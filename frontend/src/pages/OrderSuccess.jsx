@@ -1,0 +1,384 @@
+import React, { useEffect, useState } from 'react';
+import { useSearchParams, useNavigate, Link } from 'react-router-dom';
+import orderApi from '../services/orderApi';
+import paymentApi from '../services/paymentApi';
+import { FaCheck, FaSpinner, FaHome, FaShoppingBag } from 'react-icons/fa';
+
+const OrderSuccess = () => {
+    const [searchParams] = useSearchParams();
+    const navigate = useNavigate();
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState('');
+    const [order, setOrder] = useState(null);
+    
+    const tx_ref = searchParams.get('tx_ref');
+    const order_id = searchParams.get('order_id');
+
+    useEffect(() => {
+        const verifyOrder = async () => {
+            console.log('🔍 Verifying order with:', { tx_ref, order_id });
+            
+            try {
+                setLoading(true);
+                
+                // If we have order_id directly, fetch the order
+                if (order_id) {
+                    console.log('📦 Fetching order by ID:', order_id);
+                    const orderData = await orderApi.getOrderById(order_id);
+                    setOrder(orderData);
+                    setLoading(false);
+                    return;
+                }
+                
+                // If we have tx_ref, check order status
+                if (tx_ref) {
+                    console.log('🔍 Checking order status for tx_ref:', tx_ref);
+                    
+                    // First check if order exists using orderApi (NOT paymentApi)
+                    // orderApi.checkOrderStatus doesn't require authentication
+                    const statusCheck = await orderApi.checkOrderStatus(tx_ref);
+                    console.log('✅ Order status check:', statusCheck);
+                    
+                    if (statusCheck.exists && statusCheck.order_id) {
+                        // Order exists, fetch it
+                        const orderData = await orderApi.getOrderById(statusCheck.order_id);
+                        setOrder(orderData);
+                    } else if (statusCheck.pending) {
+                        // Order still pending, wait and check again
+                        console.log('⏳ Order still pending, checking again in 3 seconds...');
+                        setTimeout(verifyOrder, 3000);
+                        return;
+                    } else {
+                        setError('Order not found. Please contact support.');
+                    }
+                } else {
+                    setError('No order information found');
+                }
+            } catch (err) {
+                console.error('❌ Error verifying order:', err);
+                setError(err.message || 'Failed to verify order');
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        verifyOrder();
+    }, [tx_ref, order_id]);
+
+    if (loading) {
+        return (
+            <div style={styles.container}>
+                <div style={styles.loadingContainer}>
+                    <FaSpinner className="spinner" size={50} color="#667eea" />
+                    <h2 style={styles.loadingText}>Verifying your order...</h2>
+                </div>
+            </div>
+        );
+    }
+
+    if (error) {
+        return (
+            <div style={styles.container}>
+                <div style={styles.errorContainer}>
+                    <div style={styles.errorIcon}>❌</div>
+                    <h2 style={styles.errorTitle}>Something went wrong</h2>
+                    <p style={styles.errorMessage}>{error}</p>
+                    <div style={styles.buttonGroup}>
+                        <button 
+                            style={styles.primaryButton}
+                            onClick={() => navigate('/products')}
+                        >
+                            <FaShoppingBag /> Continue Shopping
+                        </button>
+                        <button 
+                            style={styles.secondaryButton}
+                            onClick={() => navigate('/contact')}
+                        >
+                            Contact Support
+                        </button>
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
+    return (
+        <div style={styles.container}>
+            <div style={styles.successCard}>
+                <div style={styles.successIcon}>
+                    <FaCheck size={50} color="#28a745" />
+                </div>
+                
+                <h1 style={styles.title}>Order Placed Successfully!</h1>
+                <p style={styles.subtitle}>Thank you for your purchase</p>
+                
+                {order && (
+                    <div style={styles.orderDetails}>
+                        <div style={styles.orderNumber}>
+                            Order #: {order.order?.order_number || 'N/A'}
+                        </div>
+                        
+                        <div style={styles.infoGrid}>
+                            <div style={styles.infoItem}>
+                                <strong>Total Amount:</strong>
+                                <span>{order.order?.grand_total || 0} Br</span>
+                            </div>
+                            <div style={styles.infoItem}>
+                                <strong>Payment Method:</strong>
+                                <span>{order.order?.payment_method || 'Chapa'}</span>
+                            </div>
+                            <div style={styles.infoItem}>
+                                <strong>Status:</strong>
+                                <span style={styles.statusBadge}>
+                                    {order.order?.status || 'Processing'}
+                                </span>
+                            </div>
+                            <div style={styles.infoItem}>
+                                <strong>Date:</strong>
+                                <span>
+                                    {order.order?.created_at 
+                                        ? new Date(order.order.created_at).toLocaleDateString() 
+                                        : new Date().toLocaleDateString()}
+                                </span>
+                            </div>
+                        </div>
+                        
+                        {order.items && order.items.length > 0 && (
+                            <div style={styles.itemsSection}>
+                                <h3 style={styles.itemsTitle}>Order Items</h3>
+                                {order.items.map((item, index) => (
+                                    <div key={index} style={styles.itemRow}>
+                                        <img 
+                                            src={item.image_url || 'https://via.placeholder.com/50'} 
+                                            alt={item.name}
+                                            style={styles.itemImage}
+                                        />
+                                        <div style={styles.itemDetails}>
+                                            <div style={styles.itemName}>{item.name}</div>
+                                            <div style={styles.itemMeta}>
+                                                Qty: {item.quantity} × {item.price} Br
+                                            </div>
+                                        </div>
+                                        <div style={styles.itemTotal}>
+                                            {item.price * item.quantity} Br
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+                )}
+                
+                <div style={styles.buttonGroup}>
+                    <Link to="/orders" style={styles.viewOrdersButton}>
+                        View My Orders
+                    </Link>
+                    <Link to="/products" style={styles.continueButton}>
+                        Continue Shopping
+                    </Link>
+                </div>
+                
+                <p style={styles.confirmationText}>
+                    A confirmation email has been sent to your email address.
+                </p>
+            </div>
+            
+            <style>
+                {`
+                    @keyframes spin {
+                        0% { transform: rotate(0deg); }
+                        100% { transform: rotate(360deg); }
+                    }
+                    .spinner {
+                        animation: spin 1s linear infinite;
+                    }
+                `}
+            </style>
+        </div>
+    );
+};
+
+const styles = {
+    container: {
+        maxWidth: '800px',
+        margin: '40px auto',
+        padding: '20px'
+    },
+    loadingContainer: {
+        textAlign: 'center',
+        padding: '60px 20px',
+        background: 'white',
+        borderRadius: '12px',
+        boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
+    },
+    loadingText: {
+        marginTop: '20px',
+        color: '#666'
+    },
+    successCard: {
+        background: 'white',
+        borderRadius: '12px',
+        padding: '40px',
+        boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
+        textAlign: 'center'
+    },
+    successIcon: {
+        width: '100px',
+        height: '100px',
+        borderRadius: '50%',
+        background: '#d4edda',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        margin: '0 auto 30px'
+    },
+    title: {
+        fontSize: '2rem',
+        color: '#333',
+        marginBottom: '10px'
+    },
+    subtitle: {
+        fontSize: '1.1rem',
+        color: '#666',
+        marginBottom: '30px'
+    },
+    orderDetails: {
+        background: '#f8f9fa',
+        borderRadius: '8px',
+        padding: '20px',
+        marginBottom: '30px',
+        textAlign: 'left'
+    },
+    orderNumber: {
+        fontSize: '1.2rem',
+        fontWeight: 'bold',
+        color: '#667eea',
+        padding: '10px',
+        background: '#e3f2fd',
+        borderRadius: '4px',
+        marginBottom: '20px'
+    },
+    infoGrid: {
+        display: 'grid',
+        gridTemplateColumns: 'repeat(2, 1fr)',
+        gap: '15px',
+        marginBottom: '20px'
+    },
+    infoItem: {
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '5px'
+    },
+    statusBadge: {
+        display: 'inline-block',
+        padding: '4px 12px',
+        background: '#ffc107',
+        color: '#333',
+        borderRadius: '20px',
+        fontSize: '0.9rem'
+    },
+    itemsSection: {
+        borderTop: '1px solid #dee2e6',
+        paddingTop: '20px'
+    },
+    itemsTitle: {
+        fontSize: '1.1rem',
+        marginBottom: '15px'
+    },
+    itemRow: {
+        display: 'flex',
+        alignItems: 'center',
+        gap: '15px',
+        padding: '10px 0',
+        borderBottom: '1px solid #dee2e6'
+    },
+    itemImage: {
+        width: '50px',
+        height: '50px',
+        borderRadius: '4px',
+        objectFit: 'cover'
+    },
+    itemDetails: {
+        flex: 1
+    },
+    itemName: {
+        fontWeight: '500'
+    },
+    itemMeta: {
+        fontSize: '0.9rem',
+        color: '#666'
+    },
+    itemTotal: {
+        fontWeight: 'bold'
+    },
+    buttonGroup: {
+        display: 'flex',
+        gap: '15px',
+        justifyContent: 'center',
+        marginTop: '20px'
+    },
+    viewOrdersButton: {
+        padding: '12px 30px',
+        background: '#667eea',
+        color: 'white',
+        textDecoration: 'none',
+        borderRadius: '4px',
+        fontSize: '1rem'
+    },
+    continueButton: {
+        padding: '12px 30px',
+        background: '#28a745',
+        color: 'white',
+        textDecoration: 'none',
+        borderRadius: '4px',
+        fontSize: '1rem'
+    },
+    confirmationText: {
+        marginTop: '30px',
+        color: '#666',
+        fontSize: '0.95rem'
+    },
+    errorContainer: {
+        background: 'white',
+        borderRadius: '12px',
+        padding: '40px',
+        boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
+        textAlign: 'center'
+    },
+    errorIcon: {
+        fontSize: '4rem',
+        marginBottom: '20px'
+    },
+    errorTitle: {
+        fontSize: '1.8rem',
+        color: '#dc3545',
+        marginBottom: '10px'
+    },
+    errorMessage: {
+        color: '#666',
+        marginBottom: '30px'
+    },
+    primaryButton: {
+        padding: '12px 30px',
+        background: '#667eea',
+        color: 'white',
+        border: 'none',
+        borderRadius: '4px',
+        cursor: 'pointer',
+        fontSize: '1rem',
+        display: 'inline-flex',
+        alignItems: 'center',
+        gap: '8px'
+    },
+    secondaryButton: {
+        padding: '12px 30px',
+        background: '#6c757d',
+        color: 'white',
+        border: 'none',
+        borderRadius: '4px',
+        cursor: 'pointer',
+        fontSize: '1rem'
+    }
+};
+
+export default OrderSuccess;
