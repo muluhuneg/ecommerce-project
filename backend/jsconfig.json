@@ -1,0 +1,10 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "target": "es2017",
+    "checkJs": true,
+    "lib": ["es2017"]
+  },
+  "exclude": ["node_modules"]
+}</content>
+<parameter name="filePath">c:\Users\SOOQ ELASER\Desktop\ecommerce-project\backend\jsconfig.json
