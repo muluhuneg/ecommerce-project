@@ -205,22 +205,20 @@ process.on('unhandledRejection', (reason, promise) => {
 });
 
 const PORT = process.env.PORT || 5000;
-const HOST = process.env.HOST || 'localhost';
 
-const server = app.listen(PORT, HOST, () => {
+const server = app.listen(PORT, '0.0.0.0', () => {
     console.log('\n=================================');
     console.log(`🚀 Server is running on port ${PORT}`);
     console.log(`📝 Environment: ${process.env.NODE_ENV || 'development'}`);
-    console.log(`🌍 Host: ${HOST}`);
+    console.log(`🌍 Host: 0.0.0.0 (all interfaces)`);
     console.log(`📁 Uploads directory: ${uploadsDir}`);
     console.log('=================================\n');
-    console.log(`🔗 Test route: http://${HOST}:${PORT}/api/test`);
-    console.log(`💰 Payment routes: http://${HOST}:${PORT}/api/payment`);
-    console.log(`📚 API docs: http://${HOST}:${PORT}/api`);
-    console.log(`🖼️  Uploads: http://${HOST}:${PORT}/uploads`);
+    console.log(`🔗 Test route: http://localhost:${PORT}/api/test`);
+    console.log(`💰 Payment routes: http://localhost:${PORT}/api/payment`);
+    console.log(`📚 API docs: http://localhost:${PORT}/api`);
+    console.log(`🖼️  Uploads: http://localhost:${PORT}/uploads`);
     console.log('=================================\n');
 });
-
 // Graceful shutdown
 process.on('SIGTERM', () => {
     console.log('SIGTERM signal received: closing HTTP server');
