@@ -119,8 +119,7 @@ app.get('/api', (req, res) => {
             search: '/api/search',
             notifications: '/api/notifications'
         },
-        documentation: 'https://github.com/your-repo/e-commerce-api',
-        status: 'online'
+        documentation: 'https://github.com/muluhuneg/ecommerce-project',
     });
 });
 
