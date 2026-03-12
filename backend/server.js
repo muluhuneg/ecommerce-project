@@ -12,9 +12,13 @@ if (!fs.existsSync(uploadsDir)) {
     fs.mkdirSync(uploadsDir, { recursive: true });
 }
 
-// Middleware
+// Middleware - UPDATED CORS to include Vercel frontend
 app.use(cors({
-    origin: ['http://localhost:3000', 'http://localhost:5000'],
+    origin: [
+        'http://localhost:3000', 
+        'http://localhost:5000',
+        'https://ecommerce-project-theta-liard.vercel.app'
+    ],
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
@@ -219,6 +223,7 @@ const server = app.listen(PORT, '0.0.0.0', () => {
     console.log(`🖼️  Uploads: http://localhost:${PORT}/uploads`);
     console.log('=================================\n');
 });
+
 // Graceful shutdown
 process.on('SIGTERM', () => {
     console.log('SIGTERM signal received: closing HTTP server');
