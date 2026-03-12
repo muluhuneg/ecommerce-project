@@ -50,7 +50,7 @@ const adminApi = {
         }
     },
 
-    // ========== NEW: Get recent orders for dashboard ==========
+    // Get recent orders for dashboard
     getRecentOrders: async (limit = 10) => {
         try {
             console.log('📦 Fetching recent orders...');
@@ -59,11 +59,11 @@ const adminApi = {
             return response.data;
         } catch (error) {
             console.error('❌ Error fetching recent orders:', error);
-            return []; // Return empty array instead of throwing
+            return [];
         }
     },
 
-    // ========== NEW: Get pending products for dashboard ==========
+    // Get pending products for dashboard
     getPendingProducts: async (limit = 5) => {
         try {
             console.log('🔄 Fetching pending products...');
@@ -72,7 +72,7 @@ const adminApi = {
             return response.data;
         } catch (error) {
             console.error('❌ Error fetching pending products:', error);
-            return []; // Return empty array instead of throwing
+            return [];
         }
     },
 
@@ -260,16 +260,9 @@ const adminApi = {
         }
     },
 
-    getPendingProducts: async () => {
-        try {
-            const response = await api.get('/admin/products/pending');
-            return response.data;
-        } catch (error) {
-            console.error('Error fetching pending products:', error);
-            throw error;
-        }
-    },
-
+    // NOTE: getPendingProducts is already defined above for dashboard
+    // This function is for the products page - keeping it separate
+    
     getProductDetails: async (productId) => {
         try {
             const response = await api.get(`/admin/products/${productId}`);
