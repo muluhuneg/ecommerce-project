@@ -4,7 +4,8 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "dev": "nodemon server.js"
+    "dev": "nodemon server.js",
+    "build": "npm ci --only=production"
   },
   "keywords": [],
   "author": "",
@@ -27,8 +28,4 @@
   "devDependencies": {
     "nodemon": "^3.1.14"
   }
-  "scripts": {
-  "start": "node server.js",
-  "build": "npm ci --only=production"
-}
 }
