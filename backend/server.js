@@ -12,12 +12,14 @@ if (!fs.existsSync(uploadsDir)) {
     fs.mkdirSync(uploadsDir, { recursive: true });
 }
 
-// Middleware - UPDATED CORS to include Vercel frontend
+// Middleware - UPDATED CORS to include ALL Vercel frontend URLs
 app.use(cors({
     origin: [
         'http://localhost:3000', 
         'http://localhost:5000',
-        'https://ecommerce-project-theta-liard.vercel.app'
+        'https://ecommerce-project-theta-liard.vercel.app',
+        'https://ecommerce-project-git-master-muluhunegs-projects.vercel.app', // Add this line
+        'https://ecommerce-project.vercel.app' // Add your main domain too
     ],
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
