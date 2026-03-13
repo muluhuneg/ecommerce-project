@@ -6,7 +6,7 @@ const pool = mysql.createPool({
     password: process.env.DB_PASSWORD || 'muluhunegnaw',
     database: process.env.DB_NAME || 'ecommerce_db',
     // 1. ADDED PORT (Important: uses your 25876 port)
-    port: process.env.DB_PORT || 3306, 
+    port: process.env.DB_PORT || 25876, 
     // 2. ADDED SSL (Important: Required for Aiven)
     ssl: {
         rejectUnauthorized: false
