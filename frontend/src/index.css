@@ -11,3 +11,207 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+/* ========== RESPONSIVE GRIDS ========== */
+.products-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+}
+
+.categories-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 20px;
+}
+
+.features-section {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+}
+
+.brands-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 20px;
+}
+
+/* ========== MOBILE (up to 576px) ========== */
+@media screen and (max-width: 576px) {
+  .products-grid {
+    grid-template-columns: 1fr !important;
+    gap: 15px !important;
+    padding: 10px !important;
+  }
+  
+  .categories-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 10px !important;
+  }
+  
+  .features-section {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 10px !important;
+  }
+  
+  .brands-grid {
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 10px !important;
+  }
+  
+  .stats-section {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 10px !important;
+  }
+  
+  /* Hide desktop nav, show mobile menu button */
+  .desktop-nav {
+    display: none !important;
+  }
+  
+  .mobile-menu-toggle {
+    display: block !important;
+  }
+  
+  /* Make tables scrollable */
+  table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+  
+  /* Stack form inputs */
+  .form-grid {
+    grid-template-columns: 1fr !important;
+  }
+  
+  .form-group-full {
+    grid-column: span 1 !important;
+  }
+  
+  /* Stack checkout columns */
+  .checkout-container {
+    grid-template-columns: 1fr !important;
+  }
+  
+  .right-column {
+    position: relative !important;
+    top: 0 !important;
+  }
+  
+  /* Adjust hero text for mobile */
+  .hero-title {
+    font-size: 2rem !important;
+  }
+  
+  .hero-subtitle {
+    font-size: 1rem !important;
+  }
+  
+  .hero-content {
+    left: 5% !important;
+    right: 5% !important;
+    text-align: center !important;
+    max-width: 90% !important;
+  }
+  
+  /* Full width buttons */
+  button, .button, .hero-button, .promo-button {
+    width: 100% !important;
+  }
+}
+
+/* ========== TABLET (577px - 768px) ========== */
+@media screen and (min-width: 577px) and (max-width: 768px) {
+  .products-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+  
+  .categories-grid {
+    grid-template-columns: repeat(3, 1fr) !important;
+  }
+  
+  .features-section {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+  
+  .brands-grid {
+    grid-template-columns: repeat(4, 1fr) !important;
+  }
+  
+  .stats-section {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+  
+  .checkout-container {
+    grid-template-columns: 1fr !important;
+  }
+  
+  .right-column {
+    position: relative !important;
+    top: 0 !important;
+  }
+  
+  .hero-title {
+    font-size: 2.5rem !important;
+  }
+}
+
+/* ========== SMALL DESKTOP (769px - 1024px) ========== */
+@media screen and (min-width: 769px) and (max-width: 1024px) {
+  .products-grid {
+    grid-template-columns: repeat(3, 1fr) !important;
+  }
+  
+  .categories-grid {
+    grid-template-columns: repeat(4, 1fr) !important;
+  }
+  
+  .brands-grid {
+    grid-template-columns: repeat(5, 1fr) !important;
+  }
+  
+  .hero-title {
+    font-size: 3rem !important;
+  }
+}
+
+/* ========== TOUCH DEVICE OPTIMIZATIONS ========== */
+@media (hover: none) and (pointer: coarse) {
+  /* Increase tap targets for touch */
+  button, 
+  .button, 
+  .nav-link, 
+  .product-card,
+  .category-card {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  
+  /* Remove hover effects on touch */
+  .product-card:hover,
+  .category-card:hover,
+  .brand-card:hover {
+    transform: none !important;
+  }
+}
+
+/* ========== UTILITY RESPONSIVE CLASSES ========== */
+.hide-on-mobile {
+  display: block;
+}
+
+.show-on-mobile {
+  display: none;
+}
+
+@media screen and (max-width: 576px) {
+  .hide-on-mobile {
+    display: none !important;
+  }
+  
+  .show-on-mobile {
+    display: block !important;
+  }
+}
