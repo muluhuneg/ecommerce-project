@@ -27,7 +27,8 @@ import {
     FaBell,
     FaGift,
     FaRocket,
-    FaMagic
+    FaMagic,
+    FaBars
 } from 'react-icons/fa';
 
 const Navbar = () => {
@@ -38,10 +39,11 @@ const Navbar = () => {
     const [isSearchOpen, setIsSearchOpen] = useState(false);
     const [isScrolled, setIsScrolled] = useState(false);
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [isDarkMode, setIsDarkMode] = useState(false);
     const [activeLink, setActiveLink] = useState('/');
     const navigate = useNavigate();
-    const location = useLocation(); // ✅ FIXED: Use useLocation hook
+    const location = useLocation();
 
     // Detect scroll for navbar effect
     useEffect(() => {
@@ -63,10 +65,28 @@ const Navbar = () => {
         return () => document.removeEventListener('click', handleClickOutside);
     }, []);
 
+    // Close mobile menu when route changes
+    useEffect(() => {
+        setIsMobileMenuOpen(false);
+    }, [location]);
+
+    // Prevent body scroll when mobile menu is open
+    useEffect(() => {
+        if (isMobileMenuOpen) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = 'unset';
+        }
+        return () => {
+            document.body.style.overflow = 'unset';
+        };
+    }, [isMobileMenuOpen]);
+
     const handleLogout = () => {
         logout();
         navigate('/');
         setIsDropdownOpen(false);
+        setIsMobileMenuOpen(false);
     };
 
     const handleSearch = (e) => {
@@ -75,11 +95,18 @@ const Navbar = () => {
             navigate(`/products?search=${encodeURIComponent(searchTerm)}`);
             setSearchTerm('');
             setIsSearchOpen(false);
+            setIsMobileMenuOpen(false);
         }
     };
 
     const toggleSearch = () => {
         setIsSearchOpen(!isSearchOpen);
+        if (isMobileMenuOpen) setIsMobileMenuOpen(false);
+    };
+
+    const toggleMobileMenu = () => {
+        setIsMobileMenuOpen(!isMobileMenuOpen);
+        if (isSearchOpen) setIsSearchOpen(false);
     };
 
     const toggleDarkMode = () => {
@@ -107,8 +134,8 @@ const Navbar = () => {
     );
 
     // NavLink component with active state
-    const NavLink = ({ to, icon, children }) => {
-        const isActive = location.pathname === to; // ✅ Now using location from hook
+    const NavLink = ({ to, icon, children, onClick }) => {
+        const isActive = location.pathname === to;
         return (
             <Link 
                 to={to} 
@@ -118,7 +145,7 @@ const Navbar = () => {
                     borderColor: isActive ? '#FFD700' : 'rgba(255,255,255,0.2)'
                 }}
                 className="nav-link"
-                onClick={() => setActiveLink(to)}
+                onClick={onClick}
             >
                 <span style={styles.navLinkIcon}>{icon}</span>
                 <span style={styles.navLinkText}>{children}</span>
@@ -127,8 +154,28 @@ const Navbar = () => {
         );
     };
 
+    // Mobile NavLink component
+    const MobileNavLink = ({ to, icon, children, onClick }) => {
+        const isActive = location.pathname === to;
+        return (
+            <Link 
+                to={to} 
+                style={{
+                    ...styles.mobileNavLink,
+                    background: isActive ? 'rgba(255,215,0,0.2)' : 'transparent',
+                    borderLeft: isActive ? '4px solid #FFD700' : '4px solid transparent'
+                }}
+                onClick={onClick}
+            >
+                <span style={styles.mobileNavIcon}>{icon}</span>
+                <span style={styles.mobileNavText}>{children}</span>
+                {isActive && <span style={styles.mobileNavActive}></span>}
+            </Link>
+        );
+    };
+
     // Shiny button with hover effects
-    const ShinyButton = ({ to, children, primary = false, icon }) => (
+    const ShinyButton = ({ to, children, primary = false, icon, onClick }) => (
         <Link 
             to={to} 
             style={{
@@ -136,6 +183,7 @@ const Navbar = () => {
                 ...(primary ? styles.shinyButtonPrimary : {})
             }}
             className="shiny-button"
+            onClick={onClick}
         >
             {icon && <span style={styles.buttonIcon}>{icon}</span>}
             <span>{children}</span>
@@ -150,7 +198,7 @@ const Navbar = () => {
             background: isScrolled 
                 ? 'linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)'
                 : 'linear-gradient(135deg, #667eea 0%, #764ba2 30%, #ff6b6b 70%, #ffd93d 100%)',
-            padding: isScrolled ? '0.8rem 2rem' : '1.2rem 2rem',
+            padding: isScrolled ? '0.8rem 1rem' : '1.2rem 1rem',
             boxShadow: isScrolled 
                 ? '0 10px 30px rgba(0,0,0,0.3)'
                 : '0 15px 35px rgba(0,0,0,0.2)',
@@ -163,13 +211,15 @@ const Navbar = () => {
             margin: '0 auto',
             display: 'flex',
             justifyContent: 'space-between',
-            alignItems: 'center'
+            alignItems: 'center',
+            position: 'relative'
         },
         // Logo styles with animation
         logoLink: {
             textDecoration: 'none',
             display: 'block',
-            position: 'relative'
+            position: 'relative',
+            zIndex: 1002
         },
         logoContainer: {
             display: 'flex',
@@ -183,10 +233,10 @@ const Navbar = () => {
         },
         logoIcon: {
             position: 'relative',
-            width: '50px',
-            height: '50px',
+            width: '40px',
+            height: '40px',
             background: 'linear-gradient(135deg, #FFD700, #FFA500, #FF6B6B)',
-            borderRadius: '15px',
+            borderRadius: '12px',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -196,23 +246,23 @@ const Navbar = () => {
         },
         logoLightning: {
             color: '#1a1a2e',
-            fontSize: '1.8rem',
+            fontSize: '1.4rem',
             animation: 'pulse 2s ease-in-out infinite'
         },
         logoStar1: {
             position: 'absolute',
-            top: '5px',
-            right: '5px',
+            top: '3px',
+            right: '3px',
             color: '#fff',
-            fontSize: '0.8rem',
+            fontSize: '0.6rem',
             animation: 'spin 3s linear infinite'
         },
         logoStar2: {
             position: 'absolute',
-            bottom: '5px',
-            left: '5px',
+            bottom: '3px',
+            left: '3px',
             color: '#fff',
-            fontSize: '0.8rem',
+            fontSize: '0.6rem',
             animation: 'spin 4s linear infinite reverse'
         },
         logoTextWrapper: {
@@ -221,7 +271,7 @@ const Navbar = () => {
             alignItems: 'flex-start'
         },
         logoMain: {
-            fontSize: '2rem',
+            fontSize: '1.5rem',
             fontWeight: '800',
             background: 'linear-gradient(135deg, #fff, #FFD700, #FFA500)',
             WebkitBackgroundClip: 'text',
@@ -233,20 +283,175 @@ const Navbar = () => {
         logoBadge: {
             background: 'linear-gradient(135deg, #FFD700, #FF6B6B)',
             color: '#1a1a2e',
-            fontSize: '0.65rem',
+            fontSize: '0.55rem',
             fontWeight: 'bold',
-            padding: '2px 8px',
-            borderRadius: '12px',
+            padding: '2px 6px',
+            borderRadius: '10px',
             marginTop: '2px',
             textTransform: 'uppercase',
             boxShadow: '0 2px 10px rgba(255,215,0,0.5)',
             animation: 'pulse 2s infinite'
         },
-        navLinks: {
-            display: 'flex',
+        // Desktop Navigation
+        desktopNav: {
+            display: 'none',
             gap: '0.3rem',
-            alignItems: 'center'
+            alignItems: 'center',
+            '@media (min-width: 1024px)': {
+                display: 'flex'
+            }
         },
+        // Mobile Navigation
+        mobileNav: {
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.5rem',
+            '@media (min-width: 1024px)': {
+                display: 'none'
+            }
+        },
+        hamburgerButton: {
+            background: 'rgba(255,255,255,0.15)',
+            border: '1px solid rgba(255,215,0,0.3)',
+            color: 'white',
+            width: '45px',
+            height: '45px',
+            borderRadius: '50%',
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: '1.4rem',
+            transition: 'all 0.3s ease',
+            zIndex: 1002
+        },
+        mobileMenu: {
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)',
+            zIndex: 1001,
+            padding: '80px 20px 30px',
+            overflowY: 'auto',
+            display: isMobileMenuOpen ? 'block' : 'none',
+            animation: 'slideInRight 0.3s ease'
+        },
+        mobileMenuContent: {
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '1rem'
+        },
+        mobileNavLinks: {
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '0.5rem',
+            marginBottom: '2rem'
+        },
+        mobileNavLink: {
+            color: 'white',
+            textDecoration: 'none',
+            fontSize: '1.1rem',
+            fontWeight: '600',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '1rem',
+            padding: '1rem 1.5rem',
+            borderRadius: '12px',
+            transition: 'all 0.3s ease',
+            background: 'rgba(255,255,255,0.05)',
+            border: '1px solid rgba(255,255,255,0.1)'
+        },
+        mobileNavIcon: {
+            fontSize: '1.2rem',
+            color: '#FFD700',
+            width: '24px'
+        },
+        mobileNavText: {
+            flex: 1
+        },
+        mobileNavActive: {
+            width: '4px',
+            height: '100%',
+            background: '#FFD700',
+            borderRadius: '2px'
+        },
+        mobileUserSection: {
+            background: 'rgba(255,255,255,0.05)',
+            borderRadius: '20px',
+            padding: '1.5rem',
+            marginTop: '1rem'
+        },
+        mobileUserInfo: {
+            display: 'flex',
+            alignItems: 'center',
+            gap: '1rem',
+            marginBottom: '1.5rem',
+            paddingBottom: '1.5rem',
+            borderBottom: '1px solid rgba(255,215,0,0.2)'
+        },
+        mobileUserAvatar: {
+            width: '60px',
+            height: '60px',
+            borderRadius: '50%',
+            background: 'linear-gradient(135deg, #FFD700, #FFA500, #FF6B6B)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: '1.8rem',
+            fontWeight: 'bold',
+            color: '#1a1a2e'
+        },
+        mobileUserDetails: {
+            flex: 1
+        },
+        mobileUserName: {
+            fontSize: '1.2rem',
+            fontWeight: 'bold',
+            color: 'white',
+            marginBottom: '4px'
+        },
+        mobileUserEmail: {
+            fontSize: '0.9rem',
+            color: 'rgba(255,255,255,0.7)'
+        },
+        mobileRoleBadge: {
+            display: 'inline-block',
+            fontSize: '0.7rem',
+            padding: '2px 8px',
+            borderRadius: '20px',
+            background: 'linear-gradient(135deg, #FFD700, #FFA500)',
+            color: '#1a1a2e',
+            fontWeight: 'bold',
+            textTransform: 'uppercase',
+            marginTop: '4px'
+        },
+        mobileAuthButtons: {
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '0.8rem'
+        },
+        mobileButton: {
+            padding: '1rem',
+            borderRadius: '12px',
+            border: '1px solid rgba(255,255,255,0.2)',
+            background: 'rgba(255,255,255,0.1)',
+            color: 'white',
+            textDecoration: 'none',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '0.5rem',
+            fontSize: '1rem',
+            fontWeight: '600'
+        },
+        mobileButtonPrimary: {
+            background: 'linear-gradient(135deg, #FFD700, #FFA500)',
+            border: 'none',
+            color: '#1a1a2e'
+        },
+        // Desktop nav link
         navLink: {
             color: 'white',
             textDecoration: 'none',
@@ -305,7 +510,7 @@ const Navbar = () => {
         searchContainer: {
             position: 'absolute',
             top: 'calc(100% + 15px)',
-            right: 0,
+            right: '60px',
             background: 'rgba(26, 26, 46, 0.98)',
             backdropFilter: 'blur(10px)',
             borderRadius: '20px',
@@ -313,9 +518,12 @@ const Navbar = () => {
             boxShadow: '0 20px 40px rgba(0,0,0,0.4)',
             display: isSearchOpen ? 'block' : 'none',
             zIndex: 1001,
-            width: '400px',
+            width: '300px',
             border: '2px solid rgba(255,215,0,0.3)',
-            animation: 'slideDown 0.4s ease'
+            animation: 'slideDown 0.4s ease',
+            '@media (min-width: 768px)': {
+                width: '400px'
+            }
         },
         searchForm: {
             display: 'flex',
@@ -323,7 +531,7 @@ const Navbar = () => {
         },
         searchInput: {
             flex: 1,
-            padding: '15px',
+            padding: '12px',
             border: '2px solid rgba(255,215,0,0.3)',
             borderRadius: '12px',
             fontSize: '1rem',
@@ -333,7 +541,7 @@ const Navbar = () => {
             transition: 'all 0.3s'
         },
         searchSubmit: {
-            padding: '15px 20px',
+            padding: '12px 15px',
             background: 'linear-gradient(135deg, #667eea, #764ba2, #ff6b6b)',
             color: 'white',
             border: 'none',
@@ -346,7 +554,7 @@ const Navbar = () => {
             fontSize: '1rem'
         },
         closeSearch: {
-            padding: '15px',
+            padding: '12px',
             background: 'rgba(255,255,255,0.1)',
             color: 'white',
             border: '2px solid rgba(255,255,255,0.2)',
@@ -593,6 +801,15 @@ const Navbar = () => {
                 }
             }
             
+            @keyframes slideInRight {
+                from {
+                    transform: translateX(100%);
+                }
+                to {
+                    transform: translateX(0);
+                }
+            }
+            
             @keyframes slideIn {
                 from {
                     transform: translateX(-100%);
@@ -676,6 +893,18 @@ const Navbar = () => {
                 background: linear-gradient(135deg, rgba(255,255,255,0.3), rgba(255,255,255,0.2));
                 transform: translateY(-3px);
             }
+
+            @media (min-width: 1024px) {
+                .mobile-only {
+                    display: none;
+                }
+            }
+
+            @media (max-width: 1023px) {
+                .desktop-only {
+                    display: none;
+                }
+            }
         `;
         document.head.appendChild(style);
         return () => document.head.removeChild(style);
@@ -686,7 +915,8 @@ const Navbar = () => {
             <div style={styles.container}>
                 <Logo />
 
-                <div style={styles.navLinks}>
+                {/* Desktop Navigation */}
+                <div style={{...styles.desktopNav, display: 'none', '@media (min-width: 1024px)': {display: 'flex'}}}>
                     <NavLink to="/" icon={<FaHome />}>Home</NavLink>
                     <NavLink to="/products" icon={<FaTag />}>Products</NavLink>
                     
@@ -854,6 +1084,194 @@ const Navbar = () => {
                             <ShinyButton to="/register" primary={true} icon={<FaGift />}>Register</ShinyButton>
                         </div>
                     )}
+                </div>
+
+                {/* Mobile Navigation */}
+                <div style={styles.mobileNav}>
+                    {/* Cart Icon for Mobile */}
+                    <Link to="/cart" style={{...styles.cartLink, padding: '0.7rem'}} className="cart-link">
+                        <FaShoppingCart size={18} />
+                        {cartCount > 0 && (
+                            <span style={{...styles.cartBadge, top: '-5px', right: '-5px'}}>{cartCount}</span>
+                        )}
+                    </Link>
+
+                    {/* Dark Mode Toggle for Mobile */}
+                    <button 
+                        style={{...styles.darkModeToggle, width: '40px', height: '40px'}}
+                        onClick={toggleDarkMode}
+                    >
+                        {isDarkMode ? <FaSun /> : <FaMoon />}
+                    </button>
+
+                    {/* Hamburger Menu Button */}
+                    <button 
+                        style={styles.hamburgerButton}
+                        onClick={toggleMobileMenu}
+                    >
+                        {isMobileMenuOpen ? <FaTimes /> : <FaBars />}
+                    </button>
+                </div>
+
+                {/* Mobile Menu */}
+                <div style={styles.mobileMenu}>
+                    <div style={styles.mobileMenuContent}>
+                        {/* Search Bar for Mobile */}
+                        <form onSubmit={handleSearch} style={{marginBottom: '2rem'}}>
+                            <div style={{display: 'flex', gap: '0.5rem'}}>
+                                <input
+                                    type="text"
+                                    placeholder="Search products..."
+                                    value={searchTerm}
+                                    onChange={(e) => setSearchTerm(e.target.value)}
+                                    style={{
+                                        flex: 1,
+                                        padding: '1rem',
+                                        border: '2px solid rgba(255,215,0,0.3)',
+                                        borderRadius: '12px',
+                                        fontSize: '1rem',
+                                        background: 'rgba(255,255,255,0.1)',
+                                        color: 'white',
+                                        outline: 'none'
+                                    }}
+                                />
+                                <button 
+                                    type="submit"
+                                    style={{
+                                        padding: '1rem',
+                                        background: 'linear-gradient(135deg, #667eea, #764ba2, #ff6b6b)',
+                                        color: 'white',
+                                        border: 'none',
+                                        borderRadius: '12px',
+                                        cursor: 'pointer'
+                                    }}
+                                >
+                                    <FaSearch />
+                                </button>
+                            </div>
+                        </form>
+
+                        {/* Navigation Links */}
+                        <div style={styles.mobileNavLinks}>
+                            <MobileNavLink to="/" icon={<FaHome />} onClick={() => setIsMobileMenuOpen(false)}>
+                                Home
+                            </MobileNavLink>
+                            <MobileNavLink to="/products" icon={<FaTag />} onClick={() => setIsMobileMenuOpen(false)}>
+                                Products
+                            </MobileNavLink>
+                        </div>
+
+                        {/* User Section */}
+                        {user ? (
+                            <div style={styles.mobileUserSection}>
+                                <div style={styles.mobileUserInfo}>
+                                    <div style={styles.mobileUserAvatar}>
+                                        {user.name?.charAt(0).toUpperCase()}
+                                    </div>
+                                    <div style={styles.mobileUserDetails}>
+                                        <div style={styles.mobileUserName}>{user.name}</div>
+                                        <div style={styles.mobileUserEmail}>{user.email}</div>
+                                        <div style={styles.mobileRoleBadge}>{user.role}</div>
+                                    </div>
+                                </div>
+
+                                <div style={{display: 'flex', flexDirection: 'column', gap: '0.5rem'}}>
+                                    {/* Role-based links */}
+                                    {user.role === 'seller' && (
+                                        <>
+                                            <Link to="/seller/dashboard" style={styles.mobileNavLink} onClick={() => setIsMobileMenuOpen(false)}>
+                                                <FaTachometerAlt style={styles.mobileNavIcon} />
+                                                Seller Dashboard
+                                            </Link>
+                                            <Link to="/seller/products" style={styles.mobileNavLink} onClick={() => setIsMobileMenuOpen(false)}>
+                                                <FaBox style={styles.mobileNavIcon} />
+                                                My Products
+                                            </Link>
+                                            <Link to="/seller/orders" style={styles.mobileNavLink} onClick={() => setIsMobileMenuOpen(false)}>
+                                                <FaClipboardList style={styles.mobileNavIcon} />
+                                                Orders
+                                            </Link>
+                                        </>
+                                    )}
+                                    
+                                    {user.role === 'admin' && (
+                                        <>
+                                            <Link to="/admin/dashboard" style={styles.mobileNavLink} onClick={() => setIsMobileMenuOpen(false)}>
+                                                <FaTachometerAlt style={styles.mobileNavIcon} />
+                                                Admin Dashboard
+                                            </Link>
+                                            <Link to="/admin/users" style={styles.mobileNavLink} onClick={() => setIsMobileMenuOpen(false)}>
+                                                <FaUser style={styles.mobileNavIcon} />
+                                                Users
+                                            </Link>
+                                            <Link to="/admin/products" style={styles.mobileNavLink} onClick={() => setIsMobileMenuOpen(false)}>
+                                                <FaBox style={styles.mobileNavIcon} />
+                                                Products
+                                            </Link>
+                                        </>
+                                    )}
+                                    
+                                    {user.role === 'customer' && (
+                                        <>
+                                            <Link to="/profile" style={styles.mobileNavLink} onClick={() => setIsMobileMenuOpen(false)}>
+                                                <FaUser style={styles.mobileNavIcon} />
+                                                My Profile
+                                            </Link>
+                                            <Link to="/orders" style={styles.mobileNavLink} onClick={() => setIsMobileMenuOpen(false)}>
+                                                <FaClipboardList style={styles.mobileNavIcon} />
+                                                My Orders
+                                            </Link>
+                                            <Link to="/wishlist" style={styles.mobileNavLink} onClick={() => setIsMobileMenuOpen(false)}>
+                                                <FaHeart style={styles.mobileNavIcon} />
+                                                Wishlist
+                                                {wishlistCount > 0 && (
+                                                    <span style={{...styles.countBadge, marginLeft: 'auto'}}>{wishlistCount}</span>
+                                                )}
+                                            </Link>
+                                        </>
+                                    )}
+
+                                    {/* Common links */}
+                                    <Link to="/notifications" style={styles.mobileNavLink} onClick={() => setIsMobileMenuOpen(false)}>
+                                        <FaBell style={styles.mobileNavIcon} />
+                                        Notifications
+                                    </Link>
+                                    
+                                    <Link to="/cart" style={styles.mobileNavLink} onClick={() => setIsMobileMenuOpen(false)}>
+                                        <FaShoppingCart style={styles.mobileNavIcon} />
+                                        Cart
+                                        {cartCount > 0 && (
+                                            <span style={{...styles.countBadge, marginLeft: 'auto'}}>{cartCount}</span>
+                                        )}
+                                    </Link>
+
+                                    <button 
+                                        onClick={handleLogout}
+                                        style={{...styles.mobileNavLink, width: '100%', textAlign: 'left', cursor: 'pointer'}}
+                                    >
+                                        <FaSignOutAlt style={styles.mobileNavIcon} />
+                                        Logout
+                                    </button>
+                                </div>
+                            </div>
+                        ) : (
+                            <div style={styles.mobileAuthButtons}>
+                                <Link to="/login" style={styles.mobileButton} onClick={() => setIsMobileMenuOpen(false)}>
+                                    <FaUser /> Login
+                                </Link>
+                                <Link to="/register" style={{...styles.mobileButton, ...styles.mobileButtonPrimary}} onClick={() => setIsMobileMenuOpen(false)}>
+                                    <FaGift /> Register
+                                </Link>
+                            </div>
+                        )}
+
+                        {/* Notification Bell for Mobile */}
+                        {user && (
+                            <div style={{marginTop: '1rem'}}>
+                                <NotificationBell />
+                            </div>
+                        )}
+                    </div>
                 </div>
             </div>
         </nav>
