@@ -1,6 +1,9 @@
 import axios from 'axios';
 
-const API_BASE = 'http://localhost:5000/api';
+// IMPORTANT: Use environment variable for API URL
+const API_BASE = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+
+console.log('🔧 Admin API Base URL:', API_BASE); // Add for debugging
 
 // Create axios instance with default config
 const api = axios.create({
@@ -27,10 +30,11 @@ api.interceptors.response.use(
     (response) => response,
     (error) => {
         if (error.response?.status === 401) {
-            // Unauthorized - redirect to login
+            // Unauthorized - redirect to admin login
             localStorage.removeItem('token');
             localStorage.removeItem('userRole');
-            window.location.href = '/login';
+            // Redirect to admin login page
+            window.location.href = '/admin/secure-portal';
         }
         return Promise.reject(error);
     }
@@ -260,9 +264,6 @@ const adminApi = {
         }
     },
 
-    // NOTE: getPendingProducts is already defined above for dashboard
-    // This function is for the products page - keeping it separate
-    
     getProductDetails: async (productId) => {
         try {
             const response = await api.get(`/admin/products/${productId}`);

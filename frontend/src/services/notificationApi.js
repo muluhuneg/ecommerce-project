@@ -1,6 +1,21 @@
 import axios from 'axios';
 
-const API_BASE = 'http://localhost:5000/api';
+// IMPORTANT: Use environment variable for API URL
+const API_BASE = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+
+// Add auth token to requests
+axios.interceptors.request.use(
+    (config) => {
+        const token = localStorage.getItem('token');
+        if (token) {
+            config.headers.Authorization = `Bearer ${token}`;
+        }
+        return config;
+    },
+    (error) => Promise.reject(error)
+);
+
+console.log('🔧 Notification API Base URL:', API_BASE); // Debug log
 
 const notificationApi = {
     // Get notifications with filters
@@ -11,10 +26,11 @@ const notificationApi = {
                 limit,
                 ...filters
             });
+            console.log('📬 Fetching notifications from:', `${API_BASE}/notifications?${params}`);
             const response = await axios.get(`${API_BASE}/notifications?${params}`);
             return response.data;
         } catch (error) {
-            console.error('Error fetching notifications:', error);
+            console.error('❌ Error fetching notifications:', error);
             throw error;
         }
     },
@@ -22,10 +38,11 @@ const notificationApi = {
     // Get unread count
     getUnreadCount: async () => {
         try {
+            console.log('🔔 Fetching unread count from:', `${API_BASE}/notifications/unread-count`);
             const response = await axios.get(`${API_BASE}/notifications/unread-count`);
             return response.data;
         } catch (error) {
-            console.error('Error fetching unread count:', error);
+            console.error('❌ Error fetching unread count:', error);
             throw error;
         }
     },
@@ -36,7 +53,7 @@ const notificationApi = {
             const response = await axios.get(`${API_BASE}/notifications/${id}`);
             return response.data;
         } catch (error) {
-            console.error('Error fetching notification:', error);
+            console.error('❌ Error fetching notification:', error);
             throw error;
         }
     },
@@ -47,7 +64,7 @@ const notificationApi = {
             const response = await axios.put(`${API_BASE}/notifications/${id}/read`);
             return response.data;
         } catch (error) {
-            console.error('Error marking notification as read:', error);
+            console.error('❌ Error marking notification as read:', error);
             throw error;
         }
     },
@@ -58,7 +75,7 @@ const notificationApi = {
             const response = await axios.put(`${API_BASE}/notifications/read-all`);
             return response.data;
         } catch (error) {
-            console.error('Error marking all as read:', error);
+            console.error('❌ Error marking all as read:', error);
             throw error;
         }
     },
@@ -69,7 +86,7 @@ const notificationApi = {
             const response = await axios.put(`${API_BASE}/notifications/${id}/archive`);
             return response.data;
         } catch (error) {
-            console.error('Error archiving notification:', error);
+            console.error('❌ Error archiving notification:', error);
             throw error;
         }
     },
@@ -80,7 +97,7 @@ const notificationApi = {
             const response = await axios.delete(`${API_BASE}/notifications/${id}`);
             return response.data;
         } catch (error) {
-            console.error('Error deleting notification:', error);
+            console.error('❌ Error deleting notification:', error);
             throw error;
         }
     },
@@ -91,7 +108,7 @@ const notificationApi = {
             const response = await axios.get(`${API_BASE}/notifications/preferences`);
             return response.data;
         } catch (error) {
-            console.error('Error fetching preferences:', error);
+            console.error('❌ Error fetching preferences:', error);
             throw error;
         }
     },
@@ -102,7 +119,7 @@ const notificationApi = {
             const response = await axios.put(`${API_BASE}/notifications/preferences`, preferences);
             return response.data;
         } catch (error) {
-            console.error('Error updating preferences:', error);
+            console.error('❌ Error updating preferences:', error);
             throw error;
         }
     }
