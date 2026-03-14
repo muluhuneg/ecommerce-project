@@ -74,11 +74,14 @@ const Navbar = () => {
     useEffect(() => {
         if (isMobileMenuOpen) {
             document.body.style.overflow = 'hidden';
+            document.body.classList.add('mobile-menu-open');
         } else {
             document.body.style.overflow = 'unset';
+            document.body.classList.remove('mobile-menu-open');
         }
         return () => {
             document.body.style.overflow = 'unset';
+            document.body.classList.remove('mobile-menu-open');
         };
     }, [isMobileMenuOpen]);
 
@@ -325,6 +328,7 @@ const Navbar = () => {
             transition: 'all 0.3s ease',
             zIndex: 1002
         },
+        // FIXED: Mobile menu with higher z-index and scrolling
         mobileMenu: {
             position: 'fixed',
             top: 0,
@@ -332,16 +336,22 @@ const Navbar = () => {
             right: 0,
             bottom: 0,
             background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)',
-            zIndex: 1001,
+            zIndex: 9999, // Increased to appear above everything
             padding: '80px 20px 30px',
-            overflowY: 'auto',
+            overflowY: 'auto', // Enable scrolling
+            WebkitOverflowScrolling: 'touch', // Smooth scrolling on iOS
             display: isMobileMenuOpen ? 'block' : 'none',
             animation: 'slideInRight 0.3s ease'
         },
+        // FIXED: Mobile menu content with max height and scrolling
         mobileMenuContent: {
             display: 'flex',
             flexDirection: 'column',
-            gap: '1rem'
+            gap: '1rem',
+            maxHeight: 'calc(100vh - 100px)', // Limit height
+            overflowY: 'auto', // Make content scrollable
+            paddingBottom: '30px', // Add padding at bottom
+            paddingRight: '5px' // Prevent content from touching edge
         },
         mobileNavLinks: {
             display: 'flex',
@@ -841,6 +851,18 @@ const Navbar = () => {
                 100% { left: 200%; }
             }
             
+            // FIXED: Ensure mobile menu is above everything
+            .mobile-menu-open {
+                overflow: hidden !important;
+            }
+            
+            // FIXED: Ensure dropdown items are visible and scrollable
+            .mobile-menu-content {
+                max-height: calc(100vh - 80px);
+                overflow-y: auto;
+                padding-bottom: 30px;
+            }
+            
             .nav-link:hover {
                 background: rgba(255,255,255,0.25) !important;
                 transform: translateY(-3px);
@@ -886,7 +908,7 @@ const Navbar = () => {
             .cart-link:hover {
                 background: linear-gradient(135deg, rgba(255,255,255,0.3), rgba(255,255,255,0.2));
                 transform: translateY(-3px);
-                boxShadow: 0 10px 20px rgba(255,215,0,0.3);
+                box-shadow: 0 10px 20px rgba(255,215,0,0.3);
             }
             
             .search-button:hover {
@@ -1113,9 +1135,9 @@ const Navbar = () => {
                     </button>
                 </div>
 
-                {/* Mobile Menu */}
+                {/* Mobile Menu - FIXED: Now scrollable and above all content */}
                 <div style={styles.mobileMenu}>
-                    <div style={styles.mobileMenuContent}>
+                    <div style={styles.mobileMenuContent} className="mobile-menu-content">
                         {/* Search Bar for Mobile */}
                         <form onSubmit={handleSearch} style={{marginBottom: '2rem'}}>
                             <div style={{display: 'flex', gap: '0.5rem'}}>
