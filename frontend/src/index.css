@@ -328,6 +328,27 @@ td {
   opacity: 1;
 }
 
+/* ========== FIX: HIDE FASHION PANEL ON MOBILE ========== */
+.fashion-panel,
+.panel-with-fashion {
+  display: block;
+}
+
+/* If the panel is inside the header or navigation */
+.header-fashion-panel,
+.nav-categories {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+/* Alternative: Target by content if no class is available */
+[class*="fashion"],
+[class*="categories"],
+[class*="panel"]:contains("Fashion") {
+  /* Note: :contains() doesn't work in CSS, this is just for reference */
+}
+
 /* ========== MOBILE (≤ 576px) ========== */
 @media screen and (max-width: 576px) {
   /* Grids - single column */
@@ -492,6 +513,25 @@ td {
     margin: 10px !important;
     padding: 10px !important;
   }
+  
+  /* ===== FIX: Hide Fashion Panel on Mobile ===== */
+  .fashion-panel,
+  .panel-with-fashion,
+  .hide-on-mobile-fashion,
+  [class*="fashion"]:not(.show-on-mobile),
+  [class*="Fashion"]:not(.show-on-mobile),
+  .category-panel:not(.show-on-mobile),
+  /* If it's a specific div containing Fashion and Home & Garden */
+  div:has(> :contains("Fashion")) /* Note: :has() has limited support */ {
+    display: none !important;
+  }
+  
+  /* If it's inside a specific section like header */
+  header .categories-links,
+  .top-nav .category-links,
+  .nav-menu .categories {
+    display: none !important;
+  }
 }
 
 /* ========== TABLET (577px - 768px) ========== */
@@ -576,6 +616,11 @@ td {
   display: none;
 }
 
+/* Additional utility classes for the fashion panel */
+.hide-fashion-on-mobile {
+  display: block;
+}
+
 @media screen and (max-width: 576px) {
   .hide-on-mobile {
     display: none !important;
@@ -583,6 +628,10 @@ td {
   
   .show-on-mobile {
     display: block !important;
+  }
+  
+  .hide-fashion-on-mobile {
+    display: none !important;
   }
 }
 
