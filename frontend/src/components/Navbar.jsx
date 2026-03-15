@@ -136,7 +136,7 @@ const Navbar = () => {
         </Link>
     );
 
-    // NavLink component with active state
+    // Desktop NavLink component with horizontal layout
     const NavLink = ({ to, icon, children, onClick }) => {
         const isActive = location.pathname === to;
         return (
@@ -144,8 +144,8 @@ const Navbar = () => {
                 to={to} 
                 style={{
                     ...styles.navLink,
-                    background: isActive ? 'rgba(255,255,255,0.2)' : 'rgba(255,255,255,0.1)',
-                    borderColor: isActive ? '#FFD700' : 'rgba(255,255,255,0.2)'
+                    background: isActive ? 'rgba(255,255,255,0.2)' : 'transparent',
+                    borderColor: isActive ? '#FFD700' : 'transparent'
                 }}
                 className="nav-link"
                 onClick={onClick}
@@ -295,14 +295,27 @@ const Navbar = () => {
             boxShadow: '0 2px 10px rgba(255,215,0,0.5)',
             animation: 'pulse 2s infinite'
         },
-        // Desktop Navigation
+        // Desktop Navigation - Horizontal layout
         desktopNav: {
-            display: 'none',
-            gap: '0.3rem',
+            display: 'none', // Hidden on mobile
             alignItems: 'center',
+            gap: '0.5rem',
+            flex: 1,
+            justifyContent: 'flex-end',
             '@media (min-width: 1024px)': {
-                display: 'flex'
+                display: 'flex' // Show on desktop
             }
+        },
+        desktopNavLinks: {
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.3rem',
+            marginRight: '1rem'
+        },
+        desktopActions: {
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.5rem'
         },
         // Mobile Navigation
         mobileNav: {
@@ -310,7 +323,7 @@ const Navbar = () => {
             alignItems: 'center',
             gap: '0.5rem',
             '@media (min-width: 1024px)': {
-                display: 'none'
+                display: 'none' // Hide on desktop
             }
         },
         hamburgerButton: {
@@ -328,7 +341,7 @@ const Navbar = () => {
             transition: 'all 0.3s ease',
             zIndex: 1002
         },
-        // FIXED: Mobile menu with higher z-index and scrolling
+        // Mobile menu
         mobileMenu: {
             position: 'fixed',
             top: 0,
@@ -336,22 +349,21 @@ const Navbar = () => {
             right: 0,
             bottom: 0,
             background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)',
-            zIndex: 9999, // Increased to appear above everything
+            zIndex: 9999,
             padding: '80px 20px 30px',
-            overflowY: 'auto', // Enable scrolling
-            WebkitOverflowScrolling: 'touch', // Smooth scrolling on iOS
+            overflowY: 'auto',
+            WebkitOverflowScrolling: 'touch',
             display: isMobileMenuOpen ? 'block' : 'none',
             animation: 'slideInRight 0.3s ease'
         },
-        // FIXED: Mobile menu content with max height and scrolling
         mobileMenuContent: {
             display: 'flex',
             flexDirection: 'column',
             gap: '1rem',
-            maxHeight: 'calc(100vh - 100px)', // Limit height
-            overflowY: 'auto', // Make content scrollable
-            paddingBottom: '30px', // Add padding at bottom
-            paddingRight: '5px' // Prevent content from touching edge
+            maxHeight: 'calc(100vh - 100px)',
+            overflowY: 'auto',
+            paddingBottom: '30px',
+            paddingRight: '5px'
         },
         mobileNavLinks: {
             display: 'flex',
@@ -461,7 +473,7 @@ const Navbar = () => {
             border: 'none',
             color: '#1a1a2e'
         },
-        // Desktop nav link
+        // Desktop nav link - horizontal style
         navLink: {
             color: 'white',
             textDecoration: 'none',
@@ -470,17 +482,15 @@ const Navbar = () => {
             display: 'flex',
             alignItems: 'center',
             gap: '0.5rem',
-            padding: '0.7rem 1.3rem',
+            padding: '0.5rem 1rem',
             borderRadius: '30px',
             transition: 'all 0.3s ease',
-            background: 'rgba(255,255,255,0.1)',
-            border: '1px solid rgba(255,255,255,0.2)',
             position: 'relative',
             overflow: 'hidden',
             letterSpacing: '0.5px'
         },
         navLinkIcon: {
-            fontSize: '1.1rem',
+            fontSize: '1rem',
             color: '#FFD700',
             transition: 'all 0.3s ease'
         },
@@ -493,8 +503,9 @@ const Navbar = () => {
         navLinkActive: {
             position: 'absolute',
             bottom: 0,
-            left: 0,
-            right: 0,
+            left: '50%',
+            transform: 'translateX(-50%)',
+            width: '80%',
             height: '3px',
             background: 'linear-gradient(90deg, #FFD700, #FF6B6B)',
             borderRadius: '3px 3px 0 0',
@@ -505,7 +516,7 @@ const Navbar = () => {
             background: 'linear-gradient(135deg, rgba(255,255,255,0.2), rgba(255,255,255,0.1))',
             border: '1px solid rgba(255,255,255,0.3)',
             color: 'white',
-            padding: '0.7rem 1.3rem',
+            padding: '0.5rem 1rem',
             borderRadius: '30px',
             cursor: 'pointer',
             display: 'flex',
@@ -515,7 +526,8 @@ const Navbar = () => {
             fontWeight: '600',
             transition: 'all 0.3s ease',
             backdropFilter: 'blur(5px)',
-            letterSpacing: '0.5px'
+            letterSpacing: '0.5px',
+            whiteSpace: 'nowrap'
         },
         searchContainer: {
             position: 'absolute',
@@ -584,11 +596,12 @@ const Navbar = () => {
             display: 'flex',
             alignItems: 'center',
             gap: '0.5rem',
-            padding: '0.7rem 1.3rem',
+            padding: '0.5rem 1rem',
             borderRadius: '30px',
             background: 'linear-gradient(135deg, rgba(255,255,255,0.2), rgba(255,255,255,0.1))',
             border: '1px solid rgba(255,215,0,0.3)',
-            transition: 'all 0.3s ease'
+            transition: 'all 0.3s ease',
+            whiteSpace: 'nowrap'
         },
         cartBadge: {
             position: 'absolute',
@@ -597,9 +610,9 @@ const Navbar = () => {
             background: 'linear-gradient(135deg, #ff6b6b, #ff4757, #ff0000)',
             color: 'white',
             borderRadius: '50%',
-            width: '24px',
-            height: '24px',
-            fontSize: '0.75rem',
+            width: '20px',
+            height: '20px',
+            fontSize: '0.7rem',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -613,8 +626,8 @@ const Navbar = () => {
             background: 'rgba(255,255,255,0.15)',
             border: '1px solid rgba(255,215,0,0.3)',
             color: 'white',
-            width: '45px',
-            height: '45px',
+            width: '40px',
+            height: '40px',
             borderRadius: '50%',
             cursor: 'pointer',
             display: 'flex',
@@ -626,11 +639,11 @@ const Navbar = () => {
         // Auth buttons
         authButtons: {
             display: 'flex',
-            gap: '0.8rem',
+            gap: '0.5rem',
             alignItems: 'center'
         },
         shinyButton: {
-            padding: '0.7rem 1.5rem',
+            padding: '0.5rem 1.2rem',
             borderRadius: '30px',
             border: '1px solid rgba(255,255,255,0.3)',
             background: 'rgba(255,255,255,0.15)',
@@ -668,9 +681,9 @@ const Navbar = () => {
         userName: {
             display: 'flex',
             alignItems: 'center',
-            gap: '0.8rem',
+            gap: '0.5rem',
             cursor: 'pointer',
-            padding: '0.7rem 1.3rem',
+            padding: '0.3rem 1rem 0.3rem 0.5rem',
             borderRadius: '30px',
             background: 'linear-gradient(135deg, rgba(255,255,255,0.2), rgba(255,255,255,0.1))',
             border: '1px solid rgba(255,215,0,0.3)',
@@ -695,7 +708,8 @@ const Navbar = () => {
             whiteSpace: 'nowrap',
             maxWidth: '120px',
             color: 'white',
-            fontWeight: '600'
+            fontWeight: '600',
+            fontSize: '0.9rem'
         },
         dropdown: {
             position: 'absolute',
@@ -851,12 +865,10 @@ const Navbar = () => {
                 100% { left: 200%; }
             }
             
-            // FIXED: Ensure mobile menu is above everything
             .mobile-menu-open {
                 overflow: hidden !important;
             }
             
-            // FIXED: Ensure dropdown items are visible and scrollable
             .mobile-menu-content {
                 max-height: calc(100vh - 80px);
                 overflow-y: auto;
@@ -864,19 +876,18 @@ const Navbar = () => {
             }
             
             .nav-link:hover {
-                background: rgba(255,255,255,0.25) !important;
-                transform: translateY(-3px);
-                box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+                background: rgba(255,255,255,0.15) !important;
+                transform: translateY(-2px);
             }
             
             .nav-link:hover .nav-link-icon {
-                transform: scale(1.2) rotate(5deg);
+                transform: scale(1.1) rotate(3deg);
                 color: #FFD700;
             }
             
             .shiny-button:hover {
-                transform: translateY(-3px) scale(1.02);
-                box-shadow: 0 15px 30px rgba(255,215,0,0.4);
+                transform: translateY(-2px) scale(1.02);
+                box-shadow: 0 10px 20px rgba(255,215,0,0.3);
             }
             
             .shiny-button::after {
@@ -907,19 +918,13 @@ const Navbar = () => {
             
             .cart-link:hover {
                 background: linear-gradient(135deg, rgba(255,255,255,0.3), rgba(255,255,255,0.2));
-                transform: translateY(-3px);
+                transform: translateY(-2px);
                 box-shadow: 0 10px 20px rgba(255,215,0,0.3);
             }
             
             .search-button:hover {
                 background: linear-gradient(135deg, rgba(255,255,255,0.3), rgba(255,255,255,0.2));
-                transform: translateY(-3px);
-            }
-
-            @media (min-width: 1024px) {
-                .mobile-only {
-                    display: none;
-                }
+                transform: translateY(-2px);
             }
 
             @media (max-width: 1023px) {
@@ -937,181 +942,185 @@ const Navbar = () => {
             <div style={styles.container}>
                 <Logo />
 
-                {/* Desktop Navigation */}
-                <div style={{...styles.desktopNav, display: 'none', '@media (min-width: 1024px)': {display: 'flex'}}}>
-                    <NavLink to="/" icon={<FaHome />}>Home</NavLink>
-                    <NavLink to="/products" icon={<FaTag />}>Products</NavLink>
-                    
-                    {/* Search Button */}
-                    <button 
-                        style={styles.searchButton} 
-                        onClick={toggleSearch}
-                        className="search-button"
-                    >
-                        <FaSearch /> Search
-                    </button>
-
-                    {/* Search Dropdown */}
-                    <div style={styles.searchContainer}>
-                        <form onSubmit={handleSearch} style={styles.searchForm}>
-                            <input
-                                type="text"
-                                placeholder="Search products..."
-                                value={searchTerm}
-                                onChange={(e) => setSearchTerm(e.target.value)}
-                                style={styles.searchInput}
-                                autoFocus
-                            />
-                            <button type="submit" style={styles.searchSubmit}>
-                                <FaSearch />
-                            </button>
-                            <button type="button" style={styles.closeSearch} onClick={toggleSearch}>
-                                <FaTimes />
-                            </button>
-                        </form>
+                {/* Desktop Navigation - Horizontal Layout */}
+                <div style={styles.desktopNav}>
+                    <div style={styles.desktopNavLinks}>
+                        <NavLink to="/" icon={<FaHome />}>Home</NavLink>
+                        <NavLink to="/products" icon={<FaTag />}>Products</NavLink>
                     </div>
-                    
-                    {/* Dark Mode Toggle */}
-                    <button 
-                        style={styles.darkModeToggle}
-                        onClick={toggleDarkMode}
-                        className="search-button"
-                    >
-                        {isDarkMode ? <FaSun /> : <FaMoon />}
-                    </button>
-                    
-                    {/* Notification Bell */}
-                    {user && <NotificationBell />}
-                    
-                    {/* Cart Icon with Badge */}
-                    <Link to="/cart" style={styles.cartLink} className="cart-link">
-                        <FaShoppingCart size={18} />
-                        Cart
-                        {cartCount > 0 && (
-                            <span style={styles.cartBadge}>{cartCount}</span>
-                        )}
-                    </Link>
-                    
-                    {user ? (
-                        <div 
-                            style={styles.userMenu}
-                            className="user-menu"
-                            onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+
+                    <div style={styles.desktopActions}>
+                        {/* Search Button */}
+                        <button 
+                            style={styles.searchButton} 
+                            onClick={toggleSearch}
+                            className="search-button"
                         >
-                            <div style={styles.userName} className="user-name">
-                                <div style={styles.userAvatar}>
-                                    {user.name?.charAt(0).toUpperCase()}
+                            <FaSearch /> Search
+                        </button>
+
+                        {/* Search Dropdown */}
+                        <div style={styles.searchContainer}>
+                            <form onSubmit={handleSearch} style={styles.searchForm}>
+                                <input
+                                    type="text"
+                                    placeholder="Search products..."
+                                    value={searchTerm}
+                                    onChange={(e) => setSearchTerm(e.target.value)}
+                                    style={styles.searchInput}
+                                    autoFocus
+                                />
+                                <button type="submit" style={styles.searchSubmit}>
+                                    <FaSearch />
+                                </button>
+                                <button type="button" style={styles.closeSearch} onClick={toggleSearch}>
+                                    <FaTimes />
+                                </button>
+                            </form>
+                        </div>
+                        
+                        {/* Dark Mode Toggle */}
+                        <button 
+                            style={styles.darkModeToggle}
+                            onClick={toggleDarkMode}
+                            className="search-button"
+                        >
+                            {isDarkMode ? <FaSun /> : <FaMoon />}
+                        </button>
+                        
+                        {/* Notification Bell */}
+                        {user && <NotificationBell />}
+                        
+                        {/* Cart Icon with Badge */}
+                        <Link to="/cart" style={styles.cartLink} className="cart-link">
+                            <FaShoppingCart size={18} />
+                            Cart
+                            {cartCount > 0 && (
+                                <span style={styles.cartBadge}>{cartCount}</span>
+                            )}
+                        </Link>
+                        
+                        {user ? (
+                            <div 
+                                style={styles.userMenu}
+                                className="user-menu"
+                                onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                            >
+                                <div style={styles.userName} className="user-name">
+                                    <div style={styles.userAvatar}>
+                                        {user.name?.charAt(0).toUpperCase()}
+                                    </div>
+                                    <span style={styles.userNameText}>{user.name}</span>
                                 </div>
-                                <span style={styles.userNameText}>{user.name}</span>
-                            </div>
-                            
-                            <div style={styles.dropdown}>
-                                <div style={styles.dropdownHeader}>
-                                    <div style={styles.dropdownUserInfo}>
-                                        <div style={styles.dropdownAvatar}>
-                                            {user.name?.charAt(0).toUpperCase()}
-                                        </div>
-                                        <div style={styles.dropdownUserDetails}>
-                                            <div style={styles.dropdownUserName}>
-                                                {user.name || 'User'}
+                                
+                                <div style={styles.dropdown}>
+                                    <div style={styles.dropdownHeader}>
+                                        <div style={styles.dropdownUserInfo}>
+                                            <div style={styles.dropdownAvatar}>
+                                                {user.name?.charAt(0).toUpperCase()}
                                             </div>
-                                            <div style={styles.dropdownUserEmail}>
-                                                {user.email}
+                                            <div style={styles.dropdownUserDetails}>
+                                                <div style={styles.dropdownUserName}>
+                                                    {user.name || 'User'}
+                                                </div>
+                                                <div style={styles.dropdownUserEmail}>
+                                                    {user.email}
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
 
-                                {/* Role-based dashboard links */}
-                                {user.role === 'seller' && (
-                                    <>
-                                        <Link to="/seller/dashboard" style={styles.dropdownItem} className="dropdown-item">
-                                            <FaTachometerAlt style={styles.dropdownIcon} className="dropdown-icon" />
-                                            Seller Dashboard
-                                            <span style={styles.roleBadge}>Seller</span>
-                                        </Link>
-                                        <Link to="/seller/products" style={styles.dropdownItem} className="dropdown-item">
-                                            <FaBox style={styles.dropdownIcon} className="dropdown-icon" />
-                                            My Products
-                                        </Link>
-                                        <Link to="/seller/orders" style={styles.dropdownItem} className="dropdown-item">
-                                            <FaClipboardList style={styles.dropdownIcon} className="dropdown-icon" />
-                                            Orders
-                                        </Link>
-                                    </>
-                                )}
-                                
-                                {user.role === 'admin' && (
-                                    <>
-                                        <Link to="/admin/dashboard" style={styles.dropdownItem} className="dropdown-item">
-                                            <FaTachometerAlt style={styles.dropdownIcon} className="dropdown-icon" />
-                                            Admin Dashboard
-                                            <span style={styles.roleBadge}>Admin</span>
-                                        </Link>
-                                        <Link to="/admin/users" style={styles.dropdownItem} className="dropdown-item">
-                                            <FaUser style={styles.dropdownIcon} className="dropdown-icon" />
-                                            Users
-                                        </Link>
-                                        <Link to="/admin/products" style={styles.dropdownItem} className="dropdown-item">
-                                            <FaBox style={styles.dropdownIcon} className="dropdown-icon" />
-                                            Products
-                                        </Link>
-                                    </>
-                                )}
-                                
-                                {user.role === 'customer' && (
-                                    <>
-                                        <Link to="/profile" style={styles.dropdownItem} className="dropdown-item">
-                                            <FaUser style={styles.dropdownIcon} className="dropdown-icon" />
-                                            My Profile
-                                        </Link>
-                                        <Link to="/orders" style={styles.dropdownItem} className="dropdown-item">
-                                            <FaClipboardList style={styles.dropdownIcon} className="dropdown-icon" />
-                                            My Orders
-                                        </Link>
-                                        <Link to="/wishlist" style={styles.dropdownItem} className="dropdown-item">
-                                            <FaHeart style={styles.dropdownIcon} className="dropdown-icon" />
-                                            Wishlist 
-                                            {wishlistCount > 0 && (
-                                                <span style={styles.countBadge}>{wishlistCount}</span>
-                                            )}
-                                        </Link>
-                                    </>
-                                )}
-                                
-                                <div style={styles.dropdownDivider}></div>
-                                
-                                <Link to="/notifications" style={styles.dropdownItem} className="dropdown-item">
-                                    <FaBell style={styles.dropdownIcon} className="dropdown-icon" />
-                                    Notifications
-                                </Link>
-                                
-                                <Link to="/cart" style={styles.dropdownItem} className="dropdown-item">
-                                    <FaShoppingCart style={styles.dropdownIcon} className="dropdown-icon" />
-                                    Cart 
-                                    {cartCount > 0 && (
-                                        <span style={styles.countBadge}>{cartCount}</span>
+                                    {/* Role-based dashboard links */}
+                                    {user.role === 'seller' && (
+                                        <>
+                                            <Link to="/seller/dashboard" style={styles.dropdownItem} className="dropdown-item">
+                                                <FaTachometerAlt style={styles.dropdownIcon} className="dropdown-icon" />
+                                                Seller Dashboard
+                                                <span style={styles.roleBadge}>Seller</span>
+                                            </Link>
+                                            <Link to="/seller/products" style={styles.dropdownItem} className="dropdown-item">
+                                                <FaBox style={styles.dropdownIcon} className="dropdown-icon" />
+                                                My Products
+                                            </Link>
+                                            <Link to="/seller/orders" style={styles.dropdownItem} className="dropdown-item">
+                                                <FaClipboardList style={styles.dropdownIcon} className="dropdown-icon" />
+                                                Orders
+                                            </Link>
+                                        </>
                                     )}
-                                </Link>
-                                
-                                <button onClick={handleLogout} style={styles.dropdownItem} className="dropdown-item">
-                                    <FaSignOutAlt style={styles.dropdownIcon} className="dropdown-icon" />
-                                    Logout
-                                </button>
+                                    
+                                    {user.role === 'admin' && (
+                                        <>
+                                            <Link to="/admin/dashboard" style={styles.dropdownItem} className="dropdown-item">
+                                                <FaTachometerAlt style={styles.dropdownIcon} className="dropdown-icon" />
+                                                Admin Dashboard
+                                                <span style={styles.roleBadge}>Admin</span>
+                                            </Link>
+                                            <Link to="/admin/users" style={styles.dropdownItem} className="dropdown-item">
+                                                <FaUser style={styles.dropdownIcon} className="dropdown-icon" />
+                                                Users
+                                            </Link>
+                                            <Link to="/admin/products" style={styles.dropdownItem} className="dropdown-item">
+                                                <FaBox style={styles.dropdownIcon} className="dropdown-icon" />
+                                                Products
+                                            </Link>
+                                        </>
+                                    )}
+                                    
+                                    {user.role === 'customer' && (
+                                        <>
+                                            <Link to="/profile" style={styles.dropdownItem} className="dropdown-item">
+                                                <FaUser style={styles.dropdownIcon} className="dropdown-icon" />
+                                                My Profile
+                                            </Link>
+                                            <Link to="/orders" style={styles.dropdownItem} className="dropdown-item">
+                                                <FaClipboardList style={styles.dropdownIcon} className="dropdown-icon" />
+                                                My Orders
+                                            </Link>
+                                            <Link to="/wishlist" style={styles.dropdownItem} className="dropdown-item">
+                                                <FaHeart style={styles.dropdownIcon} className="dropdown-icon" />
+                                                Wishlist 
+                                                {wishlistCount > 0 && (
+                                                    <span style={styles.countBadge}>{wishlistCount}</span>
+                                                )}
+                                            </Link>
+                                        </>
+                                    )}
+                                    
+                                    <div style={styles.dropdownDivider}></div>
+                                    
+                                    <Link to="/notifications" style={styles.dropdownItem} className="dropdown-item">
+                                        <FaBell style={styles.dropdownIcon} className="dropdown-icon" />
+                                        Notifications
+                                    </Link>
+                                    
+                                    <Link to="/cart" style={styles.dropdownItem} className="dropdown-item">
+                                        <FaShoppingCart style={styles.dropdownIcon} className="dropdown-icon" />
+                                        Cart 
+                                        {cartCount > 0 && (
+                                            <span style={styles.countBadge}>{cartCount}</span>
+                                        )}
+                                    </Link>
+                                    
+                                    <button onClick={handleLogout} style={styles.dropdownItem} className="dropdown-item">
+                                        <FaSignOutAlt style={styles.dropdownIcon} className="dropdown-icon" />
+                                        Logout
+                                    </button>
+                                </div>
                             </div>
-                        </div>
-                    ) : (
-                        <div style={styles.authButtons}>
-                            <ShinyButton to="/login" icon={<FaUser />}>Login</ShinyButton>
-                            <ShinyButton to="/register" primary={true} icon={<FaGift />}>Register</ShinyButton>
-                        </div>
-                    )}
+                        ) : (
+                            <div style={styles.authButtons}>
+                                <ShinyButton to="/login" icon={<FaUser />}>Login</ShinyButton>
+                                <ShinyButton to="/register" primary={true} icon={<FaGift />}>Register</ShinyButton>
+                            </div>
+                        )}
+                    </div>
                 </div>
 
                 {/* Mobile Navigation */}
                 <div style={styles.mobileNav}>
                     {/* Cart Icon for Mobile */}
-                    <Link to="/cart" style={{...styles.cartLink, padding: '0.7rem'}} className="cart-link">
+                    <Link to="/cart" style={{...styles.cartLink, padding: '0.5rem'}} className="cart-link">
                         <FaShoppingCart size={18} />
                         {cartCount > 0 && (
                             <span style={{...styles.cartBadge, top: '-5px', right: '-5px'}}>{cartCount}</span>
@@ -1135,7 +1144,7 @@ const Navbar = () => {
                     </button>
                 </div>
 
-                {/* Mobile Menu - FIXED: Now scrollable and above all content */}
+                {/* Mobile Menu */}
                 <div style={styles.mobileMenu}>
                     <div style={styles.mobileMenuContent} className="mobile-menu-content">
                         {/* Search Bar for Mobile */}
