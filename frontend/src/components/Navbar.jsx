@@ -295,36 +295,30 @@ const Navbar = () => {
             boxShadow: '0 2px 10px rgba(255,215,0,0.5)',
             animation: 'pulse 2s infinite'
         },
-        // Desktop Navigation - Horizontal layout (visible on desktop only)
+        // Desktop Navigation - Only visible on desktop
         desktopNav: {
             display: 'flex',
             alignItems: 'center',
             gap: '0.5rem',
             flex: 1,
-            justifyContent: 'flex-end',
-            '@media (max-width: 1023px)': {
-                display: 'none' // Hide on mobile
-            }
+            justifyContent: 'flex-end'
         },
         desktopNavLinks: {
             display: 'flex',
             alignItems: 'center',
             gap: '0.3rem',
-            marginRight: '1rem'
+            marginRight: '0.5rem'
         },
         desktopActions: {
             display: 'flex',
             alignItems: 'center',
             gap: '0.5rem'
         },
-        // Mobile Navigation (visible on mobile only)
+        // Mobile Navigation - Only visible on mobile
         mobileNav: {
             display: 'none',
             alignItems: 'center',
-            gap: '0.5rem',
-            '@media (max-width: 1023px)': {
-                display: 'flex' // Show on mobile
-            }
+            gap: '0.5rem'
         },
         hamburgerButton: {
             background: 'rgba(255,255,255,0.15)',
@@ -341,7 +335,7 @@ const Navbar = () => {
             transition: 'all 0.3s ease',
             zIndex: 1002
         },
-        // Mobile Menu - Full screen overlay
+        // Mobile menu
         mobileMenu: {
             position: 'fixed',
             top: 0,
@@ -354,44 +348,16 @@ const Navbar = () => {
             overflowY: 'auto',
             WebkitOverflowScrolling: 'touch',
             display: isMobileMenuOpen ? 'block' : 'none',
-            animation: 'fadeIn 0.3s ease'
-        },
-        mobileMenuHeader: {
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            marginBottom: '2rem',
-            paddingBottom: '1rem',
-            borderBottom: '1px solid rgba(255,215,0,0.2)'
-        },
-        mobileMenuTitle: {
-            color: '#FFD700',
-            fontSize: '1.5rem',
-            fontWeight: '600',
-            textTransform: 'uppercase',
-            letterSpacing: '1px'
-        },
-        closeButton: {
-            background: 'rgba(255,255,255,0.1)',
-            border: 'none',
-            color: 'white',
-            width: '40px',
-            height: '40px',
-            borderRadius: '50%',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            cursor: 'pointer',
-            fontSize: '1.2rem',
-            transition: 'all 0.3s ease'
+            animation: 'slideInRight 0.3s ease'
         },
         mobileMenuContent: {
             display: 'flex',
             flexDirection: 'column',
             gap: '1rem',
-            maxHeight: 'calc(100vh - 150px)',
+            maxHeight: 'calc(100vh - 100px)',
             overflowY: 'auto',
-            paddingBottom: '30px'
+            paddingBottom: '30px',
+            paddingRight: '5px'
         },
         mobileNavLinks: {
             display: 'flex',
@@ -402,7 +368,7 @@ const Navbar = () => {
         mobileNavLink: {
             color: 'white',
             textDecoration: 'none',
-            fontSize: '1.2rem',
+            fontSize: '1.1rem',
             fontWeight: '600',
             display: 'flex',
             alignItems: 'center',
@@ -414,7 +380,7 @@ const Navbar = () => {
             border: '1px solid rgba(255,255,255,0.1)'
         },
         mobileNavIcon: {
-            fontSize: '1.3rem',
+            fontSize: '1.2rem',
             color: '#FFD700',
             width: '24px'
         },
@@ -476,29 +442,6 @@ const Navbar = () => {
             fontWeight: 'bold',
             textTransform: 'uppercase',
             marginTop: '4px'
-        },
-        mobileSearch: {
-            display: 'flex',
-            gap: '0.5rem',
-            marginBottom: '1rem'
-        },
-        mobileSearchInput: {
-            flex: 1,
-            padding: '1rem',
-            border: '2px solid rgba(255,215,0,0.3)',
-            borderRadius: '12px',
-            fontSize: '1rem',
-            background: 'rgba(255,255,255,0.1)',
-            color: 'white',
-            outline: 'none'
-        },
-        mobileSearchButton: {
-            padding: '1rem',
-            background: 'linear-gradient(135deg, #667eea, #764ba2, #ff6b6b)',
-            color: 'white',
-            border: 'none',
-            borderRadius: '12px',
-            cursor: 'pointer'
         },
         mobileAuthButtons: {
             display: 'flex',
@@ -877,12 +820,12 @@ const Navbar = () => {
                 }
             }
             
-            @keyframes fadeIn {
+            @keyframes slideInRight {
                 from {
-                    opacity: 0;
+                    transform: translateX(100%);
                 }
                 to {
-                    opacity: 1;
+                    transform: translateX(0);
                 }
             }
             
@@ -972,6 +915,24 @@ const Navbar = () => {
                 background: linear-gradient(135deg, rgba(255,255,255,0.3), rgba(255,255,255,0.2));
                 transform: translateY(-2px);
             }
+
+            @media (max-width: 1023px) {
+                .desktopNav {
+                    display: none !important;
+                }
+                .mobileNav {
+                    display: flex !important;
+                }
+            }
+
+            @media (min-width: 1024px) {
+                .desktopNav {
+                    display: flex !important;
+                }
+                .mobileNav {
+                    display: none !important;
+                }
+            }
         `;
         document.head.appendChild(style);
         return () => document.head.removeChild(style);
@@ -982,8 +943,8 @@ const Navbar = () => {
             <div style={styles.container}>
                 <Logo />
 
-                {/* Desktop Navigation - Horizontal on desktop */}
-                <div style={styles.desktopNav}>
+                {/* Desktop Navigation - Only visible on desktop */}
+                <div className="desktopNav" style={styles.desktopNav}>
                     <div style={styles.desktopNavLinks}>
                         <NavLink to="/" icon={<FaHome />}>Home</NavLink>
                         <NavLink to="/products" icon={<FaTag />}>Products</NavLink>
@@ -1161,8 +1122,8 @@ const Navbar = () => {
                     </div>
                 </div>
 
-                {/* Mobile Navigation */}
-                <div style={styles.mobileNav}>
+                {/* Mobile Navigation - Only visible on mobile */}
+                <div className="mobileNav" style={styles.mobileNav}>
                     {/* Cart Icon for Mobile */}
                     <Link to="/cart" style={{...styles.cartLink, padding: '0.5rem'}} className="cart-link">
                         <FaShoppingCart size={18} />
@@ -1188,33 +1149,44 @@ const Navbar = () => {
                     </button>
                 </div>
 
-                {/* Mobile Menu - Full screen overlay */}
+                {/* Mobile Menu - Only shown when hamburger is clicked */}
                 {isMobileMenuOpen && (
                     <div style={styles.mobileMenu}>
-                        <div style={styles.mobileMenuHeader}>
-                            <span style={styles.mobileMenuTitle}>Menu</span>
-                            <button style={styles.closeButton} onClick={() => setIsMobileMenuOpen(false)}>
-                                <FaTimes />
-                            </button>
-                        </div>
-
-                        <div style={styles.mobileMenuContent}>
+                        <div style={styles.mobileMenuContent} className="mobile-menu-content">
                             {/* Search Bar for Mobile */}
-                            <div style={styles.mobileSearch}>
-                                <input
-                                    type="text"
-                                    placeholder="Search products..."
-                                    value={searchTerm}
-                                    onChange={(e) => setSearchTerm(e.target.value)}
-                                    style={styles.mobileSearchInput}
-                                />
-                                <button 
-                                    style={styles.mobileSearchButton}
-                                    onClick={handleSearch}
-                                >
-                                    <FaSearch />
-                                </button>
-                            </div>
+                            <form onSubmit={handleSearch} style={{marginBottom: '2rem'}}>
+                                <div style={{display: 'flex', gap: '0.5rem'}}>
+                                    <input
+                                        type="text"
+                                        placeholder="Search products..."
+                                        value={searchTerm}
+                                        onChange={(e) => setSearchTerm(e.target.value)}
+                                        style={{
+                                            flex: 1,
+                                            padding: '1rem',
+                                            border: '2px solid rgba(255,215,0,0.3)',
+                                            borderRadius: '12px',
+                                            fontSize: '1rem',
+                                            background: 'rgba(255,255,255,0.1)',
+                                            color: 'white',
+                                            outline: 'none'
+                                        }}
+                                    />
+                                    <button 
+                                        type="submit"
+                                        style={{
+                                            padding: '1rem',
+                                            background: 'linear-gradient(135deg, #667eea, #764ba2, #ff6b6b)',
+                                            color: 'white',
+                                            border: 'none',
+                                            borderRadius: '12px',
+                                            cursor: 'pointer'
+                                        }}
+                                    >
+                                        <FaSearch />
+                                    </button>
+                                </div>
+                            </form>
 
                             {/* Navigation Links */}
                             <div style={styles.mobileNavLinks}>
