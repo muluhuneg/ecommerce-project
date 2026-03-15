@@ -56,7 +56,7 @@ const Navbar = () => {
     // Close dropdown when clicking outside
     useEffect(() => {
         const handleClickOutside = (e) => {
-            if (!e.target.closest('.user-menu') && !e.target.closest('.mobile-menu')) {
+            if (!e.target.closest('.user-menu') && !e.target.closest('.mobile-menu-trigger')) {
                 setIsDropdownOpen(false);
                 setIsMobileMenuOpen(false);
             }
@@ -88,7 +88,8 @@ const Navbar = () => {
         }
     };
 
-    const toggleMobileMenu = () => {
+    const toggleMobileMenu = (e) => {
+        e.stopPropagation();
         setIsMobileMenuOpen(!isMobileMenuOpen);
         if (isSearchOpen) setIsSearchOpen(false);
     };
@@ -145,12 +146,12 @@ const Navbar = () => {
                 style={{
                     ...styles.mobileMenuItem,
                     background: isActive ? 'rgba(255,215,0,0.15)' : 'transparent',
-                    borderLeft: isActive ? '4px solid #FFD700' : '4px solid transparent'
                 }}
                 onClick={onClick}
             >
                 <span style={styles.mobileMenuIcon}>{icon}</span>
                 <span style={styles.mobileMenuText}>{children}</span>
+                {isActive && <span style={styles.mobileMenuActive}></span>}
             </Link>
         );
     };
@@ -310,7 +311,7 @@ const Navbar = () => {
             alignItems: 'center',
             gap: '0.8rem'
         },
-        // Mobile Navigation
+        // Mobile Navigation - KEPT AS IS
         mobileNav: {
             display: 'none',
             alignItems: 'center',
@@ -334,60 +335,39 @@ const Navbar = () => {
             transition: 'all 0.3s ease',
             zIndex: 1002
         },
-        // Mobile Dropdown Menu - FIXED: Appears as dropdown under navbar
-        mobileDropdown: {
-            position: 'absolute',
-            top: '100%',
+        // Mobile Menu Overlay - FIXED: Appears OVER content
+        mobileMenuOverlay: {
+            position: 'fixed',
+            top: 0,
             left: 0,
             right: 0,
+            bottom: 0,
+            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+            zIndex: 9998,
+            animation: 'fadeIn 0.2s ease',
+            backdropFilter: 'blur(3px)',
+        },
+        // Mobile Menu Dropdown - FIXED: Appears as dropdown OVER content
+        mobileMenuDropdown: {
+            position: 'absolute',
+            top: 'calc(100% + 5px)',
+            right: '1rem',
+            left: '1rem',
             background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)',
             zIndex: 9999,
-            padding: '1rem',
-            boxShadow: '0 10px 30px rgba(0,0,0,0.3)',
-            borderBottomLeftRadius: '12px',
-            borderBottomRightRadius: '12px',
-            borderTop: '2px solid rgba(255,215,0,0.3)',
+            borderRadius: '12px',
+            boxShadow: '0 20px 40px rgba(0,0,0,0.4)',
+            border: '2px solid rgba(255,215,0,0.3)',
             animation: 'slideDown 0.3s ease',
-            maxHeight: 'calc(100vh - 80px)',
-            overflowY: 'auto'
+            maxHeight: 'calc(100vh - 100px)',
+            overflowY: 'auto',
+            '@media (max-width: 480px)': {
+                right: '0.5rem',
+                left: '0.5rem',
+            }
         },
-        mobileDropdownContent: {
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '0.5rem'
-        },
-        mobileSection: {
-            marginBottom: '1rem',
-            borderBottom: '1px solid rgba(255,215,0,0.2)',
-            paddingBottom: '1rem'
-        },
-        mobileSectionTitle: {
-            color: '#FFD700',
-            fontSize: '0.8rem',
-            fontWeight: '600',
-            marginBottom: '0.5rem',
-            textTransform: 'uppercase',
-            letterSpacing: '1px'
-        },
-        mobileMenuItem: {
-            color: 'white',
-            textDecoration: 'none',
-            fontSize: '1rem',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.8rem',
-            padding: '0.8rem 1rem',
-            borderRadius: '8px',
-            transition: 'all 0.3s ease',
-            marginBottom: '2px'
-        },
-        mobileMenuIcon: {
-            fontSize: '1rem',
-            color: '#FFD700',
-            width: '20px'
-        },
-        mobileMenuText: {
-            flex: 1
+        mobileMenuContent: {
+            padding: '1rem'
         },
         mobileUserInfo: {
             display: 'flex',
@@ -399,14 +379,14 @@ const Navbar = () => {
             marginBottom: '1rem'
         },
         mobileUserAvatar: {
-            width: '40px',
-            height: '40px',
+            width: '45px',
+            height: '45px',
             borderRadius: '50%',
             background: 'linear-gradient(135deg, #FFD700, #FFA500, #FF6B6B)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            fontSize: '1.2rem',
+            fontSize: '1.3rem',
             fontWeight: 'bold',
             color: '#1a1a2e'
         },
@@ -423,11 +403,21 @@ const Navbar = () => {
             color: 'rgba(255,255,255,0.7)',
             fontSize: '0.8rem'
         },
+        mobileRoleBadge: {
+            display: 'inline-block',
+            fontSize: '0.6rem',
+            padding: '2px 8px',
+            borderRadius: '20px',
+            background: 'linear-gradient(135deg, #FFD700, #FFA500)',
+            color: '#1a1a2e',
+            fontWeight: 'bold',
+            textTransform: 'uppercase',
+            marginTop: '4px'
+        },
         mobileSearch: {
             display: 'flex',
             gap: '0.5rem',
-            marginBottom: '1rem',
-            padding: '0 0.5rem'
+            marginBottom: '1rem'
         },
         mobileSearchInput: {
             flex: 1,
@@ -447,11 +437,56 @@ const Navbar = () => {
             borderRadius: '8px',
             cursor: 'pointer'
         },
+        mobileSection: {
+            marginBottom: '1rem',
+            borderBottom: '1px solid rgba(255,215,0,0.2)',
+            paddingBottom: '1rem'
+        },
+        mobileSectionTitle: {
+            color: '#FFD700',
+            fontSize: '0.8rem',
+            fontWeight: '600',
+            marginBottom: '0.5rem',
+            textTransform: 'uppercase',
+            letterSpacing: '1px',
+            paddingLeft: '0.5rem'
+        },
+        mobileMenuItem: {
+            color: 'white',
+            textDecoration: 'none',
+            fontSize: '1rem',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.8rem',
+            padding: '0.8rem 1rem',
+            borderRadius: '8px',
+            transition: 'all 0.3s ease',
+            marginBottom: '2px',
+            position: 'relative',
+            cursor: 'pointer'
+        },
+        mobileMenuIcon: {
+            fontSize: '1rem',
+            color: '#FFD700',
+            width: '20px'
+        },
+        mobileMenuText: {
+            flex: 1
+        },
+        mobileMenuActive: {
+            position: 'absolute',
+            left: 0,
+            top: '25%',
+            bottom: '25%',
+            width: '3px',
+            background: '#FFD700',
+            borderRadius: '0 3px 3px 0'
+        },
         mobileAuthButtons: {
             display: 'flex',
             flexDirection: 'column',
             gap: '0.5rem',
-            padding: '0.5rem'
+            marginTop: '1rem'
         },
         mobileButton: {
             padding: '0.8rem',
@@ -465,12 +500,22 @@ const Navbar = () => {
             justifyContent: 'center',
             gap: '0.5rem',
             fontSize: '0.95rem',
-            fontWeight: '600'
+            fontWeight: '600',
+            cursor: 'pointer',
+            width: '100%'
         },
         mobileButtonPrimary: {
             background: 'linear-gradient(135deg, #FFD700, #FFA500)',
             border: 'none',
             color: '#1a1a2e'
+        },
+        countBadge: {
+            fontSize: '0.7rem',
+            padding: '2px 6px',
+            borderRadius: '20px',
+            background: 'linear-gradient(135deg, #ff6b6b, #ff4757)',
+            color: 'white',
+            marginLeft: 'auto'
         },
         // Desktop nav link
         navLink: {
@@ -727,14 +772,6 @@ const Navbar = () => {
             textTransform: 'uppercase',
             letterSpacing: '0.5px'
         },
-        countBadge: {
-            fontSize: '0.7rem',
-            padding: '2px 6px',
-            borderRadius: '20px',
-            background: 'linear-gradient(135deg, #ff6b6b, #ff4757)',
-            color: 'white',
-            marginLeft: 'auto'
-        }
     };
 
     // Add animations
@@ -750,6 +787,11 @@ const Navbar = () => {
                     opacity: 1;
                     transform: translateY(0);
                 }
+            }
+            
+            @keyframes fadeIn {
+                from { opacity: 0; }
+                to { opacity: 1; }
             }
             
             @keyframes slideIn {
@@ -1014,7 +1056,7 @@ const Navbar = () => {
                     </div>
                 </div>
 
-                {/* Mobile Navigation */}
+                {/* Mobile Navigation - KEPT EXACTLY AS YOU WANT */}
                 <div style={styles.mobileNav}>
                     <Link to="/cart" style={{...styles.cartLink, padding: '0.5rem'}}>
                         <FaShoppingCart size={16} />
@@ -1033,15 +1075,21 @@ const Navbar = () => {
                     <button 
                         style={styles.hamburgerButton}
                         onClick={toggleMobileMenu}
+                        className="mobile-menu-trigger"
                     >
                         {isMobileMenuOpen ? <FaTimes /> : <FaBars />}
                     </button>
                 </div>
 
-                {/* Mobile Dropdown Menu - FIXED: Appears as dropdown under navbar */}
+                {/* Mobile Menu Overlay - Appears OVER content */}
                 {isMobileMenuOpen && (
-                    <div style={styles.mobileDropdown} className="mobile-menu">
-                        <div style={styles.mobileDropdownContent}>
+                    <div style={styles.mobileMenuOverlay} onClick={() => setIsMobileMenuOpen(false)} />
+                )}
+
+                {/* Mobile Menu Dropdown - Appears as dropdown OVER content */}
+                {isMobileMenuOpen && (
+                    <div style={styles.mobileMenuDropdown}>
+                        <div style={styles.mobileMenuContent}>
                             {/* User Info for logged in users */}
                             {user && (
                                 <div style={styles.mobileUserInfo}>
@@ -1051,6 +1099,7 @@ const Navbar = () => {
                                     <div style={styles.mobileUserDetails}>
                                         <span style={styles.mobileUserName}>{user.name}</span>
                                         <span style={styles.mobileUserEmail}>{user.email}</span>
+                                        <span style={styles.mobileRoleBadge}>{user.role}</span>
                                     </div>
                                 </div>
                             )}
@@ -1145,7 +1194,7 @@ const Navbar = () => {
                                     {/* Logout Button */}
                                     <button 
                                         onClick={handleLogout}
-                                        style={{ ...styles.mobileButton, marginTop: '0.5rem' }}
+                                        style={styles.mobileButton}
                                     >
                                         <FaSignOutAlt /> Logout
                                     </button>
