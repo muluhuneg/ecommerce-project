@@ -295,15 +295,15 @@ const Navbar = () => {
             boxShadow: '0 2px 10px rgba(255,215,0,0.5)',
             animation: 'pulse 2s infinite'
         },
-        // Desktop Navigation - Horizontal layout
+        // Desktop Navigation - Horizontal layout (visible on desktop only)
         desktopNav: {
-            display: 'none', // Hidden on mobile
+            display: 'flex',
             alignItems: 'center',
             gap: '0.5rem',
             flex: 1,
             justifyContent: 'flex-end',
-            '@media (min-width: 1024px)': {
-                display: 'flex' // Show on desktop
+            '@media (max-width: 1023px)': {
+                display: 'none' // Hide on mobile
             }
         },
         desktopNavLinks: {
@@ -317,13 +317,13 @@ const Navbar = () => {
             alignItems: 'center',
             gap: '0.5rem'
         },
-        // Mobile Navigation
+        // Mobile Navigation (visible on mobile only)
         mobileNav: {
-            display: 'flex',
+            display: 'none',
             alignItems: 'center',
             gap: '0.5rem',
-            '@media (min-width: 1024px)': {
-                display: 'none' // Hide on desktop
+            '@media (max-width: 1023px)': {
+                display: 'flex' // Show on mobile
             }
         },
         hamburgerButton: {
@@ -341,30 +341,69 @@ const Navbar = () => {
             transition: 'all 0.3s ease',
             zIndex: 1002
         },
-        // FIXED: Mobile menu with position fixed to appear OVER content
-        mobileMenu: {
-            position: 'fixed', // Changed from 'absolute' to 'fixed'
+        // Overlay when mobile menu is open
+        mobileOverlay: {
+            position: 'fixed',
             top: 0,
             left: 0,
             right: 0,
             bottom: 0,
+            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+            zIndex: 9998,
+            display: isMobileMenuOpen ? 'block' : 'none',
+            animation: 'fadeIn 0.3s ease',
+            backdropFilter: 'blur(5px)',
+        },
+        // Mobile Menu - Slides from right OVER content
+        mobileMenu: {
+            position: 'fixed',
+            top: 0,
+            right: 0,
+            width: '85%',
+            maxWidth: '400px',
+            height: '100vh',
             background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)',
-            zIndex: 9999, // Increased to appear above everything
+            zIndex: 9999,
             padding: '80px 20px 30px',
             overflowY: 'auto',
             WebkitOverflowScrolling: 'touch',
-            display: isMobileMenuOpen ? 'block' : 'none',
-            animation: 'slideInRight 0.3s ease'
+            transform: isMobileMenuOpen ? 'translateX(0)' : 'translateX(100%)',
+            transition: 'transform 0.3s ease-in-out',
+            boxShadow: '-5px 0 20px rgba(0,0,0,0.3)',
         },
-        // FIXED: Mobile menu content with max height and scrolling
+        mobileMenuHeader: {
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            marginBottom: '2rem',
+            paddingBottom: '1rem',
+            borderBottom: '1px solid rgba(255,215,0,0.2)'
+        },
+        mobileMenuTitle: {
+            color: '#FFD700',
+            fontSize: '1.2rem',
+            fontWeight: '600',
+            textTransform: 'uppercase',
+            letterSpacing: '1px'
+        },
+        closeButton: {
+            background: 'rgba(255,255,255,0.1)',
+            border: 'none',
+            color: 'white',
+            width: '35px',
+            height: '35px',
+            borderRadius: '50%',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            cursor: 'pointer',
+            fontSize: '1.2rem',
+            transition: 'all 0.3s ease'
+        },
         mobileMenuContent: {
             display: 'flex',
             flexDirection: 'column',
-            gap: '1rem',
-            maxHeight: 'calc(100vh - 100px)',
-            overflowY: 'auto',
-            paddingBottom: '30px',
-            paddingRight: '5px'
+            gap: '1rem'
         },
         mobileNavLinks: {
             display: 'flex',
@@ -449,6 +488,29 @@ const Navbar = () => {
             fontWeight: 'bold',
             textTransform: 'uppercase',
             marginTop: '4px'
+        },
+        mobileSearch: {
+            display: 'flex',
+            gap: '0.5rem',
+            marginBottom: '1rem'
+        },
+        mobileSearchInput: {
+            flex: 1,
+            padding: '1rem',
+            border: '2px solid rgba(255,215,0,0.3)',
+            borderRadius: '12px',
+            fontSize: '1rem',
+            background: 'rgba(255,255,255,0.1)',
+            color: 'white',
+            outline: 'none'
+        },
+        mobileSearchButton: {
+            padding: '1rem',
+            background: 'linear-gradient(135deg, #667eea, #764ba2, #ff6b6b)',
+            color: 'white',
+            border: 'none',
+            borderRadius: '12px',
+            cursor: 'pointer'
         },
         mobileAuthButtons: {
             display: 'flex',
@@ -836,6 +898,15 @@ const Navbar = () => {
                 }
             }
             
+            @keyframes fadeIn {
+                from {
+                    opacity: 0;
+                }
+                to {
+                    opacity: 1;
+                }
+            }
+            
             @keyframes slideIn {
                 from {
                     transform: translateX(-100%);
@@ -932,7 +1003,7 @@ const Navbar = () => {
             <div style={styles.container}>
                 <Logo />
 
-                {/* Desktop Navigation */}
+                {/* Desktop Navigation - Horizontal on desktop */}
                 <div style={styles.desktopNav}>
                     <div style={styles.desktopNavLinks}>
                         <NavLink to="/" icon={<FaHome />}>Home</NavLink>
@@ -1138,168 +1209,160 @@ const Navbar = () => {
                     </button>
                 </div>
 
-                {/* Mobile Menu - FIXED: Now appears OVER content (not pushing it down) */}
+                {/* Mobile Menu Overlay */}
                 {isMobileMenuOpen && (
-                    <div style={styles.mobileMenu}>
-                        <div style={styles.mobileMenuContent}>
-                            {/* Search Bar for Mobile */}
-                            <form onSubmit={handleSearch} style={{marginBottom: '2rem'}}>
-                                <div style={{display: 'flex', gap: '0.5rem'}}>
-                                    <input
-                                        type="text"
-                                        placeholder="Search products..."
-                                        value={searchTerm}
-                                        onChange={(e) => setSearchTerm(e.target.value)}
-                                        style={{
-                                            flex: 1,
-                                            padding: '1rem',
-                                            border: '2px solid rgba(255,215,0,0.3)',
-                                            borderRadius: '12px',
-                                            fontSize: '1rem',
-                                            background: 'rgba(255,255,255,0.1)',
-                                            color: 'white',
-                                            outline: 'none'
-                                        }}
-                                    />
+                    <div style={styles.mobileOverlay} onClick={() => setIsMobileMenuOpen(false)} />
+                )}
+
+                {/* Mobile Menu - Slides from right OVER content */}
+                <div style={styles.mobileMenu}>
+                    <div style={styles.mobileMenuHeader}>
+                        <span style={styles.mobileMenuTitle}>Menu</span>
+                        <button style={styles.closeButton} onClick={() => setIsMobileMenuOpen(false)}>
+                            <FaTimes />
+                        </button>
+                    </div>
+
+                    <div style={styles.mobileMenuContent}>
+                        {/* Search Bar for Mobile */}
+                        <div style={styles.mobileSearch}>
+                            <input
+                                type="text"
+                                placeholder="Search products..."
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                                style={styles.mobileSearchInput}
+                            />
+                            <button 
+                                style={styles.mobileSearchButton}
+                                onClick={handleSearch}
+                            >
+                                <FaSearch />
+                            </button>
+                        </div>
+
+                        {/* Navigation Links */}
+                        <div style={styles.mobileNavLinks}>
+                            <MobileNavLink to="/" icon={<FaHome />} onClick={() => setIsMobileMenuOpen(false)}>
+                                Home
+                            </MobileNavLink>
+                            <MobileNavLink to="/products" icon={<FaTag />} onClick={() => setIsMobileMenuOpen(false)}>
+                                Products
+                            </MobileNavLink>
+                        </div>
+
+                        {/* User Section */}
+                        {user ? (
+                            <div style={styles.mobileUserSection}>
+                                <div style={styles.mobileUserInfo}>
+                                    <div style={styles.mobileUserAvatar}>
+                                        {user.name?.charAt(0).toUpperCase()}
+                                    </div>
+                                    <div style={styles.mobileUserDetails}>
+                                        <div style={styles.mobileUserName}>{user.name}</div>
+                                        <div style={styles.mobileUserEmail}>{user.email}</div>
+                                        <div style={styles.mobileRoleBadge}>{user.role}</div>
+                                    </div>
+                                </div>
+
+                                <div style={{display: 'flex', flexDirection: 'column', gap: '0.5rem'}}>
+                                    {/* Role-based links */}
+                                    {user.role === 'seller' && (
+                                        <>
+                                            <Link to="/seller/dashboard" style={styles.mobileNavLink} onClick={() => setIsMobileMenuOpen(false)}>
+                                                <FaTachometerAlt style={styles.mobileNavIcon} />
+                                                Seller Dashboard
+                                            </Link>
+                                            <Link to="/seller/products" style={styles.mobileNavLink} onClick={() => setIsMobileMenuOpen(false)}>
+                                                <FaBox style={styles.mobileNavIcon} />
+                                                My Products
+                                            </Link>
+                                            <Link to="/seller/orders" style={styles.mobileNavLink} onClick={() => setIsMobileMenuOpen(false)}>
+                                                <FaClipboardList style={styles.mobileNavIcon} />
+                                                Orders
+                                            </Link>
+                                        </>
+                                    )}
+                                    
+                                    {user.role === 'admin' && (
+                                        <>
+                                            <Link to="/admin/dashboard" style={styles.mobileNavLink} onClick={() => setIsMobileMenuOpen(false)}>
+                                                <FaTachometerAlt style={styles.mobileNavIcon} />
+                                                Admin Dashboard
+                                            </Link>
+                                            <Link to="/admin/users" style={styles.mobileNavLink} onClick={() => setIsMobileMenuOpen(false)}>
+                                                <FaUser style={styles.mobileNavIcon} />
+                                                Users
+                                            </Link>
+                                            <Link to="/admin/products" style={styles.mobileNavLink} onClick={() => setIsMobileMenuOpen(false)}>
+                                                <FaBox style={styles.mobileNavIcon} />
+                                                Products
+                                            </Link>
+                                        </>
+                                    )}
+                                    
+                                    {user.role === 'customer' && (
+                                        <>
+                                            <Link to="/profile" style={styles.mobileNavLink} onClick={() => setIsMobileMenuOpen(false)}>
+                                                <FaUser style={styles.mobileNavIcon} />
+                                                My Profile
+                                            </Link>
+                                            <Link to="/orders" style={styles.mobileNavLink} onClick={() => setIsMobileMenuOpen(false)}>
+                                                <FaClipboardList style={styles.mobileNavIcon} />
+                                                My Orders
+                                            </Link>
+                                            <Link to="/wishlist" style={styles.mobileNavLink} onClick={() => setIsMobileMenuOpen(false)}>
+                                                <FaHeart style={styles.mobileNavIcon} />
+                                                Wishlist
+                                                {wishlistCount > 0 && (
+                                                    <span style={{...styles.countBadge, marginLeft: 'auto'}}>{wishlistCount}</span>
+                                                )}
+                                            </Link>
+                                        </>
+                                    )}
+
+                                    {/* Common links */}
+                                    <Link to="/notifications" style={styles.mobileNavLink} onClick={() => setIsMobileMenuOpen(false)}>
+                                        <FaBell style={styles.mobileNavIcon} />
+                                        Notifications
+                                    </Link>
+                                    
+                                    <Link to="/cart" style={styles.mobileNavLink} onClick={() => setIsMobileMenuOpen(false)}>
+                                        <FaShoppingCart style={styles.mobileNavIcon} />
+                                        Cart
+                                        {cartCount > 0 && (
+                                            <span style={{...styles.countBadge, marginLeft: 'auto'}}>{cartCount}</span>
+                                        )}
+                                    </Link>
+
                                     <button 
-                                        type="submit"
-                                        style={{
-                                            padding: '1rem',
-                                            background: 'linear-gradient(135deg, #667eea, #764ba2, #ff6b6b)',
-                                            color: 'white',
-                                            border: 'none',
-                                            borderRadius: '12px',
-                                            cursor: 'pointer'
-                                        }}
+                                        onClick={handleLogout}
+                                        style={{...styles.mobileNavLink, width: '100%', textAlign: 'left', cursor: 'pointer'}}
                                     >
-                                        <FaSearch />
+                                        <FaSignOutAlt style={styles.mobileNavIcon} />
+                                        Logout
                                     </button>
                                 </div>
-                            </form>
-
-                            {/* Navigation Links */}
-                            <div style={styles.mobileNavLinks}>
-                                <MobileNavLink to="/" icon={<FaHome />} onClick={() => setIsMobileMenuOpen(false)}>
-                                    Home
-                                </MobileNavLink>
-                                <MobileNavLink to="/products" icon={<FaTag />} onClick={() => setIsMobileMenuOpen(false)}>
-                                    Products
-                                </MobileNavLink>
                             </div>
+                        ) : (
+                            <div style={styles.mobileAuthButtons}>
+                                <Link to="/login" style={styles.mobileButton} onClick={() => setIsMobileMenuOpen(false)}>
+                                    <FaUser /> Login
+                                </Link>
+                                <Link to="/register" style={{...styles.mobileButton, ...styles.mobileButtonPrimary}} onClick={() => setIsMobileMenuOpen(false)}>
+                                    <FaGift /> Register
+                                </Link>
+                            </div>
+                        )}
 
-                            {/* User Section */}
-                            {user ? (
-                                <div style={styles.mobileUserSection}>
-                                    <div style={styles.mobileUserInfo}>
-                                        <div style={styles.mobileUserAvatar}>
-                                            {user.name?.charAt(0).toUpperCase()}
-                                        </div>
-                                        <div style={styles.mobileUserDetails}>
-                                            <div style={styles.mobileUserName}>{user.name}</div>
-                                            <div style={styles.mobileUserEmail}>{user.email}</div>
-                                            <div style={styles.mobileRoleBadge}>{user.role}</div>
-                                        </div>
-                                    </div>
-
-                                    <div style={{display: 'flex', flexDirection: 'column', gap: '0.5rem'}}>
-                                        {/* Role-based links */}
-                                        {user.role === 'seller' && (
-                                            <>
-                                                <Link to="/seller/dashboard" style={styles.mobileNavLink} onClick={() => setIsMobileMenuOpen(false)}>
-                                                    <FaTachometerAlt style={styles.mobileNavIcon} />
-                                                    Seller Dashboard
-                                                </Link>
-                                                <Link to="/seller/products" style={styles.mobileNavLink} onClick={() => setIsMobileMenuOpen(false)}>
-                                                    <FaBox style={styles.mobileNavIcon} />
-                                                    My Products
-                                                </Link>
-                                                <Link to="/seller/orders" style={styles.mobileNavLink} onClick={() => setIsMobileMenuOpen(false)}>
-                                                    <FaClipboardList style={styles.mobileNavIcon} />
-                                                    Orders
-                                                </Link>
-                                            </>
-                                        )}
-                                        
-                                        {user.role === 'admin' && (
-                                            <>
-                                                <Link to="/admin/dashboard" style={styles.mobileNavLink} onClick={() => setIsMobileMenuOpen(false)}>
-                                                    <FaTachometerAlt style={styles.mobileNavIcon} />
-                                                    Admin Dashboard
-                                                </Link>
-                                                <Link to="/admin/users" style={styles.mobileNavLink} onClick={() => setIsMobileMenuOpen(false)}>
-                                                    <FaUser style={styles.mobileNavIcon} />
-                                                    Users
-                                                </Link>
-                                                <Link to="/admin/products" style={styles.mobileNavLink} onClick={() => setIsMobileMenuOpen(false)}>
-                                                    <FaBox style={styles.mobileNavIcon} />
-                                                    Products
-                                                </Link>
-                                            </>
-                                        )}
-                                        
-                                        {user.role === 'customer' && (
-                                            <>
-                                                <Link to="/profile" style={styles.mobileNavLink} onClick={() => setIsMobileMenuOpen(false)}>
-                                                    <FaUser style={styles.mobileNavIcon} />
-                                                    My Profile
-                                                </Link>
-                                                <Link to="/orders" style={styles.mobileNavLink} onClick={() => setIsMobileMenuOpen(false)}>
-                                                    <FaClipboardList style={styles.mobileNavIcon} />
-                                                    My Orders
-                                                </Link>
-                                                <Link to="/wishlist" style={styles.mobileNavLink} onClick={() => setIsMobileMenuOpen(false)}>
-                                                    <FaHeart style={styles.mobileNavIcon} />
-                                                    Wishlist
-                                                    {wishlistCount > 0 && (
-                                                        <span style={{...styles.countBadge, marginLeft: 'auto'}}>{wishlistCount}</span>
-                                                    )}
-                                                </Link>
-                                            </>
-                                        )}
-
-                                        {/* Common links */}
-                                        <Link to="/notifications" style={styles.mobileNavLink} onClick={() => setIsMobileMenuOpen(false)}>
-                                            <FaBell style={styles.mobileNavIcon} />
-                                            Notifications
-                                        </Link>
-                                        
-                                        <Link to="/cart" style={styles.mobileNavLink} onClick={() => setIsMobileMenuOpen(false)}>
-                                            <FaShoppingCart style={styles.mobileNavIcon} />
-                                            Cart
-                                            {cartCount > 0 && (
-                                                <span style={{...styles.countBadge, marginLeft: 'auto'}}>{cartCount}</span>
-                                            )}
-                                        </Link>
-
-                                        <button 
-                                            onClick={handleLogout}
-                                            style={{...styles.mobileNavLink, width: '100%', textAlign: 'left', cursor: 'pointer'}}
-                                        >
-                                            <FaSignOutAlt style={styles.mobileNavIcon} />
-                                            Logout
-                                        </button>
-                                    </div>
-                                </div>
-                            ) : (
-                                <div style={styles.mobileAuthButtons}>
-                                    <Link to="/login" style={styles.mobileButton} onClick={() => setIsMobileMenuOpen(false)}>
-                                        <FaUser /> Login
-                                    </Link>
-                                    <Link to="/register" style={{...styles.mobileButton, ...styles.mobileButtonPrimary}} onClick={() => setIsMobileMenuOpen(false)}>
-                                        <FaGift /> Register
-                                    </Link>
-                                </div>
-                            )}
-
-                            {/* Notification Bell for Mobile */}
-                            {user && (
-                                <div style={{marginTop: '1rem'}}>
-                                    <NotificationBell />
-                                </div>
-                            )}
-                        </div>
+                        {/* Notification Bell for Mobile */}
+                        {user && (
+                            <div style={{marginTop: '1rem'}}>
+                                <NotificationBell />
+                            </div>
+                        )}
                     </div>
-                )}
+                </div>
             </div>
         </nav>
     );
