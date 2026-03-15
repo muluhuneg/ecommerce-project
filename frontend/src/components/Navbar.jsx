@@ -41,6 +41,7 @@ const Navbar = () => {
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [isDarkMode, setIsDarkMode] = useState(false);
+    const [activeLink, setActiveLink] = useState('/');
     const navigate = useNavigate();
     const location = useLocation();
 
@@ -56,9 +57,8 @@ const Navbar = () => {
     // Close dropdown when clicking outside
     useEffect(() => {
         const handleClickOutside = (e) => {
-            if (!e.target.closest('.user-menu') && !e.target.closest('.mobile-menu-trigger')) {
+            if (!e.target.closest('.user-menu')) {
                 setIsDropdownOpen(false);
-                setIsMobileMenuOpen(false);
             }
         };
         document.addEventListener('click', handleClickOutside);
@@ -68,14 +68,28 @@ const Navbar = () => {
     // Close mobile menu when route changes
     useEffect(() => {
         setIsMobileMenuOpen(false);
-        setIsDropdownOpen(false);
     }, [location]);
+
+    // Prevent body scroll when mobile menu is open
+    useEffect(() => {
+        if (isMobileMenuOpen) {
+            document.body.style.overflow = 'hidden';
+            document.body.classList.add('mobile-menu-open');
+        } else {
+            document.body.style.overflow = 'unset';
+            document.body.classList.remove('mobile-menu-open');
+        }
+        return () => {
+            document.body.style.overflow = 'unset';
+            document.body.classList.remove('mobile-menu-open');
+        };
+    }, [isMobileMenuOpen]);
 
     const handleLogout = () => {
         logout();
         navigate('/');
-        setIsMobileMenuOpen(false);
         setIsDropdownOpen(false);
+        setIsMobileMenuOpen(false);
     };
 
     const handleSearch = (e) => {
@@ -88,8 +102,12 @@ const Navbar = () => {
         }
     };
 
-    const toggleMobileMenu = (e) => {
-        e.stopPropagation();
+    const toggleSearch = () => {
+        setIsSearchOpen(!isSearchOpen);
+        if (isMobileMenuOpen) setIsMobileMenuOpen(false);
+    };
+
+    const toggleMobileMenu = () => {
         setIsMobileMenuOpen(!isMobileMenuOpen);
         if (isSearchOpen) setIsSearchOpen(false);
     };
@@ -99,9 +117,9 @@ const Navbar = () => {
         document.body.style.backgroundColor = !isDarkMode ? '#1a1a2e' : '#f5f5f5';
     };
 
-    // Logo component
+    // Logo component with animations
     const Logo = () => (
-        <Link to="/" style={styles.logoLink}>
+        <Link to="/" style={styles.logoLink} className="logo">
             <div style={styles.logoContainer}>
                 <div style={styles.logoIconWrapper}>
                     <div style={styles.logoIcon}>
@@ -118,8 +136,8 @@ const Navbar = () => {
         </Link>
     );
 
-    // Desktop NavLink
-    const NavLink = ({ to, icon, children }) => {
+    // Desktop NavLink component
+    const NavLink = ({ to, icon, children, onClick }) => {
         const isActive = location.pathname === to;
         return (
             <Link 
@@ -127,8 +145,10 @@ const Navbar = () => {
                 style={{
                     ...styles.navLink,
                     background: isActive ? 'rgba(255,255,255,0.2)' : 'transparent',
+                    borderColor: isActive ? '#FFD700' : 'transparent'
                 }}
                 className="nav-link"
+                onClick={onClick}
             >
                 <span style={styles.navLinkIcon}>{icon}</span>
                 <span style={styles.navLinkText}>{children}</span>
@@ -137,27 +157,28 @@ const Navbar = () => {
         );
     };
 
-    // Mobile Menu Item
-    const MobileMenuItem = ({ to, icon, children, onClick }) => {
+    // Mobile NavLink component
+    const MobileNavLink = ({ to, icon, children, onClick }) => {
         const isActive = location.pathname === to;
         return (
             <Link 
                 to={to} 
                 style={{
-                    ...styles.mobileMenuItem,
-                    background: isActive ? 'rgba(255,215,0,0.15)' : 'transparent',
+                    ...styles.mobileNavLink,
+                    background: isActive ? 'rgba(255,215,0,0.2)' : 'transparent',
+                    borderLeft: isActive ? '4px solid #FFD700' : '4px solid transparent'
                 }}
                 onClick={onClick}
             >
-                <span style={styles.mobileMenuIcon}>{icon}</span>
-                <span style={styles.mobileMenuText}>{children}</span>
-                {isActive && <span style={styles.mobileMenuActive}></span>}
+                <span style={styles.mobileNavIcon}>{icon}</span>
+                <span style={styles.mobileNavText}>{children}</span>
+                {isActive && <span style={styles.mobileNavActive}></span>}
             </Link>
         );
     };
 
-    // Shiny button
-    const ShinyButton = ({ to, children, primary = false, icon }) => (
+    // Shiny button with hover effects
+    const ShinyButton = ({ to, children, primary = false, icon, onClick }) => (
         <Link 
             to={to} 
             style={{
@@ -165,6 +186,7 @@ const Navbar = () => {
                 ...(primary ? styles.shinyButtonPrimary : {})
             }}
             className="shiny-button"
+            onClick={onClick}
         >
             {icon && <span style={styles.buttonIcon}>{icon}</span>}
             <span>{children}</span>
@@ -180,13 +202,12 @@ const Navbar = () => {
                 ? 'linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)'
                 : 'linear-gradient(135deg, #667eea 0%, #764ba2 30%, #ff6b6b 70%, #ffd93d 100%)',
             padding: isScrolled ? '0.8rem 2rem' : '1.2rem 2rem',
-            boxShadow: isScrolled ? '0 10px 30px rgba(0,0,0,0.3)' : '0 15px 35px rgba(0,0,0,0.2)',
+            boxShadow: isScrolled 
+                ? '0 10px 30px rgba(0,0,0,0.3)'
+                : '0 15px 35px rgba(0,0,0,0.2)',
             transition: 'all 0.4s ease',
             borderBottom: '2px solid rgba(255,255,255,0.2)',
             backdropFilter: 'blur(10px)',
-            '@media (max-width: 768px)': {
-                padding: isScrolled ? '0.6rem 1rem' : '1rem 1rem',
-            }
         },
         container: {
             maxWidth: '1400px',
@@ -196,7 +217,7 @@ const Navbar = () => {
             alignItems: 'center',
             position: 'relative'
         },
-        // Logo styles
+        // Logo styles with animation
         logoLink: {
             textDecoration: 'none',
             display: 'block',
@@ -207,9 +228,7 @@ const Navbar = () => {
             display: 'flex',
             alignItems: 'center',
             gap: '10px',
-            '@media (max-width: 768px)': {
-                gap: '5px',
-            }
+            position: 'relative'
         },
         logoIconWrapper: {
             position: 'relative',
@@ -226,19 +245,12 @@ const Navbar = () => {
             justifyContent: 'center',
             transform: 'rotate(5deg)',
             boxShadow: '0 10px 20px rgba(255,215,0,0.4)',
-            overflow: 'hidden',
-            '@media (max-width: 768px)': {
-                width: '35px',
-                height: '35px',
-            }
+            overflow: 'hidden'
         },
         logoLightning: {
             color: '#1a1a2e',
             fontSize: '1.4rem',
-            animation: 'pulse 2s ease-in-out infinite',
-            '@media (max-width: 768px)': {
-                fontSize: '1.2rem',
-            }
+            animation: 'pulse 2s ease-in-out infinite'
         },
         logoStar1: {
             position: 'absolute',
@@ -267,11 +279,9 @@ const Navbar = () => {
             background: 'linear-gradient(135deg, #fff, #FFD700, #FFA500)',
             WebkitBackgroundClip: 'text',
             WebkitTextFillColor: 'transparent',
+            textShadow: '0 2px 10px rgba(255,215,0,0.3)',
             letterSpacing: '2px',
-            lineHeight: '1',
-            '@media (max-width: 768px)': {
-                fontSize: '1.2rem',
-            }
+            lineHeight: '1'
         },
         logoBadge: {
             background: 'linear-gradient(135deg, #FFD700, #FF6B6B)',
@@ -283,129 +293,155 @@ const Navbar = () => {
             marginTop: '2px',
             textTransform: 'uppercase',
             boxShadow: '0 2px 10px rgba(255,215,0,0.5)',
-            animation: 'pulse 2s infinite',
-            '@media (max-width: 768px)': {
-                fontSize: '0.5rem',
-                padding: '1px 4px',
-            }
+            animation: 'pulse 2s infinite'
         },
-        // Desktop Navigation
+        // Desktop Navigation - Horizontal layout
         desktopNav: {
-            display: 'flex',
+            display: 'none', // Hidden on mobile
             alignItems: 'center',
-            gap: '1.5rem',
+            gap: '0.5rem',
             flex: 1,
             justifyContent: 'flex-end',
-            '@media (max-width: 768px)': {
-                display: 'none'
+            '@media (min-width: 1024px)': {
+                display: 'flex' // Show on desktop
             }
         },
         desktopNavLinks: {
             display: 'flex',
             alignItems: 'center',
-            gap: '0.5rem',
+            gap: '0.3rem',
             marginRight: '1rem'
         },
         desktopActions: {
             display: 'flex',
             alignItems: 'center',
-            gap: '0.8rem'
+            gap: '0.5rem'
         },
-        // Mobile Navigation - KEPT AS IS
+        // Mobile Navigation
         mobileNav: {
-            display: 'none',
+            display: 'flex',
             alignItems: 'center',
             gap: '0.5rem',
-            '@media (max-width: 768px)': {
-                display: 'flex'
+            '@media (min-width: 1024px)': {
+                display: 'none' // Hide on desktop
             }
         },
         hamburgerButton: {
             background: 'rgba(255,255,255,0.15)',
             border: '1px solid rgba(255,215,0,0.3)',
             color: 'white',
-            width: '40px',
-            height: '40px',
+            width: '45px',
+            height: '45px',
             borderRadius: '50%',
             cursor: 'pointer',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            fontSize: '1.2rem',
+            fontSize: '1.4rem',
             transition: 'all 0.3s ease',
             zIndex: 1002
         },
-        // Mobile Menu Overlay - FIXED: Appears OVER content
-        mobileMenuOverlay: {
-            position: 'fixed',
+        // FIXED: Mobile menu with position fixed to appear OVER content
+        mobileMenu: {
+            position: 'fixed', // Changed from 'absolute' to 'fixed'
             top: 0,
             left: 0,
             right: 0,
             bottom: 0,
-            backgroundColor: 'rgba(0, 0, 0, 0.5)',
-            zIndex: 9998,
-            animation: 'fadeIn 0.2s ease',
-            backdropFilter: 'blur(3px)',
-        },
-        // Mobile Menu Dropdown - FIXED: Appears as dropdown OVER content
-        mobileMenuDropdown: {
-            position: 'absolute',
-            top: 'calc(100% + 5px)',
-            right: '1rem',
-            left: '1rem',
             background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)',
-            zIndex: 9999,
-            borderRadius: '12px',
-            boxShadow: '0 20px 40px rgba(0,0,0,0.4)',
-            border: '2px solid rgba(255,215,0,0.3)',
-            animation: 'slideDown 0.3s ease',
+            zIndex: 9999, // Increased to appear above everything
+            padding: '80px 20px 30px',
+            overflowY: 'auto',
+            WebkitOverflowScrolling: 'touch',
+            display: isMobileMenuOpen ? 'block' : 'none',
+            animation: 'slideInRight 0.3s ease'
+        },
+        // FIXED: Mobile menu content with max height and scrolling
+        mobileMenuContent: {
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '1rem',
             maxHeight: 'calc(100vh - 100px)',
             overflowY: 'auto',
-            '@media (max-width: 480px)': {
-                right: '0.5rem',
-                left: '0.5rem',
-            }
+            paddingBottom: '30px',
+            paddingRight: '5px'
         },
-        mobileMenuContent: {
-            padding: '1rem'
+        mobileNavLinks: {
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '0.5rem',
+            marginBottom: '2rem'
+        },
+        mobileNavLink: {
+            color: 'white',
+            textDecoration: 'none',
+            fontSize: '1.1rem',
+            fontWeight: '600',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '1rem',
+            padding: '1rem 1.5rem',
+            borderRadius: '12px',
+            transition: 'all 0.3s ease',
+            background: 'rgba(255,255,255,0.05)',
+            border: '1px solid rgba(255,255,255,0.1)'
+        },
+        mobileNavIcon: {
+            fontSize: '1.2rem',
+            color: '#FFD700',
+            width: '24px'
+        },
+        mobileNavText: {
+            flex: 1
+        },
+        mobileNavActive: {
+            width: '4px',
+            height: '100%',
+            background: '#FFD700',
+            borderRadius: '2px'
+        },
+        mobileUserSection: {
+            background: 'rgba(255,255,255,0.05)',
+            borderRadius: '20px',
+            padding: '1.5rem',
+            marginTop: '1rem'
         },
         mobileUserInfo: {
             display: 'flex',
             alignItems: 'center',
             gap: '1rem',
-            padding: '1rem',
-            background: 'rgba(255,255,255,0.05)',
-            borderRadius: '8px',
-            marginBottom: '1rem'
+            marginBottom: '1.5rem',
+            paddingBottom: '1.5rem',
+            borderBottom: '1px solid rgba(255,215,0,0.2)'
         },
         mobileUserAvatar: {
-            width: '45px',
-            height: '45px',
+            width: '60px',
+            height: '60px',
             borderRadius: '50%',
             background: 'linear-gradient(135deg, #FFD700, #FFA500, #FF6B6B)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            fontSize: '1.3rem',
+            fontSize: '1.8rem',
             fontWeight: 'bold',
             color: '#1a1a2e'
         },
         mobileUserDetails: {
-            display: 'flex',
-            flexDirection: 'column'
+            flex: 1
         },
         mobileUserName: {
+            fontSize: '1.2rem',
+            fontWeight: 'bold',
             color: 'white',
-            fontWeight: '600',
-            fontSize: '1rem'
+            marginBottom: '4px'
         },
         mobileUserEmail: {
-            color: 'rgba(255,255,255,0.7)',
-            fontSize: '0.8rem'
+            fontSize: '0.9rem',
+            color: 'rgba(255,255,255,0.7)'
         },
         mobileRoleBadge: {
             display: 'inline-block',
-            fontSize: '0.6rem',
+            fontSize: '0.7rem',
             padding: '2px 8px',
             borderRadius: '20px',
             background: 'linear-gradient(135deg, #FFD700, #FFA500)',
@@ -414,83 +450,14 @@ const Navbar = () => {
             textTransform: 'uppercase',
             marginTop: '4px'
         },
-        mobileSearch: {
-            display: 'flex',
-            gap: '0.5rem',
-            marginBottom: '1rem'
-        },
-        mobileSearchInput: {
-            flex: 1,
-            padding: '0.8rem',
-            border: '1px solid rgba(255,215,0,0.3)',
-            borderRadius: '8px',
-            fontSize: '0.9rem',
-            background: 'rgba(255,255,255,0.1)',
-            color: 'white',
-            outline: 'none'
-        },
-        mobileSearchButton: {
-            padding: '0.8rem 1rem',
-            background: 'linear-gradient(135deg, #667eea, #764ba2, #ff6b6b)',
-            color: 'white',
-            border: 'none',
-            borderRadius: '8px',
-            cursor: 'pointer'
-        },
-        mobileSection: {
-            marginBottom: '1rem',
-            borderBottom: '1px solid rgba(255,215,0,0.2)',
-            paddingBottom: '1rem'
-        },
-        mobileSectionTitle: {
-            color: '#FFD700',
-            fontSize: '0.8rem',
-            fontWeight: '600',
-            marginBottom: '0.5rem',
-            textTransform: 'uppercase',
-            letterSpacing: '1px',
-            paddingLeft: '0.5rem'
-        },
-        mobileMenuItem: {
-            color: 'white',
-            textDecoration: 'none',
-            fontSize: '1rem',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.8rem',
-            padding: '0.8rem 1rem',
-            borderRadius: '8px',
-            transition: 'all 0.3s ease',
-            marginBottom: '2px',
-            position: 'relative',
-            cursor: 'pointer'
-        },
-        mobileMenuIcon: {
-            fontSize: '1rem',
-            color: '#FFD700',
-            width: '20px'
-        },
-        mobileMenuText: {
-            flex: 1
-        },
-        mobileMenuActive: {
-            position: 'absolute',
-            left: 0,
-            top: '25%',
-            bottom: '25%',
-            width: '3px',
-            background: '#FFD700',
-            borderRadius: '0 3px 3px 0'
-        },
         mobileAuthButtons: {
             display: 'flex',
             flexDirection: 'column',
-            gap: '0.5rem',
-            marginTop: '1rem'
+            gap: '0.8rem'
         },
         mobileButton: {
-            padding: '0.8rem',
-            borderRadius: '8px',
+            padding: '1rem',
+            borderRadius: '12px',
             border: '1px solid rgba(255,255,255,0.2)',
             background: 'rgba(255,255,255,0.1)',
             color: 'white',
@@ -499,23 +466,13 @@ const Navbar = () => {
             alignItems: 'center',
             justifyContent: 'center',
             gap: '0.5rem',
-            fontSize: '0.95rem',
-            fontWeight: '600',
-            cursor: 'pointer',
-            width: '100%'
+            fontSize: '1rem',
+            fontWeight: '600'
         },
         mobileButtonPrimary: {
             background: 'linear-gradient(135deg, #FFD700, #FFA500)',
             border: 'none',
             color: '#1a1a2e'
-        },
-        countBadge: {
-            fontSize: '0.7rem',
-            padding: '2px 6px',
-            borderRadius: '20px',
-            background: 'linear-gradient(135deg, #ff6b6b, #ff4757)',
-            color: 'white',
-            marginLeft: 'auto'
         },
         // Desktop nav link
         navLink: {
@@ -530,11 +487,14 @@ const Navbar = () => {
             borderRadius: '30px',
             transition: 'all 0.3s ease',
             position: 'relative',
+            overflow: 'hidden',
+            letterSpacing: '0.5px',
             whiteSpace: 'nowrap'
         },
         navLinkIcon: {
             fontSize: '1rem',
             color: '#FFD700',
+            transition: 'all 0.3s ease'
         },
         navLinkText: {
             background: 'linear-gradient(135deg, #fff, #f0f0f0)',
@@ -566,7 +526,67 @@ const Navbar = () => {
             gap: '0.5rem',
             fontSize: '0.95rem',
             fontWeight: '600',
+            transition: 'all 0.3s ease',
+            backdropFilter: 'blur(5px)',
+            letterSpacing: '0.5px',
             whiteSpace: 'nowrap'
+        },
+        searchContainer: {
+            position: 'absolute',
+            top: 'calc(100% + 15px)',
+            right: '60px',
+            background: 'rgba(26, 26, 46, 0.98)',
+            backdropFilter: 'blur(10px)',
+            borderRadius: '20px',
+            padding: '20px',
+            boxShadow: '0 20px 40px rgba(0,0,0,0.4)',
+            display: isSearchOpen ? 'block' : 'none',
+            zIndex: 1001,
+            width: '300px',
+            border: '2px solid rgba(255,215,0,0.3)',
+            animation: 'slideDown 0.4s ease',
+            '@media (min-width: 768px)': {
+                width: '400px'
+            }
+        },
+        searchForm: {
+            display: 'flex',
+            gap: '10px'
+        },
+        searchInput: {
+            flex: 1,
+            padding: '12px',
+            border: '2px solid rgba(255,215,0,0.3)',
+            borderRadius: '12px',
+            fontSize: '1rem',
+            background: 'rgba(255,255,255,0.1)',
+            color: 'white',
+            outline: 'none',
+            transition: 'all 0.3s'
+        },
+        searchSubmit: {
+            padding: '12px 15px',
+            background: 'linear-gradient(135deg, #667eea, #764ba2, #ff6b6b)',
+            color: 'white',
+            border: 'none',
+            borderRadius: '12px',
+            cursor: 'pointer',
+            transition: 'all 0.3s',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: '1rem'
+        },
+        closeSearch: {
+            padding: '12px',
+            background: 'rgba(255,255,255,0.1)',
+            color: 'white',
+            border: '2px solid rgba(255,255,255,0.2)',
+            borderRadius: '12px',
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center'
         },
         // Cart link
         cartLink: {
@@ -582,6 +602,7 @@ const Navbar = () => {
             borderRadius: '30px',
             background: 'linear-gradient(135deg, rgba(255,255,255,0.2), rgba(255,255,255,0.1))',
             border: '1px solid rgba(255,215,0,0.3)',
+            transition: 'all 0.3s ease',
             whiteSpace: 'nowrap'
         },
         cartBadge: {
@@ -600,6 +621,7 @@ const Navbar = () => {
             fontWeight: 'bold',
             border: '2px solid white',
             animation: 'pulse 2s infinite',
+            boxShadow: '0 0 15px rgba(255,107,107,0.7)'
         },
         // Dark mode toggle
         darkModeToggle: {
@@ -614,6 +636,7 @@ const Navbar = () => {
             alignItems: 'center',
             justifyContent: 'center',
             fontSize: '1.2rem',
+            transition: 'all 0.3s ease'
         },
         // Auth buttons
         authButtons: {
@@ -630,8 +653,11 @@ const Navbar = () => {
             cursor: 'pointer',
             fontSize: '0.95rem',
             fontWeight: '600',
+            transition: 'all 0.3s ease',
             textDecoration: 'none',
             whiteSpace: 'nowrap',
+            backdropFilter: 'blur(5px)',
+            letterSpacing: '0.5px',
             display: 'flex',
             alignItems: 'center',
             gap: '0.5rem'
@@ -646,7 +672,7 @@ const Navbar = () => {
             fontSize: '1rem',
             color: '#1a1a2e'
         },
-        // User menu dropdown
+        // User menu
         userMenu: {
             display: 'flex',
             alignItems: 'center',
@@ -663,6 +689,7 @@ const Navbar = () => {
             borderRadius: '30px',
             background: 'linear-gradient(135deg, rgba(255,255,255,0.2), rgba(255,255,255,0.1))',
             border: '1px solid rgba(255,215,0,0.3)',
+            transition: 'all 0.3s ease'
         },
         userAvatar: {
             width: '32px',
@@ -678,13 +705,13 @@ const Navbar = () => {
             animation: 'pulse 2s infinite'
         },
         userNameText: {
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
             maxWidth: '120px',
             color: 'white',
             fontWeight: '600',
-            fontSize: '0.9rem',
-            whiteSpace: 'nowrap',
-            overflow: 'hidden',
-            textOverflow: 'ellipsis'
+            fontSize: '0.9rem'
         },
         dropdown: {
             position: 'absolute',
@@ -699,6 +726,7 @@ const Navbar = () => {
             zIndex: 1000,
             overflow: 'hidden',
             border: '2px solid rgba(255,215,0,0.3)',
+            animation: 'slideDown 0.3s ease'
         },
         dropdownHeader: {
             padding: '1.5rem',
@@ -750,6 +778,8 @@ const Navbar = () => {
             cursor: 'pointer',
             fontSize: '0.95rem',
             borderBottom: '1px solid rgba(255,255,255,0.05)',
+            position: 'relative',
+            overflow: 'hidden'
         },
         dropdownIcon: {
             color: '#FFD700',
@@ -772,6 +802,14 @@ const Navbar = () => {
             textTransform: 'uppercase',
             letterSpacing: '0.5px'
         },
+        countBadge: {
+            fontSize: '0.7rem',
+            padding: '2px 6px',
+            borderRadius: '20px',
+            background: 'linear-gradient(135deg, #ff6b6b, #ff4757)',
+            color: 'white',
+            marginLeft: 'auto'
+        }
     };
 
     // Add animations
@@ -781,7 +819,7 @@ const Navbar = () => {
             @keyframes slideDown {
                 from {
                     opacity: 0;
-                    transform: translateY(-10px);
+                    transform: translateY(-15px);
                 }
                 to {
                     opacity: 1;
@@ -789,14 +827,22 @@ const Navbar = () => {
                 }
             }
             
-            @keyframes fadeIn {
-                from { opacity: 0; }
-                to { opacity: 1; }
+            @keyframes slideInRight {
+                from {
+                    transform: translateX(100%);
+                }
+                to {
+                    transform: translateX(0);
+                }
             }
             
             @keyframes slideIn {
-                from { transform: translateX(-100%); }
-                to { transform: translateX(0); }
+                from {
+                    transform: translateX(-100%);
+                }
+                to {
+                    transform: translateX(0);
+                }
             }
             
             @keyframes pulse {
@@ -816,9 +862,23 @@ const Navbar = () => {
                 to { transform: rotate(360deg); }
             }
             
+            @keyframes shimmer {
+                0% { left: -100%; }
+                100% { left: 200%; }
+            }
+            
+            .mobile-menu-open {
+                overflow: hidden !important;
+            }
+            
             .nav-link:hover {
                 background: rgba(255,255,255,0.15) !important;
                 transform: translateY(-2px);
+            }
+            
+            .nav-link:hover .nav-link-icon {
+                transform: scale(1.1) rotate(3deg);
+                color: #FFD700;
             }
             
             .shiny-button:hover {
@@ -826,19 +886,41 @@ const Navbar = () => {
                 box-shadow: 0 10px 20px rgba(255,215,0,0.3);
             }
             
+            .shiny-button::after {
+                content: '';
+                position: absolute;
+                top: -50%;
+                left: -50%;
+                width: 200%;
+                height: 200%;
+                background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+                transform: rotate(30deg);
+                animation: shimmer 3s infinite;
+                opacity: 0;
+            }
+            
+            .shiny-button:hover::after {
+                opacity: 1;
+            }
+            
             .dropdown-item:hover {
                 background: rgba(255,215,0,0.15);
                 padding-left: 1.8rem;
             }
             
+            .dropdown-item:hover .dropdown-icon {
+                transform: scale(1.2) rotate(5deg);
+            }
+            
             .cart-link:hover {
                 background: linear-gradient(135deg, rgba(255,255,255,0.3), rgba(255,255,255,0.2));
                 transform: translateY(-2px);
+                box-shadow: 0 10px 20px rgba(255,215,0,0.3);
             }
             
-            .mobile-menu-item:hover {
-                background: rgba(255,215,0,0.15) !important;
-                transform: translateX(5px);
+            .search-button:hover {
+                background: linear-gradient(135deg, rgba(255,255,255,0.3), rgba(255,255,255,0.2));
+                transform: translateY(-2px);
             }
         `;
         document.head.appendChild(style);
@@ -858,79 +940,51 @@ const Navbar = () => {
                     </div>
 
                     <div style={styles.desktopActions}>
+                        {/* Search Button */}
                         <button 
                             style={styles.searchButton} 
-                            onClick={() => setIsSearchOpen(!isSearchOpen)}
+                            onClick={toggleSearch}
+                            className="search-button"
                         >
                             <FaSearch /> Search
                         </button>
 
+                        {/* Search Dropdown */}
                         {isSearchOpen && (
-                            <div style={{
-                                position: 'absolute',
-                                top: 'calc(100% + 15px)',
-                                right: '60px',
-                                background: 'rgba(26, 26, 46, 0.98)',
-                                backdropFilter: 'blur(10px)',
-                                borderRadius: '20px',
-                                padding: '20px',
-                                boxShadow: '0 20px 40px rgba(0,0,0,0.4)',
-                                zIndex: 1001,
-                                width: '300px',
-                                border: '2px solid rgba(255,215,0,0.3)',
-                            }}>
-                                <form onSubmit={handleSearch} style={{ display: 'flex', gap: '10px' }}>
+                            <div style={styles.searchContainer}>
+                                <form onSubmit={handleSearch} style={styles.searchForm}>
                                     <input
                                         type="text"
                                         placeholder="Search products..."
                                         value={searchTerm}
                                         onChange={(e) => setSearchTerm(e.target.value)}
-                                        style={{
-                                            flex: 1,
-                                            padding: '12px',
-                                            border: '2px solid rgba(255,215,0,0.3)',
-                                            borderRadius: '12px',
-                                            fontSize: '1rem',
-                                            background: 'rgba(255,255,255,0.1)',
-                                            color: 'white',
-                                            outline: 'none',
-                                        }}
+                                        style={styles.searchInput}
                                         autoFocus
                                     />
-                                    <button type="submit" style={{
-                                        padding: '12px 15px',
-                                        background: 'linear-gradient(135deg, #667eea, #764ba2, #ff6b6b)',
-                                        color: 'white',
-                                        border: 'none',
-                                        borderRadius: '12px',
-                                        cursor: 'pointer',
-                                    }}>
+                                    <button type="submit" style={styles.searchSubmit}>
                                         <FaSearch />
                                     </button>
-                                    <button type="button" style={{
-                                        padding: '12px',
-                                        background: 'rgba(255,255,255,0.1)',
-                                        color: 'white',
-                                        border: '2px solid rgba(255,255,255,0.2)',
-                                        borderRadius: '12px',
-                                        cursor: 'pointer',
-                                    }} onClick={() => setIsSearchOpen(false)}>
+                                    <button type="button" style={styles.closeSearch} onClick={toggleSearch}>
                                         <FaTimes />
                                     </button>
                                 </form>
                             </div>
                         )}
                         
+                        {/* Dark Mode Toggle */}
                         <button 
                             style={styles.darkModeToggle}
                             onClick={toggleDarkMode}
+                            className="search-button"
                         >
                             {isDarkMode ? <FaSun /> : <FaMoon />}
                         </button>
                         
+                        {/* Notification Bell */}
                         {user && <NotificationBell />}
                         
-                        <Link to="/cart" style={styles.cartLink}>
+                        {/* Cart Icon with Badge */}
+                        <Link to="/cart" style={styles.cartLink} className="cart-link">
                             <FaShoppingCart size={18} />
                             Cart
                             {cartCount > 0 && (
@@ -944,7 +998,7 @@ const Navbar = () => {
                                 className="user-menu"
                                 onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                             >
-                                <div style={styles.userName}>
+                                <div style={styles.userName} className="user-name">
                                     <div style={styles.userAvatar}>
                                         {user.name?.charAt(0).toUpperCase()}
                                     </div>
@@ -969,19 +1023,20 @@ const Navbar = () => {
                                             </div>
                                         </div>
 
+                                        {/* Role-based dashboard links */}
                                         {user.role === 'seller' && (
                                             <>
-                                                <Link to="/seller/dashboard" style={styles.dropdownItem}>
-                                                    <FaTachometerAlt style={styles.dropdownIcon} />
+                                                <Link to="/seller/dashboard" style={styles.dropdownItem} className="dropdown-item">
+                                                    <FaTachometerAlt style={styles.dropdownIcon} className="dropdown-icon" />
                                                     Seller Dashboard
                                                     <span style={styles.roleBadge}>Seller</span>
                                                 </Link>
-                                                <Link to="/seller/products" style={styles.dropdownItem}>
-                                                    <FaBox style={styles.dropdownIcon} />
+                                                <Link to="/seller/products" style={styles.dropdownItem} className="dropdown-item">
+                                                    <FaBox style={styles.dropdownIcon} className="dropdown-icon" />
                                                     My Products
                                                 </Link>
-                                                <Link to="/seller/orders" style={styles.dropdownItem}>
-                                                    <FaClipboardList style={styles.dropdownIcon} />
+                                                <Link to="/seller/orders" style={styles.dropdownItem} className="dropdown-item">
+                                                    <FaClipboardList style={styles.dropdownIcon} className="dropdown-icon" />
                                                     Orders
                                                 </Link>
                                             </>
@@ -989,17 +1044,17 @@ const Navbar = () => {
                                         
                                         {user.role === 'admin' && (
                                             <>
-                                                <Link to="/admin/dashboard" style={styles.dropdownItem}>
-                                                    <FaTachometerAlt style={styles.dropdownIcon} />
+                                                <Link to="/admin/dashboard" style={styles.dropdownItem} className="dropdown-item">
+                                                    <FaTachometerAlt style={styles.dropdownIcon} className="dropdown-icon" />
                                                     Admin Dashboard
                                                     <span style={styles.roleBadge}>Admin</span>
                                                 </Link>
-                                                <Link to="/admin/users" style={styles.dropdownItem}>
-                                                    <FaUser style={styles.dropdownIcon} />
+                                                <Link to="/admin/users" style={styles.dropdownItem} className="dropdown-item">
+                                                    <FaUser style={styles.dropdownIcon} className="dropdown-icon" />
                                                     Users
                                                 </Link>
-                                                <Link to="/admin/products" style={styles.dropdownItem}>
-                                                    <FaBox style={styles.dropdownIcon} />
+                                                <Link to="/admin/products" style={styles.dropdownItem} className="dropdown-item">
+                                                    <FaBox style={styles.dropdownIcon} className="dropdown-icon" />
                                                     Products
                                                 </Link>
                                             </>
@@ -1007,16 +1062,16 @@ const Navbar = () => {
                                         
                                         {user.role === 'customer' && (
                                             <>
-                                                <Link to="/profile" style={styles.dropdownItem}>
-                                                    <FaUser style={styles.dropdownIcon} />
+                                                <Link to="/profile" style={styles.dropdownItem} className="dropdown-item">
+                                                    <FaUser style={styles.dropdownIcon} className="dropdown-icon" />
                                                     My Profile
                                                 </Link>
-                                                <Link to="/orders" style={styles.dropdownItem}>
-                                                    <FaClipboardList style={styles.dropdownIcon} />
+                                                <Link to="/orders" style={styles.dropdownItem} className="dropdown-item">
+                                                    <FaClipboardList style={styles.dropdownIcon} className="dropdown-icon" />
                                                     My Orders
                                                 </Link>
-                                                <Link to="/wishlist" style={styles.dropdownItem}>
-                                                    <FaHeart style={styles.dropdownIcon} />
+                                                <Link to="/wishlist" style={styles.dropdownItem} className="dropdown-item">
+                                                    <FaHeart style={styles.dropdownIcon} className="dropdown-icon" />
                                                     Wishlist 
                                                     {wishlistCount > 0 && (
                                                         <span style={styles.countBadge}>{wishlistCount}</span>
@@ -1027,21 +1082,21 @@ const Navbar = () => {
                                         
                                         <div style={styles.dropdownDivider}></div>
                                         
-                                        <Link to="/notifications" style={styles.dropdownItem}>
-                                            <FaBell style={styles.dropdownIcon} />
+                                        <Link to="/notifications" style={styles.dropdownItem} className="dropdown-item">
+                                            <FaBell style={styles.dropdownIcon} className="dropdown-icon" />
                                             Notifications
                                         </Link>
                                         
-                                        <Link to="/cart" style={styles.dropdownItem}>
-                                            <FaShoppingCart style={styles.dropdownIcon} />
+                                        <Link to="/cart" style={styles.dropdownItem} className="dropdown-item">
+                                            <FaShoppingCart style={styles.dropdownIcon} className="dropdown-icon" />
                                             Cart 
                                             {cartCount > 0 && (
                                                 <span style={styles.countBadge}>{cartCount}</span>
                                             )}
                                         </Link>
                                         
-                                        <button onClick={handleLogout} style={styles.dropdownItem}>
-                                            <FaSignOutAlt style={styles.dropdownIcon} />
+                                        <button onClick={handleLogout} style={styles.dropdownItem} className="dropdown-item">
+                                            <FaSignOutAlt style={styles.dropdownIcon} className="dropdown-icon" />
                                             Logout
                                         </button>
                                     </div>
@@ -1056,149 +1111,175 @@ const Navbar = () => {
                     </div>
                 </div>
 
-                {/* Mobile Navigation - KEPT EXACTLY AS YOU WANT */}
+                {/* Mobile Navigation */}
                 <div style={styles.mobileNav}>
-                    <Link to="/cart" style={{...styles.cartLink, padding: '0.5rem'}}>
-                        <FaShoppingCart size={16} />
+                    {/* Cart Icon for Mobile */}
+                    <Link to="/cart" style={{...styles.cartLink, padding: '0.5rem'}} className="cart-link">
+                        <FaShoppingCart size={18} />
                         {cartCount > 0 && (
-                            <span style={{...styles.cartBadge, width: '18px', height: '18px', fontSize: '0.6rem'}}>{cartCount}</span>
+                            <span style={{...styles.cartBadge, top: '-5px', right: '-5px'}}>{cartCount}</span>
                         )}
                     </Link>
 
+                    {/* Dark Mode Toggle for Mobile */}
                     <button 
-                        style={{...styles.darkModeToggle, width: '36px', height: '36px'}}
+                        style={{...styles.darkModeToggle, width: '40px', height: '40px'}}
                         onClick={toggleDarkMode}
                     >
-                        {isDarkMode ? <FaSun size={14} /> : <FaMoon size={14} />}
+                        {isDarkMode ? <FaSun /> : <FaMoon />}
                     </button>
 
+                    {/* Hamburger Menu Button */}
                     <button 
                         style={styles.hamburgerButton}
                         onClick={toggleMobileMenu}
-                        className="mobile-menu-trigger"
                     >
                         {isMobileMenuOpen ? <FaTimes /> : <FaBars />}
                     </button>
                 </div>
 
-                {/* Mobile Menu Overlay - Appears OVER content */}
+                {/* Mobile Menu - FIXED: Now appears OVER content (not pushing it down) */}
                 {isMobileMenuOpen && (
-                    <div style={styles.mobileMenuOverlay} onClick={() => setIsMobileMenuOpen(false)} />
-                )}
-
-                {/* Mobile Menu Dropdown - Appears as dropdown OVER content */}
-                {isMobileMenuOpen && (
-                    <div style={styles.mobileMenuDropdown}>
+                    <div style={styles.mobileMenu}>
                         <div style={styles.mobileMenuContent}>
-                            {/* User Info for logged in users */}
-                            {user && (
-                                <div style={styles.mobileUserInfo}>
-                                    <div style={styles.mobileUserAvatar}>
-                                        {user.name?.charAt(0).toUpperCase()}
-                                    </div>
-                                    <div style={styles.mobileUserDetails}>
-                                        <span style={styles.mobileUserName}>{user.name}</span>
-                                        <span style={styles.mobileUserEmail}>{user.email}</span>
-                                        <span style={styles.mobileRoleBadge}>{user.role}</span>
-                                    </div>
+                            {/* Search Bar for Mobile */}
+                            <form onSubmit={handleSearch} style={{marginBottom: '2rem'}}>
+                                <div style={{display: 'flex', gap: '0.5rem'}}>
+                                    <input
+                                        type="text"
+                                        placeholder="Search products..."
+                                        value={searchTerm}
+                                        onChange={(e) => setSearchTerm(e.target.value)}
+                                        style={{
+                                            flex: 1,
+                                            padding: '1rem',
+                                            border: '2px solid rgba(255,215,0,0.3)',
+                                            borderRadius: '12px',
+                                            fontSize: '1rem',
+                                            background: 'rgba(255,255,255,0.1)',
+                                            color: 'white',
+                                            outline: 'none'
+                                        }}
+                                    />
+                                    <button 
+                                        type="submit"
+                                        style={{
+                                            padding: '1rem',
+                                            background: 'linear-gradient(135deg, #667eea, #764ba2, #ff6b6b)',
+                                            color: 'white',
+                                            border: 'none',
+                                            borderRadius: '12px',
+                                            cursor: 'pointer'
+                                        }}
+                                    >
+                                        <FaSearch />
+                                    </button>
                                 </div>
-                            )}
+                            </form>
 
-                            {/* Search Bar */}
-                            <div style={styles.mobileSearch}>
-                                <input
-                                    type="text"
-                                    placeholder="Search products..."
-                                    value={searchTerm}
-                                    onChange={(e) => setSearchTerm(e.target.value)}
-                                    style={styles.mobileSearchInput}
-                                />
-                                <button 
-                                    style={styles.mobileSearchButton}
-                                    onClick={handleSearch}
-                                >
-                                    <FaSearch />
-                                </button>
-                            </div>
-
-                            {/* Main Navigation */}
-                            <div style={styles.mobileSection}>
-                                <div style={styles.mobileSectionTitle}>Navigation</div>
-                                <MobileMenuItem to="/" icon={<FaHome />} onClick={() => setIsMobileMenuOpen(false)}>
+                            {/* Navigation Links */}
+                            <div style={styles.mobileNavLinks}>
+                                <MobileNavLink to="/" icon={<FaHome />} onClick={() => setIsMobileMenuOpen(false)}>
                                     Home
-                                </MobileMenuItem>
-                                <MobileMenuItem to="/products" icon={<FaTag />} onClick={() => setIsMobileMenuOpen(false)}>
+                                </MobileNavLink>
+                                <MobileNavLink to="/products" icon={<FaTag />} onClick={() => setIsMobileMenuOpen(false)}>
                                     Products
-                                </MobileMenuItem>
+                                </MobileNavLink>
                             </div>
 
+                            {/* User Section */}
                             {user ? (
-                                <>
-                                    {/* Role-based sections */}
-                                    {user.role === 'seller' && (
-                                        <div style={styles.mobileSection}>
-                                            <div style={styles.mobileSectionTitle}>Seller Panel</div>
-                                            <MobileMenuItem to="/seller/dashboard" icon={<FaTachometerAlt />} onClick={() => setIsMobileMenuOpen(false)}>
-                                                Dashboard
-                                            </MobileMenuItem>
-                                            <MobileMenuItem to="/seller/products" icon={<FaBox />} onClick={() => setIsMobileMenuOpen(false)}>
-                                                My Products
-                                            </MobileMenuItem>
-                                            <MobileMenuItem to="/seller/orders" icon={<FaClipboardList />} onClick={() => setIsMobileMenuOpen(false)}>
-                                                Orders
-                                            </MobileMenuItem>
+                                <div style={styles.mobileUserSection}>
+                                    <div style={styles.mobileUserInfo}>
+                                        <div style={styles.mobileUserAvatar}>
+                                            {user.name?.charAt(0).toUpperCase()}
                                         </div>
-                                    )}
-                                    
-                                    {user.role === 'admin' && (
-                                        <div style={styles.mobileSection}>
-                                            <div style={styles.mobileSectionTitle}>Admin Panel</div>
-                                            <MobileMenuItem to="/admin/dashboard" icon={<FaTachometerAlt />} onClick={() => setIsMobileMenuOpen(false)}>
-                                                Dashboard
-                                            </MobileMenuItem>
-                                            <MobileMenuItem to="/admin/users" icon={<FaUser />} onClick={() => setIsMobileMenuOpen(false)}>
-                                                Users
-                                            </MobileMenuItem>
-                                            <MobileMenuItem to="/admin/products" icon={<FaBox />} onClick={() => setIsMobileMenuOpen(false)}>
-                                                Products
-                                            </MobileMenuItem>
+                                        <div style={styles.mobileUserDetails}>
+                                            <div style={styles.mobileUserName}>{user.name}</div>
+                                            <div style={styles.mobileUserEmail}>{user.email}</div>
+                                            <div style={styles.mobileRoleBadge}>{user.role}</div>
                                         </div>
-                                    )}
-                                    
-                                    {/* Account Section */}
-                                    <div style={styles.mobileSection}>
-                                        <div style={styles.mobileSectionTitle}>Account</div>
-                                        <MobileMenuItem to="/profile" icon={<FaUser />} onClick={() => setIsMobileMenuOpen(false)}>
-                                            My Profile
-                                        </MobileMenuItem>
-                                        <MobileMenuItem to="/orders" icon={<FaClipboardList />} onClick={() => setIsMobileMenuOpen(false)}>
-                                            My Orders
-                                        </MobileMenuItem>
-                                        <MobileMenuItem to="/wishlist" icon={<FaHeart />} onClick={() => setIsMobileMenuOpen(false)}>
-                                            Wishlist
-                                            {wishlistCount > 0 && (
-                                                <span style={{ ...styles.countBadge, marginLeft: 'auto' }}>{wishlistCount}</span>
-                                            )}
-                                        </MobileMenuItem>
-                                        <MobileMenuItem to="/notifications" icon={<FaBell />} onClick={() => setIsMobileMenuOpen(false)}>
+                                    </div>
+
+                                    <div style={{display: 'flex', flexDirection: 'column', gap: '0.5rem'}}>
+                                        {/* Role-based links */}
+                                        {user.role === 'seller' && (
+                                            <>
+                                                <Link to="/seller/dashboard" style={styles.mobileNavLink} onClick={() => setIsMobileMenuOpen(false)}>
+                                                    <FaTachometerAlt style={styles.mobileNavIcon} />
+                                                    Seller Dashboard
+                                                </Link>
+                                                <Link to="/seller/products" style={styles.mobileNavLink} onClick={() => setIsMobileMenuOpen(false)}>
+                                                    <FaBox style={styles.mobileNavIcon} />
+                                                    My Products
+                                                </Link>
+                                                <Link to="/seller/orders" style={styles.mobileNavLink} onClick={() => setIsMobileMenuOpen(false)}>
+                                                    <FaClipboardList style={styles.mobileNavIcon} />
+                                                    Orders
+                                                </Link>
+                                            </>
+                                        )}
+                                        
+                                        {user.role === 'admin' && (
+                                            <>
+                                                <Link to="/admin/dashboard" style={styles.mobileNavLink} onClick={() => setIsMobileMenuOpen(false)}>
+                                                    <FaTachometerAlt style={styles.mobileNavIcon} />
+                                                    Admin Dashboard
+                                                </Link>
+                                                <Link to="/admin/users" style={styles.mobileNavLink} onClick={() => setIsMobileMenuOpen(false)}>
+                                                    <FaUser style={styles.mobileNavIcon} />
+                                                    Users
+                                                </Link>
+                                                <Link to="/admin/products" style={styles.mobileNavLink} onClick={() => setIsMobileMenuOpen(false)}>
+                                                    <FaBox style={styles.mobileNavIcon} />
+                                                    Products
+                                                </Link>
+                                            </>
+                                        )}
+                                        
+                                        {user.role === 'customer' && (
+                                            <>
+                                                <Link to="/profile" style={styles.mobileNavLink} onClick={() => setIsMobileMenuOpen(false)}>
+                                                    <FaUser style={styles.mobileNavIcon} />
+                                                    My Profile
+                                                </Link>
+                                                <Link to="/orders" style={styles.mobileNavLink} onClick={() => setIsMobileMenuOpen(false)}>
+                                                    <FaClipboardList style={styles.mobileNavIcon} />
+                                                    My Orders
+                                                </Link>
+                                                <Link to="/wishlist" style={styles.mobileNavLink} onClick={() => setIsMobileMenuOpen(false)}>
+                                                    <FaHeart style={styles.mobileNavIcon} />
+                                                    Wishlist
+                                                    {wishlistCount > 0 && (
+                                                        <span style={{...styles.countBadge, marginLeft: 'auto'}}>{wishlistCount}</span>
+                                                    )}
+                                                </Link>
+                                            </>
+                                        )}
+
+                                        {/* Common links */}
+                                        <Link to="/notifications" style={styles.mobileNavLink} onClick={() => setIsMobileMenuOpen(false)}>
+                                            <FaBell style={styles.mobileNavIcon} />
                                             Notifications
-                                        </MobileMenuItem>
-                                        <MobileMenuItem to="/cart" icon={<FaShoppingCart />} onClick={() => setIsMobileMenuOpen(false)}>
+                                        </Link>
+                                        
+                                        <Link to="/cart" style={styles.mobileNavLink} onClick={() => setIsMobileMenuOpen(false)}>
+                                            <FaShoppingCart style={styles.mobileNavIcon} />
                                             Cart
                                             {cartCount > 0 && (
-                                                <span style={{ ...styles.countBadge, marginLeft: 'auto' }}>{cartCount}</span>
+                                                <span style={{...styles.countBadge, marginLeft: 'auto'}}>{cartCount}</span>
                                             )}
-                                        </MobileMenuItem>
-                                    </div>
+                                        </Link>
 
-                                    {/* Logout Button */}
-                                    <button 
-                                        onClick={handleLogout}
-                                        style={styles.mobileButton}
-                                    >
-                                        <FaSignOutAlt /> Logout
-                                    </button>
-                                </>
+                                        <button 
+                                            onClick={handleLogout}
+                                            style={{...styles.mobileNavLink, width: '100%', textAlign: 'left', cursor: 'pointer'}}
+                                        >
+                                            <FaSignOutAlt style={styles.mobileNavIcon} />
+                                            Logout
+                                        </button>
+                                    </div>
+                                </div>
                             ) : (
                                 <div style={styles.mobileAuthButtons}>
                                     <Link to="/login" style={styles.mobileButton} onClick={() => setIsMobileMenuOpen(false)}>
@@ -1207,6 +1288,13 @@ const Navbar = () => {
                                     <Link to="/register" style={{...styles.mobileButton, ...styles.mobileButtonPrimary}} onClick={() => setIsMobileMenuOpen(false)}>
                                         <FaGift /> Register
                                     </Link>
+                                </div>
+                            )}
+
+                            {/* Notification Bell for Mobile */}
+                            {user && (
+                                <div style={{marginTop: '1rem'}}>
+                                    <NotificationBell />
                                 </div>
                             )}
                         </div>
