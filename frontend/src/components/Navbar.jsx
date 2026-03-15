@@ -41,7 +41,6 @@ const Navbar = () => {
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [isDarkMode, setIsDarkMode] = useState(false);
-    const [activeLink, setActiveLink] = useState('/');
     const navigate = useNavigate();
     const location = useLocation();
 
@@ -68,20 +67,19 @@ const Navbar = () => {
     // Close mobile menu when route changes
     useEffect(() => {
         setIsMobileMenuOpen(false);
+        setIsDropdownOpen(false);
+        setIsSearchOpen(false);
     }, [location]);
 
     // Prevent body scroll when mobile menu is open
     useEffect(() => {
         if (isMobileMenuOpen) {
             document.body.style.overflow = 'hidden';
-            document.body.classList.add('mobile-menu-open');
         } else {
             document.body.style.overflow = 'unset';
-            document.body.classList.remove('mobile-menu-open');
         }
         return () => {
             document.body.style.overflow = 'unset';
-            document.body.classList.remove('mobile-menu-open');
         };
     }, [isMobileMenuOpen]);
 
@@ -104,7 +102,6 @@ const Navbar = () => {
 
     const toggleSearch = () => {
         setIsSearchOpen(!isSearchOpen);
-        if (isMobileMenuOpen) setIsMobileMenuOpen(false);
     };
 
     const toggleMobileMenu = () => {
@@ -117,697 +114,72 @@ const Navbar = () => {
         document.body.style.backgroundColor = !isDarkMode ? '#1a1a2e' : '#f5f5f5';
     };
 
-    // Logo component with animations
+    // Logo component
     const Logo = () => (
-        <Link to="/" style={styles.logoLink} className="logo">
-            <div style={styles.logoContainer}>
-                <div style={styles.logoIconWrapper}>
-                    <div style={styles.logoIcon}>
-                        <FaBolt style={styles.logoLightning} />
-                        <FaStar style={styles.logoStar1} />
-                        <FaStar style={styles.logoStar2} />
-                    </div>
+        <Link to="/" className="logo-link" style={{ textDecoration: 'none' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <div style={{
+                    width: '40px',
+                    height: '40px',
+                    background: 'linear-gradient(135deg, #FFD700, #FFA500, #FF6B6B)',
+                    borderRadius: '12px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    transform: 'rotate(5deg)',
+                    boxShadow: '0 10px 20px rgba(255,215,0,0.4)'
+                }}>
+                    <FaBolt style={{ color: '#1a1a2e', fontSize: '1.4rem' }} />
                 </div>
-                <div style={styles.logoTextWrapper}>
-                    <span style={styles.logoMain}>E-Store</span>
-                    <span style={styles.logoBadge}>PRO</span>
+                <div>
+                    <span style={{
+                        fontSize: '1.5rem',
+                        fontWeight: '800',
+                        background: 'linear-gradient(135deg, #fff, #FFD700)',
+                        WebkitBackgroundClip: 'text',
+                        WebkitTextFillColor: 'transparent',
+                        letterSpacing: '2px'
+                    }}>E-Store</span>
+                    <span style={{
+                        background: 'linear-gradient(135deg, #FFD700, #FF6B6B)',
+                        color: '#1a1a2e',
+                        fontSize: '0.55rem',
+                        fontWeight: 'bold',
+                        padding: '2px 6px',
+                        borderRadius: '10px',
+                        marginLeft: '5px',
+                        textTransform: 'uppercase'
+                    }}>PRO</span>
                 </div>
             </div>
         </Link>
     );
 
-    // Desktop NavLink component with horizontal layout
-    const NavLink = ({ to, icon, children, onClick }) => {
+    // NavLink component
+    const NavLink = ({ to, icon, children }) => {
         const isActive = location.pathname === to;
         return (
             <Link 
                 to={to} 
                 style={{
-                    ...styles.navLink,
+                    color: 'white',
+                    textDecoration: 'none',
+                    fontSize: '0.95rem',
+                    fontWeight: '600',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.5rem',
+                    padding: '0.5rem 1rem',
+                    borderRadius: '30px',
                     background: isActive ? 'rgba(255,255,255,0.2)' : 'transparent',
-                    borderColor: isActive ? '#FFD700' : 'transparent'
+                    transition: 'all 0.3s ease'
                 }}
                 className="nav-link"
-                onClick={onClick}
             >
-                <span style={styles.navLinkIcon}>{icon}</span>
-                <span style={styles.navLinkText}>{children}</span>
-                {isActive && <span style={styles.navLinkActive}></span>}
+                <span style={{ color: '#FFD700' }}>{icon}</span>
+                <span>{children}</span>
             </Link>
         );
-    };
-
-    // Mobile NavLink component
-    const MobileNavLink = ({ to, icon, children, onClick }) => {
-        const isActive = location.pathname === to;
-        return (
-            <Link 
-                to={to} 
-                style={{
-                    ...styles.mobileNavLink,
-                    background: isActive ? 'rgba(255,215,0,0.2)' : 'transparent',
-                    borderLeft: isActive ? '4px solid #FFD700' : '4px solid transparent'
-                }}
-                onClick={onClick}
-            >
-                <span style={styles.mobileNavIcon}>{icon}</span>
-                <span style={styles.mobileNavText}>{children}</span>
-                {isActive && <span style={styles.mobileNavActive}></span>}
-            </Link>
-        );
-    };
-
-    // Shiny button with hover effects
-    const ShinyButton = ({ to, children, primary = false, icon, onClick }) => (
-        <Link 
-            to={to} 
-            style={{
-                ...styles.shinyButton,
-                ...(primary ? styles.shinyButtonPrimary : {})
-            }}
-            className="shiny-button"
-            onClick={onClick}
-        >
-            {icon && <span style={styles.buttonIcon}>{icon}</span>}
-            <span>{children}</span>
-        </Link>
-    );
-
-    const styles = {
-        navbar: {
-            position: 'sticky',
-            top: 0,
-            zIndex: 1000,
-            background: isScrolled 
-                ? 'linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)'
-                : 'linear-gradient(135deg, #667eea 0%, #764ba2 30%, #ff6b6b 70%, #ffd93d 100%)',
-            padding: isScrolled ? '0.8rem 1rem' : '1.2rem 1rem',
-            boxShadow: isScrolled 
-                ? '0 10px 30px rgba(0,0,0,0.3)'
-                : '0 15px 35px rgba(0,0,0,0.2)',
-            transition: 'all 0.4s ease',
-            borderBottom: '2px solid rgba(255,255,255,0.2)',
-            backdropFilter: 'blur(10px)',
-        },
-        container: {
-            maxWidth: '1400px',
-            margin: '0 auto',
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            position: 'relative'
-        },
-        // Logo styles with animation
-        logoLink: {
-            textDecoration: 'none',
-            display: 'block',
-            position: 'relative',
-            zIndex: 1002
-        },
-        logoContainer: {
-            display: 'flex',
-            alignItems: 'center',
-            gap: '10px',
-            position: 'relative'
-        },
-        logoIconWrapper: {
-            position: 'relative',
-            animation: 'float 3s ease-in-out infinite'
-        },
-        logoIcon: {
-            position: 'relative',
-            width: '40px',
-            height: '40px',
-            background: 'linear-gradient(135deg, #FFD700, #FFA500, #FF6B6B)',
-            borderRadius: '12px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            transform: 'rotate(5deg)',
-            boxShadow: '0 10px 20px rgba(255,215,0,0.4)',
-            overflow: 'hidden'
-        },
-        logoLightning: {
-            color: '#1a1a2e',
-            fontSize: '1.4rem',
-            animation: 'pulse 2s ease-in-out infinite'
-        },
-        logoStar1: {
-            position: 'absolute',
-            top: '3px',
-            right: '3px',
-            color: '#fff',
-            fontSize: '0.6rem',
-            animation: 'spin 3s linear infinite'
-        },
-        logoStar2: {
-            position: 'absolute',
-            bottom: '3px',
-            left: '3px',
-            color: '#fff',
-            fontSize: '0.6rem',
-            animation: 'spin 4s linear infinite reverse'
-        },
-        logoTextWrapper: {
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'flex-start'
-        },
-        logoMain: {
-            fontSize: '1.5rem',
-            fontWeight: '800',
-            background: 'linear-gradient(135deg, #fff, #FFD700, #FFA500)',
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent',
-            textShadow: '0 2px 10px rgba(255,215,0,0.3)',
-            letterSpacing: '2px',
-            lineHeight: '1'
-        },
-        logoBadge: {
-            background: 'linear-gradient(135deg, #FFD700, #FF6B6B)',
-            color: '#1a1a2e',
-            fontSize: '0.55rem',
-            fontWeight: 'bold',
-            padding: '2px 6px',
-            borderRadius: '10px',
-            marginTop: '2px',
-            textTransform: 'uppercase',
-            boxShadow: '0 2px 10px rgba(255,215,0,0.5)',
-            animation: 'pulse 2s infinite'
-        },
-        // Desktop Navigation - Horizontal layout
-        desktopNav: {
-            display: 'none', // Hidden on mobile
-            alignItems: 'center',
-            gap: '0.5rem',
-            flex: 1,
-            justifyContent: 'flex-end',
-            '@media (min-width: 1024px)': {
-                display: 'flex' // Show on desktop
-            }
-        },
-        desktopNavLinks: {
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.3rem',
-            marginRight: '1rem'
-        },
-        desktopActions: {
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.5rem'
-        },
-        // Mobile Navigation
-        mobileNav: {
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.5rem',
-            '@media (min-width: 1024px)': {
-                display: 'none' // Hide on desktop
-            }
-        },
-        hamburgerButton: {
-            background: 'rgba(255,255,255,0.15)',
-            border: '1px solid rgba(255,215,0,0.3)',
-            color: 'white',
-            width: '45px',
-            height: '45px',
-            borderRadius: '50%',
-            cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            fontSize: '1.4rem',
-            transition: 'all 0.3s ease',
-            zIndex: 1002
-        },
-        // Mobile menu
-        mobileMenu: {
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)',
-            zIndex: 9999,
-            padding: '80px 20px 30px',
-            overflowY: 'auto',
-            WebkitOverflowScrolling: 'touch',
-            display: isMobileMenuOpen ? 'block' : 'none',
-            animation: 'slideInRight 0.3s ease'
-        },
-        mobileMenuContent: {
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '1rem',
-            maxHeight: 'calc(100vh - 100px)',
-            overflowY: 'auto',
-            paddingBottom: '30px',
-            paddingRight: '5px'
-        },
-        mobileNavLinks: {
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '0.5rem',
-            marginBottom: '2rem'
-        },
-        mobileNavLink: {
-            color: 'white',
-            textDecoration: 'none',
-            fontSize: '1.1rem',
-            fontWeight: '600',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '1rem',
-            padding: '1rem 1.5rem',
-            borderRadius: '12px',
-            transition: 'all 0.3s ease',
-            background: 'rgba(255,255,255,0.05)',
-            border: '1px solid rgba(255,255,255,0.1)'
-        },
-        mobileNavIcon: {
-            fontSize: '1.2rem',
-            color: '#FFD700',
-            width: '24px'
-        },
-        mobileNavText: {
-            flex: 1
-        },
-        mobileNavActive: {
-            width: '4px',
-            height: '100%',
-            background: '#FFD700',
-            borderRadius: '2px'
-        },
-        mobileUserSection: {
-            background: 'rgba(255,255,255,0.05)',
-            borderRadius: '20px',
-            padding: '1.5rem',
-            marginTop: '1rem'
-        },
-        mobileUserInfo: {
-            display: 'flex',
-            alignItems: 'center',
-            gap: '1rem',
-            marginBottom: '1.5rem',
-            paddingBottom: '1.5rem',
-            borderBottom: '1px solid rgba(255,215,0,0.2)'
-        },
-        mobileUserAvatar: {
-            width: '60px',
-            height: '60px',
-            borderRadius: '50%',
-            background: 'linear-gradient(135deg, #FFD700, #FFA500, #FF6B6B)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            fontSize: '1.8rem',
-            fontWeight: 'bold',
-            color: '#1a1a2e'
-        },
-        mobileUserDetails: {
-            flex: 1
-        },
-        mobileUserName: {
-            fontSize: '1.2rem',
-            fontWeight: 'bold',
-            color: 'white',
-            marginBottom: '4px'
-        },
-        mobileUserEmail: {
-            fontSize: '0.9rem',
-            color: 'rgba(255,255,255,0.7)'
-        },
-        mobileRoleBadge: {
-            display: 'inline-block',
-            fontSize: '0.7rem',
-            padding: '2px 8px',
-            borderRadius: '20px',
-            background: 'linear-gradient(135deg, #FFD700, #FFA500)',
-            color: '#1a1a2e',
-            fontWeight: 'bold',
-            textTransform: 'uppercase',
-            marginTop: '4px'
-        },
-        mobileAuthButtons: {
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '0.8rem'
-        },
-        mobileButton: {
-            padding: '1rem',
-            borderRadius: '12px',
-            border: '1px solid rgba(255,255,255,0.2)',
-            background: 'rgba(255,255,255,0.1)',
-            color: 'white',
-            textDecoration: 'none',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: '0.5rem',
-            fontSize: '1rem',
-            fontWeight: '600'
-        },
-        mobileButtonPrimary: {
-            background: 'linear-gradient(135deg, #FFD700, #FFA500)',
-            border: 'none',
-            color: '#1a1a2e'
-        },
-        // Desktop nav link - horizontal style
-        navLink: {
-            color: 'white',
-            textDecoration: 'none',
-            fontSize: '0.95rem',
-            fontWeight: '600',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.5rem',
-            padding: '0.5rem 1rem',
-            borderRadius: '30px',
-            transition: 'all 0.3s ease',
-            position: 'relative',
-            overflow: 'hidden',
-            letterSpacing: '0.5px'
-        },
-        navLinkIcon: {
-            fontSize: '1rem',
-            color: '#FFD700',
-            transition: 'all 0.3s ease'
-        },
-        navLinkText: {
-            background: 'linear-gradient(135deg, #fff, #f0f0f0)',
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent',
-            fontWeight: '600'
-        },
-        navLinkActive: {
-            position: 'absolute',
-            bottom: 0,
-            left: '50%',
-            transform: 'translateX(-50%)',
-            width: '80%',
-            height: '3px',
-            background: 'linear-gradient(90deg, #FFD700, #FF6B6B)',
-            borderRadius: '3px 3px 0 0',
-            animation: 'slideIn 0.3s ease'
-        },
-        // Search button
-        searchButton: {
-            background: 'linear-gradient(135deg, rgba(255,255,255,0.2), rgba(255,255,255,0.1))',
-            border: '1px solid rgba(255,255,255,0.3)',
-            color: 'white',
-            padding: '0.5rem 1rem',
-            borderRadius: '30px',
-            cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.5rem',
-            fontSize: '0.95rem',
-            fontWeight: '600',
-            transition: 'all 0.3s ease',
-            backdropFilter: 'blur(5px)',
-            letterSpacing: '0.5px',
-            whiteSpace: 'nowrap'
-        },
-        searchContainer: {
-            position: 'absolute',
-            top: 'calc(100% + 15px)',
-            right: '60px',
-            background: 'rgba(26, 26, 46, 0.98)',
-            backdropFilter: 'blur(10px)',
-            borderRadius: '20px',
-            padding: '20px',
-            boxShadow: '0 20px 40px rgba(0,0,0,0.4)',
-            display: isSearchOpen ? 'block' : 'none',
-            zIndex: 1001,
-            width: '300px',
-            border: '2px solid rgba(255,215,0,0.3)',
-            animation: 'slideDown 0.4s ease',
-            '@media (min-width: 768px)': {
-                width: '400px'
-            }
-        },
-        searchForm: {
-            display: 'flex',
-            gap: '10px'
-        },
-        searchInput: {
-            flex: 1,
-            padding: '12px',
-            border: '2px solid rgba(255,215,0,0.3)',
-            borderRadius: '12px',
-            fontSize: '1rem',
-            background: 'rgba(255,255,255,0.1)',
-            color: 'white',
-            outline: 'none',
-            transition: 'all 0.3s'
-        },
-        searchSubmit: {
-            padding: '12px 15px',
-            background: 'linear-gradient(135deg, #667eea, #764ba2, #ff6b6b)',
-            color: 'white',
-            border: 'none',
-            borderRadius: '12px',
-            cursor: 'pointer',
-            transition: 'all 0.3s',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            fontSize: '1rem'
-        },
-        closeSearch: {
-            padding: '12px',
-            background: 'rgba(255,255,255,0.1)',
-            color: 'white',
-            border: '2px solid rgba(255,255,255,0.2)',
-            borderRadius: '12px',
-            cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center'
-        },
-        // Cart link
-        cartLink: {
-            position: 'relative',
-            color: 'white',
-            textDecoration: 'none',
-            fontSize: '0.95rem',
-            fontWeight: '600',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.5rem',
-            padding: '0.5rem 1rem',
-            borderRadius: '30px',
-            background: 'linear-gradient(135deg, rgba(255,255,255,0.2), rgba(255,255,255,0.1))',
-            border: '1px solid rgba(255,215,0,0.3)',
-            transition: 'all 0.3s ease',
-            whiteSpace: 'nowrap'
-        },
-        cartBadge: {
-            position: 'absolute',
-            top: '-5px',
-            right: '-5px',
-            background: 'linear-gradient(135deg, #ff6b6b, #ff4757, #ff0000)',
-            color: 'white',
-            borderRadius: '50%',
-            width: '20px',
-            height: '20px',
-            fontSize: '0.7rem',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            fontWeight: 'bold',
-            border: '2px solid white',
-            animation: 'pulse 2s infinite',
-            boxShadow: '0 0 15px rgba(255,107,107,0.7)'
-        },
-        // Dark mode toggle
-        darkModeToggle: {
-            background: 'rgba(255,255,255,0.15)',
-            border: '1px solid rgba(255,215,0,0.3)',
-            color: 'white',
-            width: '40px',
-            height: '40px',
-            borderRadius: '50%',
-            cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            fontSize: '1.2rem',
-            transition: 'all 0.3s ease'
-        },
-        // Auth buttons
-        authButtons: {
-            display: 'flex',
-            gap: '0.5rem',
-            alignItems: 'center'
-        },
-        shinyButton: {
-            padding: '0.5rem 1.2rem',
-            borderRadius: '30px',
-            border: '1px solid rgba(255,255,255,0.3)',
-            background: 'rgba(255,255,255,0.15)',
-            color: 'white',
-            cursor: 'pointer',
-            fontSize: '0.95rem',
-            fontWeight: '600',
-            transition: 'all 0.3s ease',
-            textDecoration: 'none',
-            whiteSpace: 'nowrap',
-            backdropFilter: 'blur(5px)',
-            letterSpacing: '0.5px',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.5rem'
-        },
-        shinyButtonPrimary: {
-            background: 'linear-gradient(135deg, #FFD700, #FFA500, #FF6B6B)',
-            border: 'none',
-            color: '#1a1a2e',
-            boxShadow: '0 5px 20px rgba(255,215,0,0.5)'
-        },
-        buttonIcon: {
-            fontSize: '1rem',
-            color: '#1a1a2e'
-        },
-        // User menu
-        userMenu: {
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.5rem',
-            position: 'relative',
-            cursor: 'pointer'
-        },
-        userName: {
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.5rem',
-            cursor: 'pointer',
-            padding: '0.3rem 1rem 0.3rem 0.5rem',
-            borderRadius: '30px',
-            background: 'linear-gradient(135deg, rgba(255,255,255,0.2), rgba(255,255,255,0.1))',
-            border: '1px solid rgba(255,215,0,0.3)',
-            transition: 'all 0.3s ease'
-        },
-        userAvatar: {
-            width: '32px',
-            height: '32px',
-            borderRadius: '50%',
-            background: 'linear-gradient(135deg, #FFD700, #FFA500, #FF6B6B)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            fontSize: '1rem',
-            fontWeight: 'bold',
-            color: '#1a1a2e',
-            animation: 'pulse 2s infinite'
-        },
-        userNameText: {
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-            whiteSpace: 'nowrap',
-            maxWidth: '120px',
-            color: 'white',
-            fontWeight: '600',
-            fontSize: '0.9rem'
-        },
-        dropdown: {
-            position: 'absolute',
-            top: 'calc(100% + 15px)',
-            right: 0,
-            background: 'rgba(26, 26, 46, 0.98)',
-            backdropFilter: 'blur(10px)',
-            borderRadius: '20px',
-            boxShadow: '0 20px 40px rgba(0,0,0,0.4)',
-            display: isDropdownOpen ? 'block' : 'none',
-            minWidth: '280px',
-            zIndex: 1000,
-            overflow: 'hidden',
-            border: '2px solid rgba(255,215,0,0.3)',
-            animation: 'slideDown 0.3s ease'
-        },
-        dropdownHeader: {
-            padding: '1.5rem',
-            background: 'linear-gradient(135deg, #667eea, #764ba2, #ff6b6b)',
-            borderBottom: '1px solid rgba(255,255,255,0.1)'
-        },
-        dropdownUserInfo: {
-            display: 'flex',
-            alignItems: 'center',
-            gap: '1rem'
-        },
-        dropdownAvatar: {
-            width: '50px',
-            height: '50px',
-            borderRadius: '50%',
-            background: 'linear-gradient(135deg, #FFD700, #FFA500)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            fontSize: '1.5rem',
-            fontWeight: 'bold',
-            color: '#1a1a2e',
-            border: '2px solid white'
-        },
-        dropdownUserDetails: {
-            flex: 1
-        },
-        dropdownUserName: {
-            fontWeight: 'bold',
-            fontSize: '1.1rem',
-            color: 'white',
-            marginBottom: '4px'
-        },
-        dropdownUserEmail: {
-            fontSize: '0.8rem',
-            color: 'rgba(255,255,255,0.8)'
-        },
-        dropdownItem: {
-            padding: '0.9rem 1.2rem',
-            color: 'white',
-            textDecoration: 'none',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.8rem',
-            transition: 'all 0.3s',
-            border: 'none',
-            background: 'none',
-            width: '100%',
-            cursor: 'pointer',
-            fontSize: '0.95rem',
-            borderBottom: '1px solid rgba(255,255,255,0.05)',
-            position: 'relative',
-            overflow: 'hidden'
-        },
-        dropdownIcon: {
-            color: '#FFD700',
-            width: '18px',
-            fontSize: '1.1rem'
-        },
-        dropdownDivider: {
-            height: '1px',
-            background: 'linear-gradient(90deg, transparent, rgba(255,215,0,0.3), transparent)',
-            margin: '0.5rem 0'
-        },
-        roleBadge: {
-            fontSize: '0.7rem',
-            padding: '2px 8px',
-            borderRadius: '20px',
-            background: 'linear-gradient(135deg, #FFD700, #FFA500)',
-            color: '#1a1a2e',
-            marginLeft: 'auto',
-            fontWeight: 'bold',
-            textTransform: 'uppercase',
-            letterSpacing: '0.5px'
-        },
-        countBadge: {
-            fontSize: '0.7rem',
-            padding: '2px 6px',
-            borderRadius: '20px',
-            background: 'linear-gradient(135deg, #ff6b6b, #ff4757)',
-            color: 'white',
-            marginLeft: 'auto'
-        }
     };
 
     // Add animations
@@ -834,86 +206,15 @@ const Navbar = () => {
                 }
             }
             
-            @keyframes slideIn {
-                from {
-                    transform: translateX(-100%);
-                }
-                to {
-                    transform: translateX(0);
-                }
-            }
-            
             @keyframes pulse {
                 0% { transform: scale(1); }
                 50% { transform: scale(1.1); }
                 100% { transform: scale(1); }
             }
             
-            @keyframes float {
-                0% { transform: translateY(0px) rotate(5deg); }
-                50% { transform: translateY(-5px) rotate(5deg); }
-                100% { transform: translateY(0px) rotate(5deg); }
-            }
-            
-            @keyframes spin {
-                from { transform: rotate(0deg); }
-                to { transform: rotate(360deg); }
-            }
-            
-            @keyframes shimmer {
-                0% { left: -100%; }
-                100% { left: 200%; }
-            }
-            
-            .mobile-menu-open {
-                overflow: hidden !important;
-            }
-            
-            .mobile-menu-content {
-                max-height: calc(100vh - 80px);
-                overflow-y: auto;
-                padding-bottom: 30px;
-            }
-            
             .nav-link:hover {
                 background: rgba(255,255,255,0.15) !important;
                 transform: translateY(-2px);
-            }
-            
-            .nav-link:hover .nav-link-icon {
-                transform: scale(1.1) rotate(3deg);
-                color: #FFD700;
-            }
-            
-            .shiny-button:hover {
-                transform: translateY(-2px) scale(1.02);
-                box-shadow: 0 10px 20px rgba(255,215,0,0.3);
-            }
-            
-            .shiny-button::after {
-                content: '';
-                position: absolute;
-                top: -50%;
-                left: -50%;
-                width: 200%;
-                height: 200%;
-                background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
-                transform: rotate(30deg);
-                animation: shimmer 3s infinite;
-                opacity: 0;
-            }
-            
-            .shiny-button:hover::after {
-                opacity: 1;
-            }
-            
-            .dropdown-item:hover {
-                background: rgba(255,215,0,0.15);
-                padding-left: 1.8rem;
-            }
-            
-            .dropdown-item:hover .dropdown-icon {
-                transform: scale(1.2) rotate(5deg);
             }
             
             .cart-link:hover {
@@ -926,11 +227,15 @@ const Navbar = () => {
                 background: linear-gradient(135deg, rgba(255,255,255,0.3), rgba(255,255,255,0.2));
                 transform: translateY(-2px);
             }
-
-            @media (max-width: 1023px) {
-                .desktop-only {
-                    display: none;
-                }
+            
+            .shiny-button:hover {
+                transform: translateY(-2px) scale(1.02);
+                box-shadow: 0 10px 20px rgba(255,215,0,0.3);
+            }
+            
+            .dropdown-item:hover {
+                background: rgba(255,215,0,0.15);
+                padding-left: 1.8rem;
             }
         `;
         document.head.appendChild(style);
@@ -938,21 +243,65 @@ const Navbar = () => {
     }, []);
 
     return (
-        <nav style={styles.navbar}>
-            <div style={styles.container}>
+        <nav style={{
+            position: 'sticky',
+            top: 0,
+            zIndex: 1000,
+            background: isScrolled 
+                ? 'linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)'
+                : 'linear-gradient(135deg, #667eea 0%, #764ba2 30%, #ff6b6b 70%, #ffd93d 100%)',
+            padding: isScrolled ? '0.8rem 1rem' : '1.2rem 1rem',
+            boxShadow: isScrolled 
+                ? '0 10px 30px rgba(0,0,0,0.3)'
+                : '0 15px 35px rgba(0,0,0,0.2)',
+            transition: 'all 0.4s ease',
+            borderBottom: '2px solid rgba(255,255,255,0.2)',
+            backdropFilter: 'blur(10px)'
+        }}>
+            <div style={{
+                maxWidth: '1400px',
+                margin: '0 auto',
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                position: 'relative'
+            }}>
                 <Logo />
 
-                {/* Desktop Navigation - Horizontal Layout */}
-                <div style={styles.desktopNav}>
-                    <div style={styles.desktopNavLinks}>
+                {/* Desktop Navigation - Visible on lg screens and up */}
+                <div style={{
+                    display: 'none',
+                    alignItems: 'center',
+                    gap: '0.5rem',
+                    flex: 1,
+                    justifyContent: 'flex-end',
+                    '@media (min-width: 1024px)': {
+                        display: 'flex'
+                    }
+                }} className="desktop-nav">
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', marginRight: '1rem' }}>
                         <NavLink to="/" icon={<FaHome />}>Home</NavLink>
                         <NavLink to="/products" icon={<FaTag />}>Products</NavLink>
                     </div>
 
-                    <div style={styles.desktopActions}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                         {/* Search Button */}
                         <button 
-                            style={styles.searchButton} 
+                            style={{
+                                background: 'linear-gradient(135deg, rgba(255,255,255,0.2), rgba(255,255,255,0.1))',
+                                border: '1px solid rgba(255,255,255,0.3)',
+                                color: 'white',
+                                padding: '0.5rem 1rem',
+                                borderRadius: '30px',
+                                cursor: 'pointer',
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '0.5rem',
+                                fontSize: '0.95rem',
+                                fontWeight: '600',
+                                transition: 'all 0.3s ease',
+                                backdropFilter: 'blur(5px)'
+                            }}
                             onClick={toggleSearch}
                             className="search-button"
                         >
@@ -960,28 +309,79 @@ const Navbar = () => {
                         </button>
 
                         {/* Search Dropdown */}
-                        <div style={styles.searchContainer}>
-                            <form onSubmit={handleSearch} style={styles.searchForm}>
-                                <input
-                                    type="text"
-                                    placeholder="Search products..."
-                                    value={searchTerm}
-                                    onChange={(e) => setSearchTerm(e.target.value)}
-                                    style={styles.searchInput}
-                                    autoFocus
-                                />
-                                <button type="submit" style={styles.searchSubmit}>
-                                    <FaSearch />
-                                </button>
-                                <button type="button" style={styles.closeSearch} onClick={toggleSearch}>
-                                    <FaTimes />
-                                </button>
-                            </form>
-                        </div>
+                        {isSearchOpen && (
+                            <div style={{
+                                position: 'absolute',
+                                top: 'calc(100% + 15px)',
+                                right: '60px',
+                                background: 'rgba(26, 26, 46, 0.98)',
+                                backdropFilter: 'blur(10px)',
+                                borderRadius: '20px',
+                                padding: '20px',
+                                boxShadow: '0 20px 40px rgba(0,0,0,0.4)',
+                                zIndex: 1001,
+                                width: '400px',
+                                border: '2px solid rgba(255,215,0,0.3)',
+                                animation: 'slideDown 0.4s ease'
+                            }}>
+                                <form onSubmit={handleSearch} style={{ display: 'flex', gap: '10px' }}>
+                                    <input
+                                        type="text"
+                                        placeholder="Search products..."
+                                        value={searchTerm}
+                                        onChange={(e) => setSearchTerm(e.target.value)}
+                                        style={{
+                                            flex: 1,
+                                            padding: '12px',
+                                            border: '2px solid rgba(255,215,0,0.3)',
+                                            borderRadius: '12px',
+                                            fontSize: '1rem',
+                                            background: 'rgba(255,255,255,0.1)',
+                                            color: 'white',
+                                            outline: 'none'
+                                        }}
+                                        autoFocus
+                                    />
+                                    <button type="submit" style={{
+                                        padding: '12px 15px',
+                                        background: 'linear-gradient(135deg, #667eea, #764ba2, #ff6b6b)',
+                                        color: 'white',
+                                        border: 'none',
+                                        borderRadius: '12px',
+                                        cursor: 'pointer'
+                                    }}>
+                                        <FaSearch />
+                                    </button>
+                                    <button type="button" style={{
+                                        padding: '12px',
+                                        background: 'rgba(255,255,255,0.1)',
+                                        color: 'white',
+                                        border: '2px solid rgba(255,255,255,0.2)',
+                                        borderRadius: '12px',
+                                        cursor: 'pointer'
+                                    }} onClick={toggleSearch}>
+                                        <FaTimes />
+                                    </button>
+                                </form>
+                            </div>
+                        )}
                         
                         {/* Dark Mode Toggle */}
                         <button 
-                            style={styles.darkModeToggle}
+                            style={{
+                                background: 'rgba(255,255,255,0.15)',
+                                border: '1px solid rgba(255,215,0,0.3)',
+                                color: 'white',
+                                width: '40px',
+                                height: '40px',
+                                borderRadius: '50%',
+                                cursor: 'pointer',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                fontSize: '1.2rem',
+                                transition: 'all 0.3s ease'
+                            }}
                             onClick={toggleDarkMode}
                             className="search-button"
                         >
@@ -992,144 +392,467 @@ const Navbar = () => {
                         {user && <NotificationBell />}
                         
                         {/* Cart Icon with Badge */}
-                        <Link to="/cart" style={styles.cartLink} className="cart-link">
+                        <Link to="/cart" style={{
+                            position: 'relative',
+                            color: 'white',
+                            textDecoration: 'none',
+                            fontSize: '0.95rem',
+                            fontWeight: '600',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '0.5rem',
+                            padding: '0.5rem 1rem',
+                            borderRadius: '30px',
+                            background: 'linear-gradient(135deg, rgba(255,255,255,0.2), rgba(255,255,255,0.1))',
+                            border: '1px solid rgba(255,215,0,0.3)',
+                            transition: 'all 0.3s ease'
+                        }} className="cart-link">
                             <FaShoppingCart size={18} />
                             Cart
                             {cartCount > 0 && (
-                                <span style={styles.cartBadge}>{cartCount}</span>
+                                <span style={{
+                                    position: 'absolute',
+                                    top: '-5px',
+                                    right: '-5px',
+                                    background: 'linear-gradient(135deg, #ff6b6b, #ff4757)',
+                                    color: 'white',
+                                    borderRadius: '50%',
+                                    width: '20px',
+                                    height: '20px',
+                                    fontSize: '0.7rem',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    fontWeight: 'bold',
+                                    border: '2px solid white',
+                                    animation: 'pulse 2s infinite'
+                                }}>{cartCount}</span>
                             )}
                         </Link>
                         
                         {user ? (
                             <div 
-                                style={styles.userMenu}
+                                style={{
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '0.5rem',
+                                    position: 'relative',
+                                    cursor: 'pointer'
+                                }}
                                 className="user-menu"
                                 onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                             >
-                                <div style={styles.userName} className="user-name">
-                                    <div style={styles.userAvatar}>
+                                <div style={{
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '0.5rem',
+                                    cursor: 'pointer',
+                                    padding: '0.3rem 1rem 0.3rem 0.5rem',
+                                    borderRadius: '30px',
+                                    background: 'linear-gradient(135deg, rgba(255,255,255,0.2), rgba(255,255,255,0.1))',
+                                    border: '1px solid rgba(255,215,0,0.3)'
+                                }}>
+                                    <div style={{
+                                        width: '32px',
+                                        height: '32px',
+                                        borderRadius: '50%',
+                                        background: 'linear-gradient(135deg, #FFD700, #FFA500, #FF6B6B)',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        fontSize: '1rem',
+                                        fontWeight: 'bold',
+                                        color: '#1a1a2e'
+                                    }}>
                                         {user.name?.charAt(0).toUpperCase()}
                                     </div>
-                                    <span style={styles.userNameText}>{user.name}</span>
+                                    <span style={{
+                                        overflow: 'hidden',
+                                        textOverflow: 'ellipsis',
+                                        whiteSpace: 'nowrap',
+                                        maxWidth: '120px',
+                                        color: 'white',
+                                        fontWeight: '600',
+                                        fontSize: '0.9rem'
+                                    }}>{user.name}</span>
                                 </div>
                                 
-                                <div style={styles.dropdown}>
-                                    <div style={styles.dropdownHeader}>
-                                        <div style={styles.dropdownUserInfo}>
-                                            <div style={styles.dropdownAvatar}>
-                                                {user.name?.charAt(0).toUpperCase()}
-                                            </div>
-                                            <div style={styles.dropdownUserDetails}>
-                                                <div style={styles.dropdownUserName}>
-                                                    {user.name || 'User'}
+                                {isDropdownOpen && (
+                                    <div style={{
+                                        position: 'absolute',
+                                        top: 'calc(100% + 15px)',
+                                        right: 0,
+                                        background: 'rgba(26, 26, 46, 0.98)',
+                                        backdropFilter: 'blur(10px)',
+                                        borderRadius: '20px',
+                                        boxShadow: '0 20px 40px rgba(0,0,0,0.4)',
+                                        minWidth: '280px',
+                                        zIndex: 1000,
+                                        overflow: 'hidden',
+                                        border: '2px solid rgba(255,215,0,0.3)',
+                                        animation: 'slideDown 0.3s ease'
+                                    }}>
+                                        <div style={{
+                                            padding: '1.5rem',
+                                            background: 'linear-gradient(135deg, #667eea, #764ba2, #ff6b6b)',
+                                            borderBottom: '1px solid rgba(255,255,255,0.1)'
+                                        }}>
+                                            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                                                <div style={{
+                                                    width: '50px',
+                                                    height: '50px',
+                                                    borderRadius: '50%',
+                                                    background: 'linear-gradient(135deg, #FFD700, #FFA500)',
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    justifyContent: 'center',
+                                                    fontSize: '1.5rem',
+                                                    fontWeight: 'bold',
+                                                    color: '#1a1a2e',
+                                                    border: '2px solid white'
+                                                }}>
+                                                    {user.name?.charAt(0).toUpperCase()}
                                                 </div>
-                                                <div style={styles.dropdownUserEmail}>
-                                                    {user.email}
+                                                <div>
+                                                    <div style={{ fontWeight: 'bold', fontSize: '1.1rem', color: 'white' }}>
+                                                        {user.name || 'User'}
+                                                    </div>
+                                                    <div style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.8)' }}>
+                                                        {user.email}
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
 
-                                    {/* Role-based dashboard links */}
-                                    {user.role === 'seller' && (
-                                        <>
-                                            <Link to="/seller/dashboard" style={styles.dropdownItem} className="dropdown-item">
-                                                <FaTachometerAlt style={styles.dropdownIcon} className="dropdown-icon" />
-                                                Seller Dashboard
-                                                <span style={styles.roleBadge}>Seller</span>
-                                            </Link>
-                                            <Link to="/seller/products" style={styles.dropdownItem} className="dropdown-item">
-                                                <FaBox style={styles.dropdownIcon} className="dropdown-icon" />
-                                                My Products
-                                            </Link>
-                                            <Link to="/seller/orders" style={styles.dropdownItem} className="dropdown-item">
-                                                <FaClipboardList style={styles.dropdownIcon} className="dropdown-icon" />
-                                                Orders
-                                            </Link>
-                                        </>
-                                    )}
-                                    
-                                    {user.role === 'admin' && (
-                                        <>
-                                            <Link to="/admin/dashboard" style={styles.dropdownItem} className="dropdown-item">
-                                                <FaTachometerAlt style={styles.dropdownIcon} className="dropdown-icon" />
-                                                Admin Dashboard
-                                                <span style={styles.roleBadge}>Admin</span>
-                                            </Link>
-                                            <Link to="/admin/users" style={styles.dropdownItem} className="dropdown-item">
-                                                <FaUser style={styles.dropdownIcon} className="dropdown-icon" />
-                                                Users
-                                            </Link>
-                                            <Link to="/admin/products" style={styles.dropdownItem} className="dropdown-item">
-                                                <FaBox style={styles.dropdownIcon} className="dropdown-icon" />
-                                                Products
-                                            </Link>
-                                        </>
-                                    )}
-                                    
-                                    {user.role === 'customer' && (
-                                        <>
-                                            <Link to="/profile" style={styles.dropdownItem} className="dropdown-item">
-                                                <FaUser style={styles.dropdownIcon} className="dropdown-icon" />
-                                                My Profile
-                                            </Link>
-                                            <Link to="/orders" style={styles.dropdownItem} className="dropdown-item">
-                                                <FaClipboardList style={styles.dropdownIcon} className="dropdown-icon" />
-                                                My Orders
-                                            </Link>
-                                            <Link to="/wishlist" style={styles.dropdownItem} className="dropdown-item">
-                                                <FaHeart style={styles.dropdownIcon} className="dropdown-icon" />
-                                                Wishlist 
-                                                {wishlistCount > 0 && (
-                                                    <span style={styles.countBadge}>{wishlistCount}</span>
-                                                )}
-                                            </Link>
-                                        </>
-                                    )}
-                                    
-                                    <div style={styles.dropdownDivider}></div>
-                                    
-                                    <Link to="/notifications" style={styles.dropdownItem} className="dropdown-item">
-                                        <FaBell style={styles.dropdownIcon} className="dropdown-icon" />
-                                        Notifications
-                                    </Link>
-                                    
-                                    <Link to="/cart" style={styles.dropdownItem} className="dropdown-item">
-                                        <FaShoppingCart style={styles.dropdownIcon} className="dropdown-icon" />
-                                        Cart 
-                                        {cartCount > 0 && (
-                                            <span style={styles.countBadge}>{cartCount}</span>
+                                        {/* Role-based dashboard links */}
+                                        {user.role === 'seller' && (
+                                            <>
+                                                <Link to="/seller/dashboard" style={{
+                                                    padding: '0.9rem 1.2rem',
+                                                    color: 'white',
+                                                    textDecoration: 'none',
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    gap: '0.8rem',
+                                                    transition: 'all 0.3s',
+                                                    borderBottom: '1px solid rgba(255,255,255,0.05)'
+                                                }} className="dropdown-item">
+                                                    <FaTachometerAlt style={{ color: '#FFD700' }} />
+                                                    Seller Dashboard
+                                                    <span style={{
+                                                        fontSize: '0.7rem',
+                                                        padding: '2px 8px',
+                                                        borderRadius: '20px',
+                                                        background: 'linear-gradient(135deg, #FFD700, #FFA500)',
+                                                        color: '#1a1a2e',
+                                                        marginLeft: 'auto',
+                                                        fontWeight: 'bold'
+                                                    }}>Seller</span>
+                                                </Link>
+                                                <Link to="/seller/products" style={{
+                                                    padding: '0.9rem 1.2rem',
+                                                    color: 'white',
+                                                    textDecoration: 'none',
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    gap: '0.8rem',
+                                                    transition: 'all 0.3s',
+                                                    borderBottom: '1px solid rgba(255,255,255,0.05)'
+                                                }} className="dropdown-item">
+                                                    <FaBox style={{ color: '#FFD700' }} />
+                                                    My Products
+                                                </Link>
+                                                <Link to="/seller/orders" style={{
+                                                    padding: '0.9rem 1.2rem',
+                                                    color: 'white',
+                                                    textDecoration: 'none',
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    gap: '0.8rem',
+                                                    transition: 'all 0.3s',
+                                                    borderBottom: '1px solid rgba(255,255,255,0.05)'
+                                                }} className="dropdown-item">
+                                                    <FaClipboardList style={{ color: '#FFD700' }} />
+                                                    Orders
+                                                </Link>
+                                            </>
                                         )}
-                                    </Link>
-                                    
-                                    <button onClick={handleLogout} style={styles.dropdownItem} className="dropdown-item">
-                                        <FaSignOutAlt style={styles.dropdownIcon} className="dropdown-icon" />
-                                        Logout
-                                    </button>
-                                </div>
+                                        
+                                        {user.role === 'admin' && (
+                                            <>
+                                                <Link to="/admin/dashboard" style={{
+                                                    padding: '0.9rem 1.2rem',
+                                                    color: 'white',
+                                                    textDecoration: 'none',
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    gap: '0.8rem',
+                                                    transition: 'all 0.3s',
+                                                    borderBottom: '1px solid rgba(255,255,255,0.05)'
+                                                }} className="dropdown-item">
+                                                    <FaTachometerAlt style={{ color: '#FFD700' }} />
+                                                    Admin Dashboard
+                                                    <span style={{
+                                                        fontSize: '0.7rem',
+                                                        padding: '2px 8px',
+                                                        borderRadius: '20px',
+                                                        background: 'linear-gradient(135deg, #FFD700, #FFA500)',
+                                                        color: '#1a1a2e',
+                                                        marginLeft: 'auto',
+                                                        fontWeight: 'bold'
+                                                    }}>Admin</span>
+                                                </Link>
+                                                <Link to="/admin/users" style={{
+                                                    padding: '0.9rem 1.2rem',
+                                                    color: 'white',
+                                                    textDecoration: 'none',
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    gap: '0.8rem',
+                                                    transition: 'all 0.3s',
+                                                    borderBottom: '1px solid rgba(255,255,255,0.05)'
+                                                }} className="dropdown-item">
+                                                    <FaUser style={{ color: '#FFD700' }} />
+                                                    Users
+                                                </Link>
+                                                <Link to="/admin/products" style={{
+                                                    padding: '0.9rem 1.2rem',
+                                                    color: 'white',
+                                                    textDecoration: 'none',
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    gap: '0.8rem',
+                                                    transition: 'all 0.3s',
+                                                    borderBottom: '1px solid rgba(255,255,255,0.05)'
+                                                }} className="dropdown-item">
+                                                    <FaBox style={{ color: '#FFD700' }} />
+                                                    Products
+                                                </Link>
+                                            </>
+                                        )}
+                                        
+                                        {user.role === 'customer' && (
+                                            <>
+                                                <Link to="/profile" style={{
+                                                    padding: '0.9rem 1.2rem',
+                                                    color: 'white',
+                                                    textDecoration: 'none',
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    gap: '0.8rem',
+                                                    transition: 'all 0.3s',
+                                                    borderBottom: '1px solid rgba(255,255,255,0.05)'
+                                                }} className="dropdown-item">
+                                                    <FaUser style={{ color: '#FFD700' }} />
+                                                    My Profile
+                                                </Link>
+                                                <Link to="/orders" style={{
+                                                    padding: '0.9rem 1.2rem',
+                                                    color: 'white',
+                                                    textDecoration: 'none',
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    gap: '0.8rem',
+                                                    transition: 'all 0.3s',
+                                                    borderBottom: '1px solid rgba(255,255,255,0.05)'
+                                                }} className="dropdown-item">
+                                                    <FaClipboardList style={{ color: '#FFD700' }} />
+                                                    My Orders
+                                                </Link>
+                                                <Link to="/wishlist" style={{
+                                                    padding: '0.9rem 1.2rem',
+                                                    color: 'white',
+                                                    textDecoration: 'none',
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    gap: '0.8rem',
+                                                    transition: 'all 0.3s',
+                                                    borderBottom: '1px solid rgba(255,255,255,0.05)'
+                                                }} className="dropdown-item">
+                                                    <FaHeart style={{ color: '#FFD700' }} />
+                                                    Wishlist 
+                                                    {wishlistCount > 0 && (
+                                                        <span style={{
+                                                            fontSize: '0.7rem',
+                                                            padding: '2px 6px',
+                                                            borderRadius: '20px',
+                                                            background: 'linear-gradient(135deg, #ff6b6b, #ff4757)',
+                                                            color: 'white',
+                                                            marginLeft: 'auto'
+                                                        }}>{wishlistCount}</span>
+                                                    )}
+                                                </Link>
+                                            </>
+                                        )}
+                                        
+                                        <div style={{
+                                            height: '1px',
+                                            background: 'linear-gradient(90deg, transparent, rgba(255,215,0,0.3), transparent)',
+                                            margin: '0.5rem 0'
+                                        }}></div>
+                                        
+                                        <Link to="/notifications" style={{
+                                            padding: '0.9rem 1.2rem',
+                                            color: 'white',
+                                            textDecoration: 'none',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            gap: '0.8rem',
+                                            transition: 'all 0.3s',
+                                            borderBottom: '1px solid rgba(255,255,255,0.05)'
+                                        }} className="dropdown-item">
+                                            <FaBell style={{ color: '#FFD700' }} />
+                                            Notifications
+                                        </Link>
+                                        
+                                        <Link to="/cart" style={{
+                                            padding: '0.9rem 1.2rem',
+                                            color: 'white',
+                                            textDecoration: 'none',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            gap: '0.8rem',
+                                            transition: 'all 0.3s',
+                                            borderBottom: '1px solid rgba(255,255,255,0.05)'
+                                        }} className="dropdown-item">
+                                            <FaShoppingCart style={{ color: '#FFD700' }} />
+                                            Cart 
+                                            {cartCount > 0 && (
+                                                <span style={{
+                                                    fontSize: '0.7rem',
+                                                    padding: '2px 6px',
+                                                    borderRadius: '20px',
+                                                    background: 'linear-gradient(135deg, #ff6b6b, #ff4757)',
+                                                    color: 'white',
+                                                    marginLeft: 'auto'
+                                                }}>{cartCount}</span>
+                                            )}
+                                        </Link>
+                                        
+                                        <button onClick={handleLogout} style={{
+                                            padding: '0.9rem 1.2rem',
+                                            color: 'white',
+                                            textDecoration: 'none',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            gap: '0.8rem',
+                                            transition: 'all 0.3s',
+                                            border: 'none',
+                                            background: 'none',
+                                            width: '100%',
+                                            cursor: 'pointer',
+                                            fontSize: '0.95rem',
+                                            borderBottom: '1px solid rgba(255,255,255,0.05)'
+                                        }} className="dropdown-item">
+                                            <FaSignOutAlt style={{ color: '#FFD700' }} />
+                                            Logout
+                                        </button>
+                                    </div>
+                                )}
                             </div>
                         ) : (
-                            <div style={styles.authButtons}>
-                                <ShinyButton to="/login" icon={<FaUser />}>Login</ShinyButton>
-                                <ShinyButton to="/register" primary={true} icon={<FaGift />}>Register</ShinyButton>
+                            <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                                <Link to="/login" style={{
+                                    padding: '0.5rem 1.2rem',
+                                    borderRadius: '30px',
+                                    border: '1px solid rgba(255,255,255,0.3)',
+                                    background: 'rgba(255,255,255,0.15)',
+                                    color: 'white',
+                                    cursor: 'pointer',
+                                    fontSize: '0.95rem',
+                                    fontWeight: '600',
+                                    transition: 'all 0.3s ease',
+                                    textDecoration: 'none',
+                                    backdropFilter: 'blur(5px)',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '0.5rem'
+                                }} className="shiny-button">
+                                    <FaUser /> Login
+                                </Link>
+                                <Link to="/register" style={{
+                                    padding: '0.5rem 1.2rem',
+                                    borderRadius: '30px',
+                                    background: 'linear-gradient(135deg, #FFD700, #FFA500, #FF6B6B)',
+                                    border: 'none',
+                                    color: '#1a1a2e',
+                                    cursor: 'pointer',
+                                    fontSize: '0.95rem',
+                                    fontWeight: '600',
+                                    transition: 'all 0.3s ease',
+                                    textDecoration: 'none',
+                                    boxShadow: '0 5px 20px rgba(255,215,0,0.5)',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '0.5rem'
+                                }} className="shiny-button">
+                                    <FaGift /> Register
+                                </Link>
                             </div>
                         )}
                     </div>
                 </div>
 
-                {/* Mobile Navigation */}
-                <div style={styles.mobileNav}>
+                {/* Mobile Navigation - Visible on smaller screens */}
+                <div style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.5rem',
+                    '@media (min-width: 1024px)': {
+                        display: 'none'
+                    }
+                }}>
                     {/* Cart Icon for Mobile */}
-                    <Link to="/cart" style={{...styles.cartLink, padding: '0.5rem'}} className="cart-link">
+                    <Link to="/cart" style={{
+                        position: 'relative',
+                        color: 'white',
+                        textDecoration: 'none',
+                        padding: '0.5rem',
+                        borderRadius: '50%',
+                        background: 'rgba(255,255,255,0.15)',
+                        border: '1px solid rgba(255,215,0,0.3)',
+                        width: '40px',
+                        height: '40px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center'
+                    }} className="cart-link">
                         <FaShoppingCart size={18} />
                         {cartCount > 0 && (
-                            <span style={{...styles.cartBadge, top: '-5px', right: '-5px'}}>{cartCount}</span>
+                            <span style={{
+                                position: 'absolute',
+                                top: '-5px',
+                                right: '-5px',
+                                background: 'linear-gradient(135deg, #ff6b6b, #ff4757)',
+                                color: 'white',
+                                borderRadius: '50%',
+                                width: '20px',
+                                height: '20px',
+                                fontSize: '0.7rem',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                fontWeight: 'bold',
+                                border: '2px solid white'
+                            }}>{cartCount}</span>
                         )}
                     </Link>
 
                     {/* Dark Mode Toggle for Mobile */}
                     <button 
-                        style={{...styles.darkModeToggle, width: '40px', height: '40px'}}
+                        style={{
+                            background: 'rgba(255,255,255,0.15)',
+                            border: '1px solid rgba(255,215,0,0.3)',
+                            color: 'white',
+                            width: '40px',
+                            height: '40px',
+                            borderRadius: '50%',
+                            cursor: 'pointer',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            fontSize: '1.2rem'
+                        }}
                         onClick={toggleDarkMode}
                     >
                         {isDarkMode ? <FaSun /> : <FaMoon />}
@@ -1137,7 +860,21 @@ const Navbar = () => {
 
                     {/* Hamburger Menu Button */}
                     <button 
-                        style={styles.hamburgerButton}
+                        style={{
+                            background: 'rgba(255,255,255,0.15)',
+                            border: '1px solid rgba(255,215,0,0.3)',
+                            color: 'white',
+                            width: '45px',
+                            height: '45px',
+                            borderRadius: '50%',
+                            cursor: 'pointer',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            fontSize: '1.4rem',
+                            transition: 'all 0.3s ease',
+                            zIndex: 1002
+                        }}
                         onClick={toggleMobileMenu}
                     >
                         {isMobileMenuOpen ? <FaTimes /> : <FaBars />}
@@ -1145,166 +882,459 @@ const Navbar = () => {
                 </div>
 
                 {/* Mobile Menu */}
-                <div style={styles.mobileMenu}>
-                    <div style={styles.mobileMenuContent} className="mobile-menu-content">
-                        {/* Search Bar for Mobile */}
-                        <form onSubmit={handleSearch} style={{marginBottom: '2rem'}}>
-                            <div style={{display: 'flex', gap: '0.5rem'}}>
-                                <input
-                                    type="text"
-                                    placeholder="Search products..."
-                                    value={searchTerm}
-                                    onChange={(e) => setSearchTerm(e.target.value)}
-                                    style={{
-                                        flex: 1,
-                                        padding: '1rem',
-                                        border: '2px solid rgba(255,215,0,0.3)',
-                                        borderRadius: '12px',
-                                        fontSize: '1rem',
-                                        background: 'rgba(255,255,255,0.1)',
-                                        color: 'white',
-                                        outline: 'none'
-                                    }}
-                                />
-                                <button 
-                                    type="submit"
-                                    style={{
-                                        padding: '1rem',
-                                        background: 'linear-gradient(135deg, #667eea, #764ba2, #ff6b6b)',
-                                        color: 'white',
-                                        border: 'none',
-                                        borderRadius: '12px',
-                                        cursor: 'pointer'
-                                    }}
-                                >
-                                    <FaSearch />
-                                </button>
-                            </div>
-                        </form>
-
-                        {/* Navigation Links */}
-                        <div style={styles.mobileNavLinks}>
-                            <MobileNavLink to="/" icon={<FaHome />} onClick={() => setIsMobileMenuOpen(false)}>
-                                Home
-                            </MobileNavLink>
-                            <MobileNavLink to="/products" icon={<FaTag />} onClick={() => setIsMobileMenuOpen(false)}>
-                                Products
-                            </MobileNavLink>
-                        </div>
-
-                        {/* User Section */}
-                        {user ? (
-                            <div style={styles.mobileUserSection}>
-                                <div style={styles.mobileUserInfo}>
-                                    <div style={styles.mobileUserAvatar}>
-                                        {user.name?.charAt(0).toUpperCase()}
-                                    </div>
-                                    <div style={styles.mobileUserDetails}>
-                                        <div style={styles.mobileUserName}>{user.name}</div>
-                                        <div style={styles.mobileUserEmail}>{user.email}</div>
-                                        <div style={styles.mobileRoleBadge}>{user.role}</div>
-                                    </div>
-                                </div>
-
-                                <div style={{display: 'flex', flexDirection: 'column', gap: '0.5rem'}}>
-                                    {/* Role-based links */}
-                                    {user.role === 'seller' && (
-                                        <>
-                                            <Link to="/seller/dashboard" style={styles.mobileNavLink} onClick={() => setIsMobileMenuOpen(false)}>
-                                                <FaTachometerAlt style={styles.mobileNavIcon} />
-                                                Seller Dashboard
-                                            </Link>
-                                            <Link to="/seller/products" style={styles.mobileNavLink} onClick={() => setIsMobileMenuOpen(false)}>
-                                                <FaBox style={styles.mobileNavIcon} />
-                                                My Products
-                                            </Link>
-                                            <Link to="/seller/orders" style={styles.mobileNavLink} onClick={() => setIsMobileMenuOpen(false)}>
-                                                <FaClipboardList style={styles.mobileNavIcon} />
-                                                Orders
-                                            </Link>
-                                        </>
-                                    )}
-                                    
-                                    {user.role === 'admin' && (
-                                        <>
-                                            <Link to="/admin/dashboard" style={styles.mobileNavLink} onClick={() => setIsMobileMenuOpen(false)}>
-                                                <FaTachometerAlt style={styles.mobileNavIcon} />
-                                                Admin Dashboard
-                                            </Link>
-                                            <Link to="/admin/users" style={styles.mobileNavLink} onClick={() => setIsMobileMenuOpen(false)}>
-                                                <FaUser style={styles.mobileNavIcon} />
-                                                Users
-                                            </Link>
-                                            <Link to="/admin/products" style={styles.mobileNavLink} onClick={() => setIsMobileMenuOpen(false)}>
-                                                <FaBox style={styles.mobileNavIcon} />
-                                                Products
-                                            </Link>
-                                        </>
-                                    )}
-                                    
-                                    {user.role === 'customer' && (
-                                        <>
-                                            <Link to="/profile" style={styles.mobileNavLink} onClick={() => setIsMobileMenuOpen(false)}>
-                                                <FaUser style={styles.mobileNavIcon} />
-                                                My Profile
-                                            </Link>
-                                            <Link to="/orders" style={styles.mobileNavLink} onClick={() => setIsMobileMenuOpen(false)}>
-                                                <FaClipboardList style={styles.mobileNavIcon} />
-                                                My Orders
-                                            </Link>
-                                            <Link to="/wishlist" style={styles.mobileNavLink} onClick={() => setIsMobileMenuOpen(false)}>
-                                                <FaHeart style={styles.mobileNavIcon} />
-                                                Wishlist
-                                                {wishlistCount > 0 && (
-                                                    <span style={{...styles.countBadge, marginLeft: 'auto'}}>{wishlistCount}</span>
-                                                )}
-                                            </Link>
-                                        </>
-                                    )}
-
-                                    {/* Common links */}
-                                    <Link to="/notifications" style={styles.mobileNavLink} onClick={() => setIsMobileMenuOpen(false)}>
-                                        <FaBell style={styles.mobileNavIcon} />
-                                        Notifications
-                                    </Link>
-                                    
-                                    <Link to="/cart" style={styles.mobileNavLink} onClick={() => setIsMobileMenuOpen(false)}>
-                                        <FaShoppingCart style={styles.mobileNavIcon} />
-                                        Cart
-                                        {cartCount > 0 && (
-                                            <span style={{...styles.countBadge, marginLeft: 'auto'}}>{cartCount}</span>
-                                        )}
-                                    </Link>
-
+                {isMobileMenuOpen && (
+                    <div style={{
+                        position: 'fixed',
+                        top: 0,
+                        left: 0,
+                        right: 0,
+                        bottom: 0,
+                        background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)',
+                        zIndex: 9999,
+                        padding: '80px 20px 30px',
+                        overflowY: 'auto',
+                        animation: 'slideInRight 0.3s ease'
+                    }}>
+                        <div style={{
+                            display: 'flex',
+                            flexDirection: 'column',
+                            gap: '1rem',
+                            maxHeight: 'calc(100vh - 100px)',
+                            overflowY: 'auto',
+                            paddingBottom: '30px'
+                        }}>
+                            {/* Search Bar for Mobile */}
+                            <form onSubmit={handleSearch} style={{ marginBottom: '2rem' }}>
+                                <div style={{ display: 'flex', gap: '0.5rem' }}>
+                                    <input
+                                        type="text"
+                                        placeholder="Search products..."
+                                        value={searchTerm}
+                                        onChange={(e) => setSearchTerm(e.target.value)}
+                                        style={{
+                                            flex: 1,
+                                            padding: '1rem',
+                                            border: '2px solid rgba(255,215,0,0.3)',
+                                            borderRadius: '12px',
+                                            fontSize: '1rem',
+                                            background: 'rgba(255,255,255,0.1)',
+                                            color: 'white',
+                                            outline: 'none'
+                                        }}
+                                    />
                                     <button 
-                                        onClick={handleLogout}
-                                        style={{...styles.mobileNavLink, width: '100%', textAlign: 'left', cursor: 'pointer'}}
+                                        type="submit"
+                                        style={{
+                                            padding: '1rem',
+                                            background: 'linear-gradient(135deg, #667eea, #764ba2, #ff6b6b)',
+                                            color: 'white',
+                                            border: 'none',
+                                            borderRadius: '12px',
+                                            cursor: 'pointer'
+                                        }}
                                     >
-                                        <FaSignOutAlt style={styles.mobileNavIcon} />
-                                        Logout
+                                        <FaSearch />
                                     </button>
                                 </div>
-                            </div>
-                        ) : (
-                            <div style={styles.mobileAuthButtons}>
-                                <Link to="/login" style={styles.mobileButton} onClick={() => setIsMobileMenuOpen(false)}>
-                                    <FaUser /> Login
-                                </Link>
-                                <Link to="/register" style={{...styles.mobileButton, ...styles.mobileButtonPrimary}} onClick={() => setIsMobileMenuOpen(false)}>
-                                    <FaGift /> Register
-                                </Link>
-                            </div>
-                        )}
+                            </form>
 
-                        {/* Notification Bell for Mobile */}
-                        {user && (
-                            <div style={{marginTop: '1rem'}}>
-                                <NotificationBell />
+                            {/* Navigation Links */}
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginBottom: '2rem' }}>
+                                <Link 
+                                    to="/" 
+                                    style={{
+                                        color: 'white',
+                                        textDecoration: 'none',
+                                        fontSize: '1.1rem',
+                                        fontWeight: '600',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: '1rem',
+                                        padding: '1rem 1.5rem',
+                                        borderRadius: '12px',
+                                        background: location.pathname === '/' ? 'rgba(255,215,0,0.2)' : 'rgba(255,255,255,0.05)',
+                                        border: '1px solid rgba(255,255,255,0.1)',
+                                        borderLeft: location.pathname === '/' ? '4px solid #FFD700' : '4px solid transparent'
+                                    }}
+                                    onClick={() => setIsMobileMenuOpen(false)}
+                                >
+                                    <FaHome style={{ color: '#FFD700', fontSize: '1.2rem' }} />
+                                    <span style={{ flex: 1 }}>Home</span>
+                                </Link>
+                                <Link 
+                                    to="/products" 
+                                    style={{
+                                        color: 'white',
+                                        textDecoration: 'none',
+                                        fontSize: '1.1rem',
+                                        fontWeight: '600',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: '1rem',
+                                        padding: '1rem 1.5rem',
+                                        borderRadius: '12px',
+                                        background: location.pathname === '/products' ? 'rgba(255,215,0,0.2)' : 'rgba(255,255,255,0.05)',
+                                        border: '1px solid rgba(255,255,255,0.1)',
+                                        borderLeft: location.pathname === '/products' ? '4px solid #FFD700' : '4px solid transparent'
+                                    }}
+                                    onClick={() => setIsMobileMenuOpen(false)}
+                                >
+                                    <FaTag style={{ color: '#FFD700', fontSize: '1.2rem' }} />
+                                    <span style={{ flex: 1 }}>Products</span>
+                                </Link>
                             </div>
-                        )}
+
+                            {/* User Section */}
+                            {user ? (
+                                <div style={{
+                                    background: 'rgba(255,255,255,0.05)',
+                                    borderRadius: '20px',
+                                    padding: '1.5rem',
+                                    marginTop: '1rem'
+                                }}>
+                                    <div style={{
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: '1rem',
+                                        marginBottom: '1.5rem',
+                                        paddingBottom: '1.5rem',
+                                        borderBottom: '1px solid rgba(255,215,0,0.2)'
+                                    }}>
+                                        <div style={{
+                                            width: '60px',
+                                            height: '60px',
+                                            borderRadius: '50%',
+                                            background: 'linear-gradient(135deg, #FFD700, #FFA500, #FF6B6B)',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            fontSize: '1.8rem',
+                                            fontWeight: 'bold',
+                                            color: '#1a1a2e'
+                                        }}>
+                                            {user.name?.charAt(0).toUpperCase()}
+                                        </div>
+                                        <div style={{ flex: 1 }}>
+                                            <div style={{ fontSize: '1.2rem', fontWeight: 'bold', color: 'white', marginBottom: '4px' }}>
+                                                {user.name}
+                                            </div>
+                                            <div style={{ fontSize: '0.9rem', color: 'rgba(255,255,255,0.7)' }}>
+                                                {user.email}
+                                            </div>
+                                            <div style={{
+                                                display: 'inline-block',
+                                                fontSize: '0.7rem',
+                                                padding: '2px 8px',
+                                                borderRadius: '20px',
+                                                background: 'linear-gradient(135deg, #FFD700, #FFA500)',
+                                                color: '#1a1a2e',
+                                                fontWeight: 'bold',
+                                                textTransform: 'uppercase',
+                                                marginTop: '4px'
+                                            }}>
+                                                {user.role}
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                                        {/* Role-based links */}
+                                        {user.role === 'seller' && (
+                                            <>
+                                                <Link to="/seller/dashboard" style={{
+                                                    color: 'white',
+                                                    textDecoration: 'none',
+                                                    fontSize: '1.1rem',
+                                                    fontWeight: '600',
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    gap: '1rem',
+                                                    padding: '1rem 1.5rem',
+                                                    borderRadius: '12px',
+                                                    background: 'rgba(255,255,255,0.05)',
+                                                    border: '1px solid rgba(255,255,255,0.1)'
+                                                }} onClick={() => setIsMobileMenuOpen(false)}>
+                                                    <FaTachometerAlt style={{ color: '#FFD700' }} />
+                                                    Seller Dashboard
+                                                </Link>
+                                                <Link to="/seller/products" style={{
+                                                    color: 'white',
+                                                    textDecoration: 'none',
+                                                    fontSize: '1.1rem',
+                                                    fontWeight: '600',
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    gap: '1rem',
+                                                    padding: '1rem 1.5rem',
+                                                    borderRadius: '12px',
+                                                    background: 'rgba(255,255,255,0.05)',
+                                                    border: '1px solid rgba(255,255,255,0.1)'
+                                                }} onClick={() => setIsMobileMenuOpen(false)}>
+                                                    <FaBox style={{ color: '#FFD700' }} />
+                                                    My Products
+                                                </Link>
+                                                <Link to="/seller/orders" style={{
+                                                    color: 'white',
+                                                    textDecoration: 'none',
+                                                    fontSize: '1.1rem',
+                                                    fontWeight: '600',
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    gap: '1rem',
+                                                    padding: '1rem 1.5rem',
+                                                    borderRadius: '12px',
+                                                    background: 'rgba(255,255,255,0.05)',
+                                                    border: '1px solid rgba(255,255,255,0.1)'
+                                                }} onClick={() => setIsMobileMenuOpen(false)}>
+                                                    <FaClipboardList style={{ color: '#FFD700' }} />
+                                                    Orders
+                                                </Link>
+                                            </>
+                                        )}
+                                        
+                                        {user.role === 'admin' && (
+                                            <>
+                                                <Link to="/admin/dashboard" style={{
+                                                    color: 'white',
+                                                    textDecoration: 'none',
+                                                    fontSize: '1.1rem',
+                                                    fontWeight: '600',
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    gap: '1rem',
+                                                    padding: '1rem 1.5rem',
+                                                    borderRadius: '12px',
+                                                    background: 'rgba(255,255,255,0.05)',
+                                                    border: '1px solid rgba(255,255,255,0.1)'
+                                                }} onClick={() => setIsMobileMenuOpen(false)}>
+                                                    <FaTachometerAlt style={{ color: '#FFD700' }} />
+                                                    Admin Dashboard
+                                                </Link>
+                                                <Link to="/admin/users" style={{
+                                                    color: 'white',
+                                                    textDecoration: 'none',
+                                                    fontSize: '1.1rem',
+                                                    fontWeight: '600',
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    gap: '1rem',
+                                                    padding: '1rem 1.5rem',
+                                                    borderRadius: '12px',
+                                                    background: 'rgba(255,255,255,0.05)',
+                                                    border: '1px solid rgba(255,255,255,0.1)'
+                                                }} onClick={() => setIsMobileMenuOpen(false)}>
+                                                    <FaUser style={{ color: '#FFD700' }} />
+                                                    Users
+                                                </Link>
+                                                <Link to="/admin/products" style={{
+                                                    color: 'white',
+                                                    textDecoration: 'none',
+                                                    fontSize: '1.1rem',
+                                                    fontWeight: '600',
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    gap: '1rem',
+                                                    padding: '1rem 1.5rem',
+                                                    borderRadius: '12px',
+                                                    background: 'rgba(255,255,255,0.05)',
+                                                    border: '1px solid rgba(255,255,255,0.1)'
+                                                }} onClick={() => setIsMobileMenuOpen(false)}>
+                                                    <FaBox style={{ color: '#FFD700' }} />
+                                                    Products
+                                                </Link>
+                                            </>
+                                        )}
+                                        
+                                        {user.role === 'customer' && (
+                                            <>
+                                                <Link to="/profile" style={{
+                                                    color: 'white',
+                                                    textDecoration: 'none',
+                                                    fontSize: '1.1rem',
+                                                    fontWeight: '600',
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    gap: '1rem',
+                                                    padding: '1rem 1.5rem',
+                                                    borderRadius: '12px',
+                                                    background: 'rgba(255,255,255,0.05)',
+                                                    border: '1px solid rgba(255,255,255,0.1)'
+                                                }} onClick={() => setIsMobileMenuOpen(false)}>
+                                                    <FaUser style={{ color: '#FFD700' }} />
+                                                    My Profile
+                                                </Link>
+                                                <Link to="/orders" style={{
+                                                    color: 'white',
+                                                    textDecoration: 'none',
+                                                    fontSize: '1.1rem',
+                                                    fontWeight: '600',
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    gap: '1rem',
+                                                    padding: '1rem 1.5rem',
+                                                    borderRadius: '12px',
+                                                    background: 'rgba(255,255,255,0.05)',
+                                                    border: '1px solid rgba(255,255,255,0.1)'
+                                                }} onClick={() => setIsMobileMenuOpen(false)}>
+                                                    <FaClipboardList style={{ color: '#FFD700' }} />
+                                                    My Orders
+                                                </Link>
+                                                <Link to="/wishlist" style={{
+                                                    color: 'white',
+                                                    textDecoration: 'none',
+                                                    fontSize: '1.1rem',
+                                                    fontWeight: '600',
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    gap: '1rem',
+                                                    padding: '1rem 1.5rem',
+                                                    borderRadius: '12px',
+                                                    background: 'rgba(255,255,255,0.05)',
+                                                    border: '1px solid rgba(255,255,255,0.1)'
+                                                }} onClick={() => setIsMobileMenuOpen(false)}>
+                                                    <FaHeart style={{ color: '#FFD700' }} />
+                                                    Wishlist
+                                                    {wishlistCount > 0 && (
+                                                        <span style={{
+                                                            fontSize: '0.7rem',
+                                                            padding: '2px 6px',
+                                                            borderRadius: '20px',
+                                                            background: 'linear-gradient(135deg, #ff6b6b, #ff4757)',
+                                                            color: 'white',
+                                                            marginLeft: 'auto'
+                                                        }}>{wishlistCount}</span>
+                                                    )}
+                                                </Link>
+                                            </>
+                                        )}
+
+                                        {/* Common links */}
+                                        <Link to="/notifications" style={{
+                                            color: 'white',
+                                            textDecoration: 'none',
+                                            fontSize: '1.1rem',
+                                            fontWeight: '600',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            gap: '1rem',
+                                            padding: '1rem 1.5rem',
+                                            borderRadius: '12px',
+                                            background: 'rgba(255,255,255,0.05)',
+                                            border: '1px solid rgba(255,255,255,0.1)'
+                                        }} onClick={() => setIsMobileMenuOpen(false)}>
+                                            <FaBell style={{ color: '#FFD700' }} />
+                                            Notifications
+                                        </Link>
+                                        
+                                        <Link to="/cart" style={{
+                                            color: 'white',
+                                            textDecoration: 'none',
+                                            fontSize: '1.1rem',
+                                            fontWeight: '600',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            gap: '1rem',
+                                            padding: '1rem 1.5rem',
+                                            borderRadius: '12px',
+                                            background: 'rgba(255,255,255,0.05)',
+                                            border: '1px solid rgba(255,255,255,0.1)'
+                                        }} onClick={() => setIsMobileMenuOpen(false)}>
+                                            <FaShoppingCart style={{ color: '#FFD700' }} />
+                                            Cart
+                                            {cartCount > 0 && (
+                                                <span style={{
+                                                    fontSize: '0.7rem',
+                                                    padding: '2px 6px',
+                                                    borderRadius: '20px',
+                                                    background: 'linear-gradient(135deg, #ff6b6b, #ff4757)',
+                                                    color: 'white',
+                                                    marginLeft: 'auto'
+                                                }}>{cartCount}</span>
+                                            )}
+                                        </Link>
+
+                                        <button 
+                                            onClick={handleLogout}
+                                            style={{
+                                                color: 'white',
+                                                textDecoration: 'none',
+                                                fontSize: '1.1rem',
+                                                fontWeight: '600',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                gap: '1rem',
+                                                padding: '1rem 1.5rem',
+                                                borderRadius: '12px',
+                                                background: 'rgba(255,255,255,0.05)',
+                                                border: '1px solid rgba(255,255,255,0.1)',
+                                                width: '100%',
+                                                textAlign: 'left',
+                                                cursor: 'pointer'
+                                            }}
+                                        >
+                                            <FaSignOutAlt style={{ color: '#FFD700' }} />
+                                            Logout
+                                        </button>
+                                    </div>
+                                </div>
+                            ) : (
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
+                                    <Link to="/login" style={{
+                                        padding: '1rem',
+                                        borderRadius: '12px',
+                                        border: '1px solid rgba(255,255,255,0.2)',
+                                        background: 'rgba(255,255,255,0.1)',
+                                        color: 'white',
+                                        textDecoration: 'none',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        gap: '0.5rem',
+                                        fontSize: '1rem',
+                                        fontWeight: '600'
+                                    }} onClick={() => setIsMobileMenuOpen(false)}>
+                                        <FaUser /> Login
+                                    </Link>
+                                    <Link to="/register" style={{
+                                        padding: '1rem',
+                                        borderRadius: '12px',
+                                        background: 'linear-gradient(135deg, #FFD700, #FFA500)',
+                                        border: 'none',
+                                        color: '#1a1a2e',
+                                        textDecoration: 'none',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        gap: '0.5rem',
+                                        fontSize: '1rem',
+                                        fontWeight: '600'
+                                    }} onClick={() => setIsMobileMenuOpen(false)}>
+                                        <FaGift /> Register
+                                    </Link>
+                                </div>
+                            )}
+
+                            {/* Notification Bell for Mobile */}
+                            {user && (
+                                <div style={{ marginTop: '1rem' }}>
+                                    <NotificationBell />
+                                </div>
+                            )}
+                        </div>
                     </div>
-                </div>
+                )}
             </div>
+
+            {/* Add CSS media query for responsive behavior */}
+            <style>
+                {`
+                    @media (min-width: 1024px) {
+                        .desktop-nav {
+                            display: flex !important;
+                        }
+                    }
+                `}
+            </style>
         </nav>
     );
 };
