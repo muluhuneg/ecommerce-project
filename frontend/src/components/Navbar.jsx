@@ -53,23 +53,23 @@ const Navbar = () => {
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
+    // Close dropdown when clicking outside
+    useEffect(() => {
+        const handleClickOutside = (e) => {
+            if (!e.target.closest('.user-menu') && !e.target.closest('.mobile-menu')) {
+                setIsDropdownOpen(false);
+                setIsMobileMenuOpen(false);
+            }
+        };
+        document.addEventListener('click', handleClickOutside);
+        return () => document.removeEventListener('click', handleClickOutside);
+    }, []);
+
     // Close mobile menu when route changes
     useEffect(() => {
         setIsMobileMenuOpen(false);
         setIsDropdownOpen(false);
     }, [location]);
-
-    // Prevent body scroll when mobile menu is open
-    useEffect(() => {
-        if (isMobileMenuOpen) {
-            document.body.style.overflow = 'hidden';
-        } else {
-            document.body.style.overflow = 'unset';
-        }
-        return () => {
-            document.body.style.overflow = 'unset';
-        };
-    }, [isMobileMenuOpen]);
 
     const handleLogout = () => {
         logout();
@@ -136,20 +136,21 @@ const Navbar = () => {
         );
     };
 
-    // Mobile NavLink
-    const MobileNavLink = ({ to, icon, children }) => {
+    // Mobile Menu Item
+    const MobileMenuItem = ({ to, icon, children, onClick }) => {
         const isActive = location.pathname === to;
         return (
             <Link 
                 to={to} 
                 style={{
-                    ...styles.mobileNavLink,
-                    background: isActive ? 'rgba(255,215,0,0.2)' : 'transparent',
+                    ...styles.mobileMenuItem,
+                    background: isActive ? 'rgba(255,215,0,0.15)' : 'transparent',
+                    borderLeft: isActive ? '4px solid #FFD700' : '4px solid transparent'
                 }}
-                onClick={() => setIsMobileMenuOpen(false)}
+                onClick={onClick}
             >
-                <span style={styles.mobileNavIcon}>{icon}</span>
-                <span style={styles.mobileNavText}>{children}</span>
+                <span style={styles.mobileMenuIcon}>{icon}</span>
+                <span style={styles.mobileMenuText}>{children}</span>
             </Link>
         );
     };
@@ -182,6 +183,9 @@ const Navbar = () => {
             transition: 'all 0.4s ease',
             borderBottom: '2px solid rgba(255,255,255,0.2)',
             backdropFilter: 'blur(10px)',
+            '@media (max-width: 768px)': {
+                padding: isScrolled ? '0.6rem 1rem' : '1rem 1rem',
+            }
         },
         container: {
             maxWidth: '1400px',
@@ -202,6 +206,9 @@ const Navbar = () => {
             display: 'flex',
             alignItems: 'center',
             gap: '10px',
+            '@media (max-width: 768px)': {
+                gap: '5px',
+            }
         },
         logoIconWrapper: {
             position: 'relative',
@@ -218,12 +225,19 @@ const Navbar = () => {
             justifyContent: 'center',
             transform: 'rotate(5deg)',
             boxShadow: '0 10px 20px rgba(255,215,0,0.4)',
-            overflow: 'hidden'
+            overflow: 'hidden',
+            '@media (max-width: 768px)': {
+                width: '35px',
+                height: '35px',
+            }
         },
         logoLightning: {
             color: '#1a1a2e',
             fontSize: '1.4rem',
-            animation: 'pulse 2s ease-in-out infinite'
+            animation: 'pulse 2s ease-in-out infinite',
+            '@media (max-width: 768px)': {
+                fontSize: '1.2rem',
+            }
         },
         logoStar1: {
             position: 'absolute',
@@ -253,7 +267,10 @@ const Navbar = () => {
             WebkitBackgroundClip: 'text',
             WebkitTextFillColor: 'transparent',
             letterSpacing: '2px',
-            lineHeight: '1'
+            lineHeight: '1',
+            '@media (max-width: 768px)': {
+                fontSize: '1.2rem',
+            }
         },
         logoBadge: {
             background: 'linear-gradient(135deg, #FFD700, #FF6B6B)',
@@ -265,7 +282,11 @@ const Navbar = () => {
             marginTop: '2px',
             textTransform: 'uppercase',
             boxShadow: '0 2px 10px rgba(255,215,0,0.5)',
-            animation: 'pulse 2s infinite'
+            animation: 'pulse 2s infinite',
+            '@media (max-width: 768px)': {
+                fontSize: '0.5rem',
+                padding: '1px 4px',
+            }
         },
         // Desktop Navigation
         desktopNav: {
@@ -274,7 +295,7 @@ const Navbar = () => {
             gap: '1.5rem',
             flex: 1,
             justifyContent: 'flex-end',
-            '@media (max-width: 1024px)': {
+            '@media (max-width: 768px)': {
                 display: 'none'
             }
         },
@@ -294,7 +315,7 @@ const Navbar = () => {
             display: 'none',
             alignItems: 'center',
             gap: '0.5rem',
-            '@media (max-width: 1024px)': {
+            '@media (max-width: 768px)': {
                 display: 'flex'
             }
         },
@@ -302,62 +323,80 @@ const Navbar = () => {
             background: 'rgba(255,255,255,0.15)',
             border: '1px solid rgba(255,215,0,0.3)',
             color: 'white',
-            width: '45px',
-            height: '45px',
+            width: '40px',
+            height: '40px',
             borderRadius: '50%',
             cursor: 'pointer',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            fontSize: '1.4rem',
+            fontSize: '1.2rem',
             transition: 'all 0.3s ease',
             zIndex: 1002
         },
-        // Mobile Menu Overlay - FIXED: Appears OVER content
-        mobileMenuOverlay: {
-            position: 'fixed',
-            top: 0,
+        // Mobile Dropdown Menu - FIXED: Appears as dropdown under navbar
+        mobileDropdown: {
+            position: 'absolute',
+            top: '100%',
             left: 0,
             right: 0,
-            bottom: 0,
-            backgroundColor: 'rgba(0, 0, 0, 0.5)',
-            zIndex: 9998,
-            display: isMobileMenuOpen ? 'block' : 'none',
-            animation: 'fadeIn 0.3s ease',
-            backdropFilter: 'blur(5px)',
-        },
-        // Mobile Menu - FIXED: Appears OVER content
-        mobileMenu: {
-            position: 'fixed',
-            top: 0,
-            right: 0,
-            width: '85%',
-            maxWidth: '400px',
-            height: '100vh',
             background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)',
             zIndex: 9999,
-            padding: '80px 20px 30px',
-            overflowY: 'auto',
-            WebkitOverflowScrolling: 'touch',
-            transform: isMobileMenuOpen ? 'translateX(0)' : 'translateX(100%)',
-            transition: 'transform 0.3s ease-in-out',
-            boxShadow: '-5px 0 20px rgba(0,0,0,0.3)',
+            padding: '1rem',
+            boxShadow: '0 10px 30px rgba(0,0,0,0.3)',
+            borderBottomLeftRadius: '12px',
+            borderBottomRightRadius: '12px',
+            borderTop: '2px solid rgba(255,215,0,0.3)',
+            animation: 'slideDown 0.3s ease',
+            maxHeight: 'calc(100vh - 80px)',
+            overflowY: 'auto'
         },
-        mobileMenuHeader: {
-            position: 'absolute',
-            top: '20px',
-            left: '20px',
-            right: '20px',
+        mobileDropdownContent: {
             display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
+            flexDirection: 'column',
+            gap: '0.5rem'
+        },
+        mobileSection: {
+            marginBottom: '1rem',
             borderBottom: '1px solid rgba(255,215,0,0.2)',
-            paddingBottom: '15px'
+            paddingBottom: '1rem'
+        },
+        mobileSectionTitle: {
+            color: '#FFD700',
+            fontSize: '0.8rem',
+            fontWeight: '600',
+            marginBottom: '0.5rem',
+            textTransform: 'uppercase',
+            letterSpacing: '1px'
+        },
+        mobileMenuItem: {
+            color: 'white',
+            textDecoration: 'none',
+            fontSize: '1rem',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.8rem',
+            padding: '0.8rem 1rem',
+            borderRadius: '8px',
+            transition: 'all 0.3s ease',
+            marginBottom: '2px'
+        },
+        mobileMenuIcon: {
+            fontSize: '1rem',
+            color: '#FFD700',
+            width: '20px'
+        },
+        mobileMenuText: {
+            flex: 1
         },
         mobileUserInfo: {
             display: 'flex',
             alignItems: 'center',
-            gap: '10px'
+            gap: '1rem',
+            padding: '1rem',
+            background: 'rgba(255,255,255,0.05)',
+            borderRadius: '8px',
+            marginBottom: '1rem'
         },
         mobileUserAvatar: {
             width: '40px',
@@ -384,74 +423,39 @@ const Navbar = () => {
             color: 'rgba(255,255,255,0.7)',
             fontSize: '0.8rem'
         },
-        closeButton: {
-            background: 'rgba(255,255,255,0.1)',
-            border: 'none',
-            color: 'white',
-            width: '35px',
-            height: '35px',
-            borderRadius: '50%',
+        mobileSearch: {
             display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            cursor: 'pointer',
-            fontSize: '1.2rem'
-        },
-        mobileMenuContent: {
-            marginTop: '20px'
-        },
-        mobileNavLinks: {
-            display: 'flex',
-            flexDirection: 'column',
             gap: '0.5rem',
-            marginBottom: '2rem'
+            marginBottom: '1rem',
+            padding: '0 0.5rem'
         },
-        mobileNavLink: {
-            color: 'white',
-            textDecoration: 'none',
-            fontSize: '1.1rem',
-            fontWeight: '500',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '1rem',
-            padding: '1rem 1.5rem',
-            borderRadius: '12px',
-            transition: 'all 0.3s ease',
-            background: 'rgba(255,255,255,0.05)',
-            border: '1px solid rgba(255,255,255,0.1)'
-        },
-        mobileNavIcon: {
-            fontSize: '1.2rem',
-            color: '#FFD700',
-            width: '24px'
-        },
-        mobileNavText: {
-            flex: 1
-        },
-        mobileSection: {
-            background: 'rgba(255,255,255,0.05)',
-            borderRadius: '12px',
-            padding: '1rem',
-            marginTop: '1rem'
-        },
-        mobileSectionTitle: {
-            color: '#FFD700',
+        mobileSearchInput: {
+            flex: 1,
+            padding: '0.8rem',
+            border: '1px solid rgba(255,215,0,0.3)',
+            borderRadius: '8px',
             fontSize: '0.9rem',
-            fontWeight: '600',
-            marginBottom: '0.5rem',
-            paddingLeft: '0.5rem',
-            textTransform: 'uppercase',
-            letterSpacing: '1px'
+            background: 'rgba(255,255,255,0.1)',
+            color: 'white',
+            outline: 'none'
+        },
+        mobileSearchButton: {
+            padding: '0.8rem 1rem',
+            background: 'linear-gradient(135deg, #667eea, #764ba2, #ff6b6b)',
+            color: 'white',
+            border: 'none',
+            borderRadius: '8px',
+            cursor: 'pointer'
         },
         mobileAuthButtons: {
             display: 'flex',
             flexDirection: 'column',
-            gap: '0.8rem',
-            marginTop: '1rem'
+            gap: '0.5rem',
+            padding: '0.5rem'
         },
         mobileButton: {
-            padding: '1rem',
-            borderRadius: '12px',
+            padding: '0.8rem',
+            borderRadius: '8px',
             border: '1px solid rgba(255,255,255,0.2)',
             background: 'rgba(255,255,255,0.1)',
             color: 'white',
@@ -460,7 +464,7 @@ const Navbar = () => {
             alignItems: 'center',
             justifyContent: 'center',
             gap: '0.5rem',
-            fontSize: '1rem',
+            fontSize: '0.95rem',
             fontWeight: '600'
         },
         mobileButtonPrimary: {
@@ -518,57 +522,6 @@ const Navbar = () => {
             fontSize: '0.95rem',
             fontWeight: '600',
             whiteSpace: 'nowrap'
-        },
-        searchContainer: {
-            position: 'absolute',
-            top: 'calc(100% + 15px)',
-            right: '60px',
-            background: 'rgba(26, 26, 46, 0.98)',
-            backdropFilter: 'blur(10px)',
-            borderRadius: '20px',
-            padding: '20px',
-            boxShadow: '0 20px 40px rgba(0,0,0,0.4)',
-            display: isSearchOpen ? 'block' : 'none',
-            zIndex: 1001,
-            width: '300px',
-            border: '2px solid rgba(255,215,0,0.3)',
-        },
-        searchForm: {
-            display: 'flex',
-            gap: '10px'
-        },
-        searchInput: {
-            flex: 1,
-            padding: '12px',
-            border: '2px solid rgba(255,215,0,0.3)',
-            borderRadius: '12px',
-            fontSize: '1rem',
-            background: 'rgba(255,255,255,0.1)',
-            color: 'white',
-            outline: 'none',
-        },
-        searchSubmit: {
-            padding: '12px 15px',
-            background: 'linear-gradient(135deg, #667eea, #764ba2, #ff6b6b)',
-            color: 'white',
-            border: 'none',
-            borderRadius: '12px',
-            cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            fontSize: '1rem'
-        },
-        closeSearch: {
-            padding: '12px',
-            background: 'rgba(255,255,255,0.1)',
-            color: 'white',
-            border: '2px solid rgba(255,255,255,0.2)',
-            borderRadius: '12px',
-            cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center'
         },
         // Cart link
         cartLink: {
@@ -788,18 +741,19 @@ const Navbar = () => {
     useEffect(() => {
         const style = document.createElement('style');
         style.textContent = `
-            @keyframes fadeIn {
-                from { opacity: 0; }
-                to { opacity: 1; }
+            @keyframes slideDown {
+                from {
+                    opacity: 0;
+                    transform: translateY(-10px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
             }
             
             @keyframes slideIn {
                 from { transform: translateX(-100%); }
-                to { transform: translateX(0); }
-            }
-            
-            @keyframes slideInRight {
-                from { transform: translateX(100%); }
                 to { transform: translateX(0); }
             }
             
@@ -840,7 +794,7 @@ const Navbar = () => {
                 transform: translateY(-2px);
             }
             
-            .mobile-nav-link:hover {
+            .mobile-menu-item:hover {
                 background: rgba(255,215,0,0.15) !important;
                 transform: translateX(5px);
             }
@@ -870,20 +824,55 @@ const Navbar = () => {
                         </button>
 
                         {isSearchOpen && (
-                            <div style={styles.searchContainer}>
-                                <form onSubmit={handleSearch} style={styles.searchForm}>
+                            <div style={{
+                                position: 'absolute',
+                                top: 'calc(100% + 15px)',
+                                right: '60px',
+                                background: 'rgba(26, 26, 46, 0.98)',
+                                backdropFilter: 'blur(10px)',
+                                borderRadius: '20px',
+                                padding: '20px',
+                                boxShadow: '0 20px 40px rgba(0,0,0,0.4)',
+                                zIndex: 1001,
+                                width: '300px',
+                                border: '2px solid rgba(255,215,0,0.3)',
+                            }}>
+                                <form onSubmit={handleSearch} style={{ display: 'flex', gap: '10px' }}>
                                     <input
                                         type="text"
                                         placeholder="Search products..."
                                         value={searchTerm}
                                         onChange={(e) => setSearchTerm(e.target.value)}
-                                        style={styles.searchInput}
+                                        style={{
+                                            flex: 1,
+                                            padding: '12px',
+                                            border: '2px solid rgba(255,215,0,0.3)',
+                                            borderRadius: '12px',
+                                            fontSize: '1rem',
+                                            background: 'rgba(255,255,255,0.1)',
+                                            color: 'white',
+                                            outline: 'none',
+                                        }}
                                         autoFocus
                                     />
-                                    <button type="submit" style={styles.searchSubmit}>
+                                    <button type="submit" style={{
+                                        padding: '12px 15px',
+                                        background: 'linear-gradient(135deg, #667eea, #764ba2, #ff6b6b)',
+                                        color: 'white',
+                                        border: 'none',
+                                        borderRadius: '12px',
+                                        cursor: 'pointer',
+                                    }}>
                                         <FaSearch />
                                     </button>
-                                    <button type="button" style={styles.closeSearch} onClick={() => setIsSearchOpen(false)}>
+                                    <button type="button" style={{
+                                        padding: '12px',
+                                        background: 'rgba(255,255,255,0.1)',
+                                        color: 'white',
+                                        border: '2px solid rgba(255,255,255,0.2)',
+                                        borderRadius: '12px',
+                                        cursor: 'pointer',
+                                    }} onClick={() => setIsSearchOpen(false)}>
                                         <FaTimes />
                                     </button>
                                 </form>
@@ -1028,17 +1017,17 @@ const Navbar = () => {
                 {/* Mobile Navigation */}
                 <div style={styles.mobileNav}>
                     <Link to="/cart" style={{...styles.cartLink, padding: '0.5rem'}}>
-                        <FaShoppingCart size={18} />
+                        <FaShoppingCart size={16} />
                         {cartCount > 0 && (
-                            <span style={{...styles.cartBadge, top: '-5px', right: '-5px'}}>{cartCount}</span>
+                            <span style={{...styles.cartBadge, width: '18px', height: '18px', fontSize: '0.6rem'}}>{cartCount}</span>
                         )}
                     </Link>
 
                     <button 
-                        style={{...styles.darkModeToggle, width: '40px', height: '40px'}}
+                        style={{...styles.darkModeToggle, width: '36px', height: '36px'}}
                         onClick={toggleDarkMode}
                     >
-                        {isDarkMode ? <FaSun /> : <FaMoon />}
+                        {isDarkMode ? <FaSun size={14} /> : <FaMoon size={14} />}
                     </button>
 
                     <button 
@@ -1049,148 +1038,131 @@ const Navbar = () => {
                     </button>
                 </div>
 
-                {/* Mobile Menu Overlay - Appears OVER homepage content */}
+                {/* Mobile Dropdown Menu - FIXED: Appears as dropdown under navbar */}
                 {isMobileMenuOpen && (
-                    <div style={styles.mobileMenuOverlay} onClick={() => setIsMobileMenuOpen(false)} />
-                )}
+                    <div style={styles.mobileDropdown} className="mobile-menu">
+                        <div style={styles.mobileDropdownContent}>
+                            {/* User Info for logged in users */}
+                            {user && (
+                                <div style={styles.mobileUserInfo}>
+                                    <div style={styles.mobileUserAvatar}>
+                                        {user.name?.charAt(0).toUpperCase()}
+                                    </div>
+                                    <div style={styles.mobileUserDetails}>
+                                        <span style={styles.mobileUserName}>{user.name}</span>
+                                        <span style={styles.mobileUserEmail}>{user.email}</span>
+                                    </div>
+                                </div>
+                            )}
 
-                {/* Mobile Menu - Slides in from right OVER content */}
-                <div style={styles.mobileMenu}>
-                    <div style={styles.mobileMenuHeader}>
-                        {user ? (
-                            <div style={styles.mobileUserInfo}>
-                                <div style={styles.mobileUserAvatar}>
-                                    {user.name?.charAt(0).toUpperCase()}
-                                </div>
-                                <div style={styles.mobileUserDetails}>
-                                    <span style={styles.mobileUserName}>{user.name}</span>
-                                    <span style={styles.mobileUserEmail}>{user.email}</span>
-                                </div>
-                            </div>
-                        ) : (
-                            <div style={styles.mobileUserInfo}>
-                                <div style={styles.mobileUserAvatar}>
-                                    <FaUser />
-                                </div>
-                                <div style={styles.mobileUserDetails}>
-                                    <span style={styles.mobileUserName}>Guest</span>
-                                    <span style={styles.mobileUserEmail}>Sign in to continue</span>
-                                </div>
-                            </div>
-                        )}
-                        <button style={styles.closeButton} onClick={() => setIsMobileMenuOpen(false)}>
-                            <FaTimes />
-                        </button>
-                    </div>
-
-                    <div style={styles.mobileMenuContent}>
-                        {/* Search Bar */}
-                        <form onSubmit={handleSearch} style={{ marginBottom: '1.5rem' }}>
-                            <div style={{ display: 'flex', gap: '0.5rem' }}>
+                            {/* Search Bar */}
+                            <div style={styles.mobileSearch}>
                                 <input
                                     type="text"
                                     placeholder="Search products..."
                                     value={searchTerm}
                                     onChange={(e) => setSearchTerm(e.target.value)}
-                                    style={{
-                                        flex: 1,
-                                        padding: '0.8rem',
-                                        border: '2px solid rgba(255,215,0,0.3)',
-                                        borderRadius: '8px',
-                                        fontSize: '0.95rem',
-                                        background: 'rgba(255,255,255,0.1)',
-                                        color: 'white',
-                                        outline: 'none'
-                                    }}
+                                    style={styles.mobileSearchInput}
                                 />
                                 <button 
-                                    type="submit"
-                                    style={{
-                                        padding: '0.8rem 1rem',
-                                        background: 'linear-gradient(135deg, #667eea, #764ba2, #ff6b6b)',
-                                        color: 'white',
-                                        border: 'none',
-                                        borderRadius: '8px',
-                                        cursor: 'pointer'
-                                    }}
+                                    style={styles.mobileSearchButton}
+                                    onClick={handleSearch}
                                 >
                                     <FaSearch />
                                 </button>
                             </div>
-                        </form>
 
-                        {/* Navigation Links */}
-                        <div style={styles.mobileNavLinks}>
-                            <MobileNavLink to="/" icon={<FaHome />}>Home</MobileNavLink>
-                            <MobileNavLink to="/products" icon={<FaTag />}>Products</MobileNavLink>
-                        </div>
+                            {/* Main Navigation */}
+                            <div style={styles.mobileSection}>
+                                <div style={styles.mobileSectionTitle}>Navigation</div>
+                                <MobileMenuItem to="/" icon={<FaHome />} onClick={() => setIsMobileMenuOpen(false)}>
+                                    Home
+                                </MobileMenuItem>
+                                <MobileMenuItem to="/products" icon={<FaTag />} onClick={() => setIsMobileMenuOpen(false)}>
+                                    Products
+                                </MobileMenuItem>
+                            </div>
 
-                        {user ? (
-                            <>
-                                {/* Role-based sections */}
-                                {user.role === 'seller' && (
-                                    <div style={styles.mobileSection}>
-                                        <div style={styles.mobileSectionTitle}>Seller Panel</div>
-                                        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                                            <MobileNavLink to="/seller/dashboard" icon={<FaTachometerAlt />}>Dashboard</MobileNavLink>
-                                            <MobileNavLink to="/seller/products" icon={<FaBox />}>My Products</MobileNavLink>
-                                            <MobileNavLink to="/seller/orders" icon={<FaClipboardList />}>Orders</MobileNavLink>
+                            {user ? (
+                                <>
+                                    {/* Role-based sections */}
+                                    {user.role === 'seller' && (
+                                        <div style={styles.mobileSection}>
+                                            <div style={styles.mobileSectionTitle}>Seller Panel</div>
+                                            <MobileMenuItem to="/seller/dashboard" icon={<FaTachometerAlt />} onClick={() => setIsMobileMenuOpen(false)}>
+                                                Dashboard
+                                            </MobileMenuItem>
+                                            <MobileMenuItem to="/seller/products" icon={<FaBox />} onClick={() => setIsMobileMenuOpen(false)}>
+                                                My Products
+                                            </MobileMenuItem>
+                                            <MobileMenuItem to="/seller/orders" icon={<FaClipboardList />} onClick={() => setIsMobileMenuOpen(false)}>
+                                                Orders
+                                            </MobileMenuItem>
                                         </div>
-                                    </div>
-                                )}
-                                
-                                {user.role === 'admin' && (
-                                    <div style={styles.mobileSection}>
-                                        <div style={styles.mobileSectionTitle}>Admin Panel</div>
-                                        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                                            <MobileNavLink to="/admin/dashboard" icon={<FaTachometerAlt />}>Dashboard</MobileNavLink>
-                                            <MobileNavLink to="/admin/users" icon={<FaUser />}>Users</MobileNavLink>
-                                            <MobileNavLink to="/admin/products" icon={<FaBox />}>Products</MobileNavLink>
+                                    )}
+                                    
+                                    {user.role === 'admin' && (
+                                        <div style={styles.mobileSection}>
+                                            <div style={styles.mobileSectionTitle}>Admin Panel</div>
+                                            <MobileMenuItem to="/admin/dashboard" icon={<FaTachometerAlt />} onClick={() => setIsMobileMenuOpen(false)}>
+                                                Dashboard
+                                            </MobileMenuItem>
+                                            <MobileMenuItem to="/admin/users" icon={<FaUser />} onClick={() => setIsMobileMenuOpen(false)}>
+                                                Users
+                                            </MobileMenuItem>
+                                            <MobileMenuItem to="/admin/products" icon={<FaBox />} onClick={() => setIsMobileMenuOpen(false)}>
+                                                Products
+                                            </MobileMenuItem>
                                         </div>
-                                    </div>
-                                )}
-                                
-                                {/* Common links for logged in users */}
-                                <div style={styles.mobileSection}>
-                                    <div style={styles.mobileSectionTitle}>Account</div>
-                                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                                        <MobileNavLink to="/profile" icon={<FaUser />}>My Profile</MobileNavLink>
-                                        <MobileNavLink to="/orders" icon={<FaClipboardList />}>My Orders</MobileNavLink>
-                                        <MobileNavLink to="/wishlist" icon={<FaHeart />}>
+                                    )}
+                                    
+                                    {/* Account Section */}
+                                    <div style={styles.mobileSection}>
+                                        <div style={styles.mobileSectionTitle}>Account</div>
+                                        <MobileMenuItem to="/profile" icon={<FaUser />} onClick={() => setIsMobileMenuOpen(false)}>
+                                            My Profile
+                                        </MobileMenuItem>
+                                        <MobileMenuItem to="/orders" icon={<FaClipboardList />} onClick={() => setIsMobileMenuOpen(false)}>
+                                            My Orders
+                                        </MobileMenuItem>
+                                        <MobileMenuItem to="/wishlist" icon={<FaHeart />} onClick={() => setIsMobileMenuOpen(false)}>
                                             Wishlist
                                             {wishlistCount > 0 && (
                                                 <span style={{ ...styles.countBadge, marginLeft: 'auto' }}>{wishlistCount}</span>
                                             )}
-                                        </MobileNavLink>
-                                        <MobileNavLink to="/notifications" icon={<FaBell />}>Notifications</MobileNavLink>
-                                        <MobileNavLink to="/cart" icon={<FaShoppingCart />}>
+                                        </MobileMenuItem>
+                                        <MobileMenuItem to="/notifications" icon={<FaBell />} onClick={() => setIsMobileMenuOpen(false)}>
+                                            Notifications
+                                        </MobileMenuItem>
+                                        <MobileMenuItem to="/cart" icon={<FaShoppingCart />} onClick={() => setIsMobileMenuOpen(false)}>
                                             Cart
                                             {cartCount > 0 && (
                                                 <span style={{ ...styles.countBadge, marginLeft: 'auto' }}>{cartCount}</span>
                                             )}
-                                        </MobileNavLink>
+                                        </MobileMenuItem>
                                     </div>
-                                </div>
 
-                                <button 
-                                    onClick={handleLogout}
-                                    style={{ ...styles.mobileButton, width: '100%', marginTop: '1rem' }}
-                                >
-                                    <FaSignOutAlt /> Logout
-                                </button>
-                            </>
-                        ) : (
-                            <div style={styles.mobileAuthButtons}>
-                                <Link to="/login" style={styles.mobileButton} onClick={() => setIsMobileMenuOpen(false)}>
-                                    <FaUser /> Login
-                                </Link>
-                                <Link to="/register" style={{...styles.mobileButton, ...styles.mobileButtonPrimary}} onClick={() => setIsMobileMenuOpen(false)}>
-                                    <FaGift /> Register
-                                </Link>
-                            </div>
-                        )}
+                                    {/* Logout Button */}
+                                    <button 
+                                        onClick={handleLogout}
+                                        style={{ ...styles.mobileButton, marginTop: '0.5rem' }}
+                                    >
+                                        <FaSignOutAlt /> Logout
+                                    </button>
+                                </>
+                            ) : (
+                                <div style={styles.mobileAuthButtons}>
+                                    <Link to="/login" style={styles.mobileButton} onClick={() => setIsMobileMenuOpen(false)}>
+                                        <FaUser /> Login
+                                    </Link>
+                                    <Link to="/register" style={{...styles.mobileButton, ...styles.mobileButtonPrimary}} onClick={() => setIsMobileMenuOpen(false)}>
+                                        <FaGift /> Register
+                                    </Link>
+                                </div>
+                            )}
+                        </div>
                     </div>
-                </div>
+                )}
             </div>
         </nav>
     );
