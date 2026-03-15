@@ -41,7 +41,6 @@ const Navbar = () => {
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [isDarkMode, setIsDarkMode] = useState(false);
-    const [activeLink, setActiveLink] = useState('/');
     const navigate = useNavigate();
     const location = useLocation();
 
@@ -54,42 +53,29 @@ const Navbar = () => {
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
-    // Close dropdown when clicking outside
-    useEffect(() => {
-        const handleClickOutside = (e) => {
-            if (!e.target.closest('.user-menu')) {
-                setIsDropdownOpen(false);
-            }
-        };
-        document.addEventListener('click', handleClickOutside);
-        return () => document.removeEventListener('click', handleClickOutside);
-    }, []);
-
     // Close mobile menu when route changes
     useEffect(() => {
         setIsMobileMenuOpen(false);
+        setIsDropdownOpen(false);
     }, [location]);
 
     // Prevent body scroll when mobile menu is open
     useEffect(() => {
         if (isMobileMenuOpen) {
             document.body.style.overflow = 'hidden';
-            document.body.classList.add('mobile-menu-open');
         } else {
             document.body.style.overflow = 'unset';
-            document.body.classList.remove('mobile-menu-open');
         }
         return () => {
             document.body.style.overflow = 'unset';
-            document.body.classList.remove('mobile-menu-open');
         };
     }, [isMobileMenuOpen]);
 
     const handleLogout = () => {
         logout();
         navigate('/');
-        setIsDropdownOpen(false);
         setIsMobileMenuOpen(false);
+        setIsDropdownOpen(false);
     };
 
     const handleSearch = (e) => {
@@ -102,11 +88,6 @@ const Navbar = () => {
         }
     };
 
-    const toggleSearch = () => {
-        setIsSearchOpen(!isSearchOpen);
-        if (isMobileMenuOpen) setIsMobileMenuOpen(false);
-    };
-
     const toggleMobileMenu = () => {
         setIsMobileMenuOpen(!isMobileMenuOpen);
         if (isSearchOpen) setIsSearchOpen(false);
@@ -117,9 +98,9 @@ const Navbar = () => {
         document.body.style.backgroundColor = !isDarkMode ? '#1a1a2e' : '#f5f5f5';
     };
 
-    // Logo component with animations
+    // Logo component
     const Logo = () => (
-        <Link to="/" style={styles.logoLink} className="logo">
+        <Link to="/" style={styles.logoLink}>
             <div style={styles.logoContainer}>
                 <div style={styles.logoIconWrapper}>
                     <div style={styles.logoIcon}>
@@ -136,8 +117,8 @@ const Navbar = () => {
         </Link>
     );
 
-    // Desktop NavLink component
-    const NavLink = ({ to, icon, children, onClick }) => {
+    // Desktop NavLink
+    const NavLink = ({ to, icon, children }) => {
         const isActive = location.pathname === to;
         return (
             <Link 
@@ -145,10 +126,8 @@ const Navbar = () => {
                 style={{
                     ...styles.navLink,
                     background: isActive ? 'rgba(255,255,255,0.2)' : 'transparent',
-                    borderColor: isActive ? '#FFD700' : 'transparent'
                 }}
                 className="nav-link"
-                onClick={onClick}
             >
                 <span style={styles.navLinkIcon}>{icon}</span>
                 <span style={styles.navLinkText}>{children}</span>
@@ -157,8 +136,8 @@ const Navbar = () => {
         );
     };
 
-    // Mobile NavLink component
-    const MobileNavLink = ({ to, icon, children, onClick }) => {
+    // Mobile NavLink
+    const MobileNavLink = ({ to, icon, children }) => {
         const isActive = location.pathname === to;
         return (
             <Link 
@@ -166,19 +145,17 @@ const Navbar = () => {
                 style={{
                     ...styles.mobileNavLink,
                     background: isActive ? 'rgba(255,215,0,0.2)' : 'transparent',
-                    borderLeft: isActive ? '4px solid #FFD700' : '4px solid transparent'
                 }}
-                onClick={onClick}
+                onClick={() => setIsMobileMenuOpen(false)}
             >
                 <span style={styles.mobileNavIcon}>{icon}</span>
                 <span style={styles.mobileNavText}>{children}</span>
-                {isActive && <span style={styles.mobileNavActive}></span>}
             </Link>
         );
     };
 
-    // Shiny button with hover effects
-    const ShinyButton = ({ to, children, primary = false, icon, onClick }) => (
+    // Shiny button
+    const ShinyButton = ({ to, children, primary = false, icon }) => (
         <Link 
             to={to} 
             style={{
@@ -186,7 +163,6 @@ const Navbar = () => {
                 ...(primary ? styles.shinyButtonPrimary : {})
             }}
             className="shiny-button"
-            onClick={onClick}
         >
             {icon && <span style={styles.buttonIcon}>{icon}</span>}
             <span>{children}</span>
@@ -197,14 +173,12 @@ const Navbar = () => {
         navbar: {
             position: 'sticky',
             top: 0,
-            zIndex: 1100,
+            zIndex: 1000,
             background: isScrolled 
                 ? 'linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)'
                 : 'linear-gradient(135deg, #667eea 0%, #764ba2 30%, #ff6b6b 70%, #ffd93d 100%)',
             padding: isScrolled ? '0.8rem 2rem' : '1.2rem 2rem',
-            boxShadow: isScrolled 
-                ? '0 10px 30px rgba(0,0,0,0.3)'
-                : '0 15px 35px rgba(0,0,0,0.2)',
+            boxShadow: isScrolled ? '0 10px 30px rgba(0,0,0,0.3)' : '0 15px 35px rgba(0,0,0,0.2)',
             transition: 'all 0.4s ease',
             borderBottom: '2px solid rgba(255,255,255,0.2)',
             backdropFilter: 'blur(10px)',
@@ -217,7 +191,7 @@ const Navbar = () => {
             alignItems: 'center',
             position: 'relative'
         },
-        // Logo styles with animation
+        // Logo styles
         logoLink: {
             textDecoration: 'none',
             display: 'block',
@@ -228,7 +202,6 @@ const Navbar = () => {
             display: 'flex',
             alignItems: 'center',
             gap: '10px',
-            position: 'relative'
         },
         logoIconWrapper: {
             position: 'relative',
@@ -279,7 +252,6 @@ const Navbar = () => {
             background: 'linear-gradient(135deg, #fff, #FFD700, #FFA500)',
             WebkitBackgroundClip: 'text',
             WebkitTextFillColor: 'transparent',
-            textShadow: '0 2px 10px rgba(255,215,0,0.3)',
             letterSpacing: '2px',
             lineHeight: '1'
         },
@@ -295,30 +267,36 @@ const Navbar = () => {
             boxShadow: '0 2px 10px rgba(255,215,0,0.5)',
             animation: 'pulse 2s infinite'
         },
-        // Desktop Navigation - Only visible on desktop
+        // Desktop Navigation
         desktopNav: {
             display: 'flex',
             alignItems: 'center',
-            gap: '0.5rem',
+            gap: '1.5rem',
             flex: 1,
-            justifyContent: 'flex-end'
+            justifyContent: 'flex-end',
+            '@media (max-width: 1024px)': {
+                display: 'none'
+            }
         },
         desktopNavLinks: {
             display: 'flex',
             alignItems: 'center',
-            gap: '0.3rem',
-            marginRight: '0.5rem'
+            gap: '0.5rem',
+            marginRight: '1rem'
         },
         desktopActions: {
             display: 'flex',
             alignItems: 'center',
-            gap: '0.5rem'
+            gap: '0.8rem'
         },
-        // Mobile Navigation - Only visible on mobile
+        // Mobile Navigation
         mobileNav: {
             display: 'none',
             alignItems: 'center',
-            gap: '0.5rem'
+            gap: '0.5rem',
+            '@media (max-width: 1024px)': {
+                display: 'flex'
+            }
         },
         hamburgerButton: {
             background: 'rgba(255,255,255,0.15)',
@@ -335,29 +313,92 @@ const Navbar = () => {
             transition: 'all 0.3s ease',
             zIndex: 1002
         },
-        // Mobile menu
-        mobileMenu: {
+        // Mobile Menu Overlay - FIXED: Appears OVER content
+        mobileMenuOverlay: {
             position: 'fixed',
             top: 0,
             left: 0,
             right: 0,
             bottom: 0,
+            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+            zIndex: 9998,
+            display: isMobileMenuOpen ? 'block' : 'none',
+            animation: 'fadeIn 0.3s ease',
+            backdropFilter: 'blur(5px)',
+        },
+        // Mobile Menu - FIXED: Appears OVER content
+        mobileMenu: {
+            position: 'fixed',
+            top: 0,
+            right: 0,
+            width: '85%',
+            maxWidth: '400px',
+            height: '100vh',
             background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)',
             zIndex: 9999,
             padding: '80px 20px 30px',
             overflowY: 'auto',
             WebkitOverflowScrolling: 'touch',
-            display: isMobileMenuOpen ? 'block' : 'none',
-            animation: 'slideInRight 0.3s ease'
+            transform: isMobileMenuOpen ? 'translateX(0)' : 'translateX(100%)',
+            transition: 'transform 0.3s ease-in-out',
+            boxShadow: '-5px 0 20px rgba(0,0,0,0.3)',
+        },
+        mobileMenuHeader: {
+            position: 'absolute',
+            top: '20px',
+            left: '20px',
+            right: '20px',
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            borderBottom: '1px solid rgba(255,215,0,0.2)',
+            paddingBottom: '15px'
+        },
+        mobileUserInfo: {
+            display: 'flex',
+            alignItems: 'center',
+            gap: '10px'
+        },
+        mobileUserAvatar: {
+            width: '40px',
+            height: '40px',
+            borderRadius: '50%',
+            background: 'linear-gradient(135deg, #FFD700, #FFA500, #FF6B6B)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: '1.2rem',
+            fontWeight: 'bold',
+            color: '#1a1a2e'
+        },
+        mobileUserDetails: {
+            display: 'flex',
+            flexDirection: 'column'
+        },
+        mobileUserName: {
+            color: 'white',
+            fontWeight: '600',
+            fontSize: '1rem'
+        },
+        mobileUserEmail: {
+            color: 'rgba(255,255,255,0.7)',
+            fontSize: '0.8rem'
+        },
+        closeButton: {
+            background: 'rgba(255,255,255,0.1)',
+            border: 'none',
+            color: 'white',
+            width: '35px',
+            height: '35px',
+            borderRadius: '50%',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            cursor: 'pointer',
+            fontSize: '1.2rem'
         },
         mobileMenuContent: {
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '1rem',
-            maxHeight: 'calc(100vh - 100px)',
-            overflowY: 'auto',
-            paddingBottom: '30px',
-            paddingRight: '5px'
+            marginTop: '20px'
         },
         mobileNavLinks: {
             display: 'flex',
@@ -369,7 +410,7 @@ const Navbar = () => {
             color: 'white',
             textDecoration: 'none',
             fontSize: '1.1rem',
-            fontWeight: '600',
+            fontWeight: '500',
             display: 'flex',
             alignItems: 'center',
             gap: '1rem',
@@ -387,66 +428,26 @@ const Navbar = () => {
         mobileNavText: {
             flex: 1
         },
-        mobileNavActive: {
-            width: '4px',
-            height: '100%',
-            background: '#FFD700',
-            borderRadius: '2px'
-        },
-        mobileUserSection: {
+        mobileSection: {
             background: 'rgba(255,255,255,0.05)',
-            borderRadius: '20px',
-            padding: '1.5rem',
+            borderRadius: '12px',
+            padding: '1rem',
             marginTop: '1rem'
         },
-        mobileUserInfo: {
-            display: 'flex',
-            alignItems: 'center',
-            gap: '1rem',
-            marginBottom: '1.5rem',
-            paddingBottom: '1.5rem',
-            borderBottom: '1px solid rgba(255,215,0,0.2)'
-        },
-        mobileUserAvatar: {
-            width: '60px',
-            height: '60px',
-            borderRadius: '50%',
-            background: 'linear-gradient(135deg, #FFD700, #FFA500, #FF6B6B)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            fontSize: '1.8rem',
-            fontWeight: 'bold',
-            color: '#1a1a2e'
-        },
-        mobileUserDetails: {
-            flex: 1
-        },
-        mobileUserName: {
-            fontSize: '1.2rem',
-            fontWeight: 'bold',
-            color: 'white',
-            marginBottom: '4px'
-        },
-        mobileUserEmail: {
+        mobileSectionTitle: {
+            color: '#FFD700',
             fontSize: '0.9rem',
-            color: 'rgba(255,255,255,0.7)'
-        },
-        mobileRoleBadge: {
-            display: 'inline-block',
-            fontSize: '0.7rem',
-            padding: '2px 8px',
-            borderRadius: '20px',
-            background: 'linear-gradient(135deg, #FFD700, #FFA500)',
-            color: '#1a1a2e',
-            fontWeight: 'bold',
+            fontWeight: '600',
+            marginBottom: '0.5rem',
+            paddingLeft: '0.5rem',
             textTransform: 'uppercase',
-            marginTop: '4px'
+            letterSpacing: '1px'
         },
         mobileAuthButtons: {
             display: 'flex',
             flexDirection: 'column',
-            gap: '0.8rem'
+            gap: '0.8rem',
+            marginTop: '1rem'
         },
         mobileButton: {
             padding: '1rem',
@@ -480,14 +481,11 @@ const Navbar = () => {
             borderRadius: '30px',
             transition: 'all 0.3s ease',
             position: 'relative',
-            overflow: 'hidden',
-            letterSpacing: '0.5px',
             whiteSpace: 'nowrap'
         },
         navLinkIcon: {
             fontSize: '1rem',
             color: '#FFD700',
-            transition: 'all 0.3s ease'
         },
         navLinkText: {
             background: 'linear-gradient(135deg, #fff, #f0f0f0)',
@@ -519,9 +517,6 @@ const Navbar = () => {
             gap: '0.5rem',
             fontSize: '0.95rem',
             fontWeight: '600',
-            transition: 'all 0.3s ease',
-            backdropFilter: 'blur(5px)',
-            letterSpacing: '0.5px',
             whiteSpace: 'nowrap'
         },
         searchContainer: {
@@ -537,10 +532,6 @@ const Navbar = () => {
             zIndex: 1001,
             width: '300px',
             border: '2px solid rgba(255,215,0,0.3)',
-            animation: 'slideDown 0.4s ease',
-            '@media (min-width: 768px)': {
-                width: '400px'
-            }
         },
         searchForm: {
             display: 'flex',
@@ -555,7 +546,6 @@ const Navbar = () => {
             background: 'rgba(255,255,255,0.1)',
             color: 'white',
             outline: 'none',
-            transition: 'all 0.3s'
         },
         searchSubmit: {
             padding: '12px 15px',
@@ -564,7 +554,6 @@ const Navbar = () => {
             border: 'none',
             borderRadius: '12px',
             cursor: 'pointer',
-            transition: 'all 0.3s',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -595,7 +584,6 @@ const Navbar = () => {
             borderRadius: '30px',
             background: 'linear-gradient(135deg, rgba(255,255,255,0.2), rgba(255,255,255,0.1))',
             border: '1px solid rgba(255,215,0,0.3)',
-            transition: 'all 0.3s ease',
             whiteSpace: 'nowrap'
         },
         cartBadge: {
@@ -614,7 +602,6 @@ const Navbar = () => {
             fontWeight: 'bold',
             border: '2px solid white',
             animation: 'pulse 2s infinite',
-            boxShadow: '0 0 15px rgba(255,107,107,0.7)'
         },
         // Dark mode toggle
         darkModeToggle: {
@@ -629,7 +616,6 @@ const Navbar = () => {
             alignItems: 'center',
             justifyContent: 'center',
             fontSize: '1.2rem',
-            transition: 'all 0.3s ease'
         },
         // Auth buttons
         authButtons: {
@@ -646,11 +632,8 @@ const Navbar = () => {
             cursor: 'pointer',
             fontSize: '0.95rem',
             fontWeight: '600',
-            transition: 'all 0.3s ease',
             textDecoration: 'none',
             whiteSpace: 'nowrap',
-            backdropFilter: 'blur(5px)',
-            letterSpacing: '0.5px',
             display: 'flex',
             alignItems: 'center',
             gap: '0.5rem'
@@ -665,7 +648,7 @@ const Navbar = () => {
             fontSize: '1rem',
             color: '#1a1a2e'
         },
-        // User menu
+        // User menu dropdown
         userMenu: {
             display: 'flex',
             alignItems: 'center',
@@ -682,7 +665,6 @@ const Navbar = () => {
             borderRadius: '30px',
             background: 'linear-gradient(135deg, rgba(255,255,255,0.2), rgba(255,255,255,0.1))',
             border: '1px solid rgba(255,215,0,0.3)',
-            transition: 'all 0.3s ease'
         },
         userAvatar: {
             width: '32px',
@@ -698,13 +680,13 @@ const Navbar = () => {
             animation: 'pulse 2s infinite'
         },
         userNameText: {
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-            whiteSpace: 'nowrap',
             maxWidth: '120px',
             color: 'white',
             fontWeight: '600',
-            fontSize: '0.9rem'
+            fontSize: '0.9rem',
+            whiteSpace: 'nowrap',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis'
         },
         dropdown: {
             position: 'absolute',
@@ -719,7 +701,6 @@ const Navbar = () => {
             zIndex: 1000,
             overflow: 'hidden',
             border: '2px solid rgba(255,215,0,0.3)',
-            animation: 'slideDown 0.3s ease'
         },
         dropdownHeader: {
             padding: '1.5rem',
@@ -771,8 +752,6 @@ const Navbar = () => {
             cursor: 'pointer',
             fontSize: '0.95rem',
             borderBottom: '1px solid rgba(255,255,255,0.05)',
-            position: 'relative',
-            overflow: 'hidden'
         },
         dropdownIcon: {
             color: '#FFD700',
@@ -809,33 +788,19 @@ const Navbar = () => {
     useEffect(() => {
         const style = document.createElement('style');
         style.textContent = `
-            @keyframes slideDown {
-                from {
-                    opacity: 0;
-                    transform: translateY(-15px);
-                }
-                to {
-                    opacity: 1;
-                    transform: translateY(0);
-                }
-            }
-            
-            @keyframes slideInRight {
-                from {
-                    transform: translateX(100%);
-                }
-                to {
-                    transform: translateX(0);
-                }
+            @keyframes fadeIn {
+                from { opacity: 0; }
+                to { opacity: 1; }
             }
             
             @keyframes slideIn {
-                from {
-                    transform: translateX(-100%);
-                }
-                to {
-                    transform: translateX(0);
-                }
+                from { transform: translateX(-100%); }
+                to { transform: translateX(0); }
+            }
+            
+            @keyframes slideInRight {
+                from { transform: translateX(100%); }
+                to { transform: translateX(0); }
             }
             
             @keyframes pulse {
@@ -855,23 +820,9 @@ const Navbar = () => {
                 to { transform: rotate(360deg); }
             }
             
-            @keyframes shimmer {
-                0% { left: -100%; }
-                100% { left: 200%; }
-            }
-            
-            .mobile-menu-open {
-                overflow: hidden !important;
-            }
-            
             .nav-link:hover {
                 background: rgba(255,255,255,0.15) !important;
                 transform: translateY(-2px);
-            }
-            
-            .nav-link:hover .nav-link-icon {
-                transform: scale(1.1) rotate(3deg);
-                color: #FFD700;
             }
             
             .shiny-button:hover {
@@ -879,59 +830,19 @@ const Navbar = () => {
                 box-shadow: 0 10px 20px rgba(255,215,0,0.3);
             }
             
-            .shiny-button::after {
-                content: '';
-                position: absolute;
-                top: -50%;
-                left: -50%;
-                width: 200%;
-                height: 200%;
-                background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
-                transform: rotate(30deg);
-                animation: shimmer 3s infinite;
-                opacity: 0;
-            }
-            
-            .shiny-button:hover::after {
-                opacity: 1;
-            }
-            
             .dropdown-item:hover {
                 background: rgba(255,215,0,0.15);
                 padding-left: 1.8rem;
             }
             
-            .dropdown-item:hover .dropdown-icon {
-                transform: scale(1.2) rotate(5deg);
-            }
-            
             .cart-link:hover {
                 background: linear-gradient(135deg, rgba(255,255,255,0.3), rgba(255,255,255,0.2));
                 transform: translateY(-2px);
-                box-shadow: 0 10px 20px rgba(255,215,0,0.3);
             }
             
-            .search-button:hover {
-                background: linear-gradient(135deg, rgba(255,255,255,0.3), rgba(255,255,255,0.2));
-                transform: translateY(-2px);
-            }
-
-            @media (max-width: 1023px) {
-                .desktopNav {
-                    display: none !important;
-                }
-                .mobileNav {
-                    display: flex !important;
-                }
-            }
-
-            @media (min-width: 1024px) {
-                .desktopNav {
-                    display: flex !important;
-                }
-                .mobileNav {
-                    display: none !important;
-                }
+            .mobile-nav-link:hover {
+                background: rgba(255,215,0,0.15) !important;
+                transform: translateX(5px);
             }
         `;
         document.head.appendChild(style);
@@ -943,24 +854,21 @@ const Navbar = () => {
             <div style={styles.container}>
                 <Logo />
 
-                {/* Desktop Navigation - Only visible on desktop */}
-                <div className="desktopNav" style={styles.desktopNav}>
+                {/* Desktop Navigation */}
+                <div style={styles.desktopNav}>
                     <div style={styles.desktopNavLinks}>
                         <NavLink to="/" icon={<FaHome />}>Home</NavLink>
                         <NavLink to="/products" icon={<FaTag />}>Products</NavLink>
                     </div>
 
                     <div style={styles.desktopActions}>
-                        {/* Search Button */}
                         <button 
                             style={styles.searchButton} 
-                            onClick={toggleSearch}
-                            className="search-button"
+                            onClick={() => setIsSearchOpen(!isSearchOpen)}
                         >
                             <FaSearch /> Search
                         </button>
 
-                        {/* Search Dropdown */}
                         {isSearchOpen && (
                             <div style={styles.searchContainer}>
                                 <form onSubmit={handleSearch} style={styles.searchForm}>
@@ -975,27 +883,23 @@ const Navbar = () => {
                                     <button type="submit" style={styles.searchSubmit}>
                                         <FaSearch />
                                     </button>
-                                    <button type="button" style={styles.closeSearch} onClick={toggleSearch}>
+                                    <button type="button" style={styles.closeSearch} onClick={() => setIsSearchOpen(false)}>
                                         <FaTimes />
                                     </button>
                                 </form>
                             </div>
                         )}
                         
-                        {/* Dark Mode Toggle */}
                         <button 
                             style={styles.darkModeToggle}
                             onClick={toggleDarkMode}
-                            className="search-button"
                         >
                             {isDarkMode ? <FaSun /> : <FaMoon />}
                         </button>
                         
-                        {/* Notification Bell */}
                         {user && <NotificationBell />}
                         
-                        {/* Cart Icon with Badge */}
-                        <Link to="/cart" style={styles.cartLink} className="cart-link">
+                        <Link to="/cart" style={styles.cartLink}>
                             <FaShoppingCart size={18} />
                             Cart
                             {cartCount > 0 && (
@@ -1009,7 +913,7 @@ const Navbar = () => {
                                 className="user-menu"
                                 onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                             >
-                                <div style={styles.userName} className="user-name">
+                                <div style={styles.userName}>
                                     <div style={styles.userAvatar}>
                                         {user.name?.charAt(0).toUpperCase()}
                                     </div>
@@ -1034,20 +938,19 @@ const Navbar = () => {
                                             </div>
                                         </div>
 
-                                        {/* Role-based dashboard links */}
                                         {user.role === 'seller' && (
                                             <>
-                                                <Link to="/seller/dashboard" style={styles.dropdownItem} className="dropdown-item">
-                                                    <FaTachometerAlt style={styles.dropdownIcon} className="dropdown-icon" />
+                                                <Link to="/seller/dashboard" style={styles.dropdownItem}>
+                                                    <FaTachometerAlt style={styles.dropdownIcon} />
                                                     Seller Dashboard
                                                     <span style={styles.roleBadge}>Seller</span>
                                                 </Link>
-                                                <Link to="/seller/products" style={styles.dropdownItem} className="dropdown-item">
-                                                    <FaBox style={styles.dropdownIcon} className="dropdown-icon" />
+                                                <Link to="/seller/products" style={styles.dropdownItem}>
+                                                    <FaBox style={styles.dropdownIcon} />
                                                     My Products
                                                 </Link>
-                                                <Link to="/seller/orders" style={styles.dropdownItem} className="dropdown-item">
-                                                    <FaClipboardList style={styles.dropdownIcon} className="dropdown-icon" />
+                                                <Link to="/seller/orders" style={styles.dropdownItem}>
+                                                    <FaClipboardList style={styles.dropdownIcon} />
                                                     Orders
                                                 </Link>
                                             </>
@@ -1055,17 +958,17 @@ const Navbar = () => {
                                         
                                         {user.role === 'admin' && (
                                             <>
-                                                <Link to="/admin/dashboard" style={styles.dropdownItem} className="dropdown-item">
-                                                    <FaTachometerAlt style={styles.dropdownIcon} className="dropdown-icon" />
+                                                <Link to="/admin/dashboard" style={styles.dropdownItem}>
+                                                    <FaTachometerAlt style={styles.dropdownIcon} />
                                                     Admin Dashboard
                                                     <span style={styles.roleBadge}>Admin</span>
                                                 </Link>
-                                                <Link to="/admin/users" style={styles.dropdownItem} className="dropdown-item">
-                                                    <FaUser style={styles.dropdownIcon} className="dropdown-icon" />
+                                                <Link to="/admin/users" style={styles.dropdownItem}>
+                                                    <FaUser style={styles.dropdownIcon} />
                                                     Users
                                                 </Link>
-                                                <Link to="/admin/products" style={styles.dropdownItem} className="dropdown-item">
-                                                    <FaBox style={styles.dropdownIcon} className="dropdown-icon" />
+                                                <Link to="/admin/products" style={styles.dropdownItem}>
+                                                    <FaBox style={styles.dropdownIcon} />
                                                     Products
                                                 </Link>
                                             </>
@@ -1073,16 +976,16 @@ const Navbar = () => {
                                         
                                         {user.role === 'customer' && (
                                             <>
-                                                <Link to="/profile" style={styles.dropdownItem} className="dropdown-item">
-                                                    <FaUser style={styles.dropdownIcon} className="dropdown-icon" />
+                                                <Link to="/profile" style={styles.dropdownItem}>
+                                                    <FaUser style={styles.dropdownIcon} />
                                                     My Profile
                                                 </Link>
-                                                <Link to="/orders" style={styles.dropdownItem} className="dropdown-item">
-                                                    <FaClipboardList style={styles.dropdownIcon} className="dropdown-icon" />
+                                                <Link to="/orders" style={styles.dropdownItem}>
+                                                    <FaClipboardList style={styles.dropdownIcon} />
                                                     My Orders
                                                 </Link>
-                                                <Link to="/wishlist" style={styles.dropdownItem} className="dropdown-item">
-                                                    <FaHeart style={styles.dropdownIcon} className="dropdown-icon" />
+                                                <Link to="/wishlist" style={styles.dropdownItem}>
+                                                    <FaHeart style={styles.dropdownIcon} />
                                                     Wishlist 
                                                     {wishlistCount > 0 && (
                                                         <span style={styles.countBadge}>{wishlistCount}</span>
@@ -1093,21 +996,21 @@ const Navbar = () => {
                                         
                                         <div style={styles.dropdownDivider}></div>
                                         
-                                        <Link to="/notifications" style={styles.dropdownItem} className="dropdown-item">
-                                            <FaBell style={styles.dropdownIcon} className="dropdown-icon" />
+                                        <Link to="/notifications" style={styles.dropdownItem}>
+                                            <FaBell style={styles.dropdownIcon} />
                                             Notifications
                                         </Link>
                                         
-                                        <Link to="/cart" style={styles.dropdownItem} className="dropdown-item">
-                                            <FaShoppingCart style={styles.dropdownIcon} className="dropdown-icon" />
+                                        <Link to="/cart" style={styles.dropdownItem}>
+                                            <FaShoppingCart style={styles.dropdownIcon} />
                                             Cart 
                                             {cartCount > 0 && (
                                                 <span style={styles.countBadge}>{cartCount}</span>
                                             )}
                                         </Link>
                                         
-                                        <button onClick={handleLogout} style={styles.dropdownItem} className="dropdown-item">
-                                            <FaSignOutAlt style={styles.dropdownIcon} className="dropdown-icon" />
+                                        <button onClick={handleLogout} style={styles.dropdownItem}>
+                                            <FaSignOutAlt style={styles.dropdownIcon} />
                                             Logout
                                         </button>
                                     </div>
@@ -1122,17 +1025,15 @@ const Navbar = () => {
                     </div>
                 </div>
 
-                {/* Mobile Navigation - Only visible on mobile */}
-                <div className="mobileNav" style={styles.mobileNav}>
-                    {/* Cart Icon for Mobile */}
-                    <Link to="/cart" style={{...styles.cartLink, padding: '0.5rem'}} className="cart-link">
+                {/* Mobile Navigation */}
+                <div style={styles.mobileNav}>
+                    <Link to="/cart" style={{...styles.cartLink, padding: '0.5rem'}}>
                         <FaShoppingCart size={18} />
                         {cartCount > 0 && (
                             <span style={{...styles.cartBadge, top: '-5px', right: '-5px'}}>{cartCount}</span>
                         )}
                     </Link>
 
-                    {/* Dark Mode Toggle for Mobile */}
                     <button 
                         style={{...styles.darkModeToggle, width: '40px', height: '40px'}}
                         onClick={toggleDarkMode}
@@ -1140,7 +1041,6 @@ const Navbar = () => {
                         {isDarkMode ? <FaSun /> : <FaMoon />}
                     </button>
 
-                    {/* Hamburger Menu Button */}
                     <button 
                         style={styles.hamburgerButton}
                         onClick={toggleMobileMenu}
@@ -1149,168 +1049,148 @@ const Navbar = () => {
                     </button>
                 </div>
 
-                {/* Mobile Menu - Only shown when hamburger is clicked */}
+                {/* Mobile Menu Overlay - Appears OVER homepage content */}
                 {isMobileMenuOpen && (
-                    <div style={styles.mobileMenu}>
-                        <div style={styles.mobileMenuContent} className="mobile-menu-content">
-                            {/* Search Bar for Mobile */}
-                            <form onSubmit={handleSearch} style={{marginBottom: '2rem'}}>
-                                <div style={{display: 'flex', gap: '0.5rem'}}>
-                                    <input
-                                        type="text"
-                                        placeholder="Search products..."
-                                        value={searchTerm}
-                                        onChange={(e) => setSearchTerm(e.target.value)}
-                                        style={{
-                                            flex: 1,
-                                            padding: '1rem',
-                                            border: '2px solid rgba(255,215,0,0.3)',
-                                            borderRadius: '12px',
-                                            fontSize: '1rem',
-                                            background: 'rgba(255,255,255,0.1)',
-                                            color: 'white',
-                                            outline: 'none'
-                                        }}
-                                    />
-                                    <button 
-                                        type="submit"
-                                        style={{
-                                            padding: '1rem',
-                                            background: 'linear-gradient(135deg, #667eea, #764ba2, #ff6b6b)',
-                                            color: 'white',
-                                            border: 'none',
-                                            borderRadius: '12px',
-                                            cursor: 'pointer'
-                                        }}
-                                    >
-                                        <FaSearch />
-                                    </button>
+                    <div style={styles.mobileMenuOverlay} onClick={() => setIsMobileMenuOpen(false)} />
+                )}
+
+                {/* Mobile Menu - Slides in from right OVER content */}
+                <div style={styles.mobileMenu}>
+                    <div style={styles.mobileMenuHeader}>
+                        {user ? (
+                            <div style={styles.mobileUserInfo}>
+                                <div style={styles.mobileUserAvatar}>
+                                    {user.name?.charAt(0).toUpperCase()}
                                 </div>
-                            </form>
-
-                            {/* Navigation Links */}
-                            <div style={styles.mobileNavLinks}>
-                                <MobileNavLink to="/" icon={<FaHome />} onClick={() => setIsMobileMenuOpen(false)}>
-                                    Home
-                                </MobileNavLink>
-                                <MobileNavLink to="/products" icon={<FaTag />} onClick={() => setIsMobileMenuOpen(false)}>
-                                    Products
-                                </MobileNavLink>
+                                <div style={styles.mobileUserDetails}>
+                                    <span style={styles.mobileUserName}>{user.name}</span>
+                                    <span style={styles.mobileUserEmail}>{user.email}</span>
+                                </div>
                             </div>
+                        ) : (
+                            <div style={styles.mobileUserInfo}>
+                                <div style={styles.mobileUserAvatar}>
+                                    <FaUser />
+                                </div>
+                                <div style={styles.mobileUserDetails}>
+                                    <span style={styles.mobileUserName}>Guest</span>
+                                    <span style={styles.mobileUserEmail}>Sign in to continue</span>
+                                </div>
+                            </div>
+                        )}
+                        <button style={styles.closeButton} onClick={() => setIsMobileMenuOpen(false)}>
+                            <FaTimes />
+                        </button>
+                    </div>
 
-                            {/* User Section */}
-                            {user ? (
-                                <div style={styles.mobileUserSection}>
-                                    <div style={styles.mobileUserInfo}>
-                                        <div style={styles.mobileUserAvatar}>
-                                            {user.name?.charAt(0).toUpperCase()}
-                                        </div>
-                                        <div style={styles.mobileUserDetails}>
-                                            <div style={styles.mobileUserName}>{user.name}</div>
-                                            <div style={styles.mobileUserEmail}>{user.email}</div>
-                                            <div style={styles.mobileRoleBadge}>{user.role}</div>
+                    <div style={styles.mobileMenuContent}>
+                        {/* Search Bar */}
+                        <form onSubmit={handleSearch} style={{ marginBottom: '1.5rem' }}>
+                            <div style={{ display: 'flex', gap: '0.5rem' }}>
+                                <input
+                                    type="text"
+                                    placeholder="Search products..."
+                                    value={searchTerm}
+                                    onChange={(e) => setSearchTerm(e.target.value)}
+                                    style={{
+                                        flex: 1,
+                                        padding: '0.8rem',
+                                        border: '2px solid rgba(255,215,0,0.3)',
+                                        borderRadius: '8px',
+                                        fontSize: '0.95rem',
+                                        background: 'rgba(255,255,255,0.1)',
+                                        color: 'white',
+                                        outline: 'none'
+                                    }}
+                                />
+                                <button 
+                                    type="submit"
+                                    style={{
+                                        padding: '0.8rem 1rem',
+                                        background: 'linear-gradient(135deg, #667eea, #764ba2, #ff6b6b)',
+                                        color: 'white',
+                                        border: 'none',
+                                        borderRadius: '8px',
+                                        cursor: 'pointer'
+                                    }}
+                                >
+                                    <FaSearch />
+                                </button>
+                            </div>
+                        </form>
+
+                        {/* Navigation Links */}
+                        <div style={styles.mobileNavLinks}>
+                            <MobileNavLink to="/" icon={<FaHome />}>Home</MobileNavLink>
+                            <MobileNavLink to="/products" icon={<FaTag />}>Products</MobileNavLink>
+                        </div>
+
+                        {user ? (
+                            <>
+                                {/* Role-based sections */}
+                                {user.role === 'seller' && (
+                                    <div style={styles.mobileSection}>
+                                        <div style={styles.mobileSectionTitle}>Seller Panel</div>
+                                        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                                            <MobileNavLink to="/seller/dashboard" icon={<FaTachometerAlt />}>Dashboard</MobileNavLink>
+                                            <MobileNavLink to="/seller/products" icon={<FaBox />}>My Products</MobileNavLink>
+                                            <MobileNavLink to="/seller/orders" icon={<FaClipboardList />}>Orders</MobileNavLink>
                                         </div>
                                     </div>
-
-                                    <div style={{display: 'flex', flexDirection: 'column', gap: '0.5rem'}}>
-                                        {/* Role-based links */}
-                                        {user.role === 'seller' && (
-                                            <>
-                                                <Link to="/seller/dashboard" style={styles.mobileNavLink} onClick={() => setIsMobileMenuOpen(false)}>
-                                                    <FaTachometerAlt style={styles.mobileNavIcon} />
-                                                    Seller Dashboard
-                                                </Link>
-                                                <Link to="/seller/products" style={styles.mobileNavLink} onClick={() => setIsMobileMenuOpen(false)}>
-                                                    <FaBox style={styles.mobileNavIcon} />
-                                                    My Products
-                                                </Link>
-                                                <Link to="/seller/orders" style={styles.mobileNavLink} onClick={() => setIsMobileMenuOpen(false)}>
-                                                    <FaClipboardList style={styles.mobileNavIcon} />
-                                                    Orders
-                                                </Link>
-                                            </>
-                                        )}
-                                        
-                                        {user.role === 'admin' && (
-                                            <>
-                                                <Link to="/admin/dashboard" style={styles.mobileNavLink} onClick={() => setIsMobileMenuOpen(false)}>
-                                                    <FaTachometerAlt style={styles.mobileNavIcon} />
-                                                    Admin Dashboard
-                                                </Link>
-                                                <Link to="/admin/users" style={styles.mobileNavLink} onClick={() => setIsMobileMenuOpen(false)}>
-                                                    <FaUser style={styles.mobileNavIcon} />
-                                                    Users
-                                                </Link>
-                                                <Link to="/admin/products" style={styles.mobileNavLink} onClick={() => setIsMobileMenuOpen(false)}>
-                                                    <FaBox style={styles.mobileNavIcon} />
-                                                    Products
-                                                </Link>
-                                            </>
-                                        )}
-                                        
-                                        {user.role === 'customer' && (
-                                            <>
-                                                <Link to="/profile" style={styles.mobileNavLink} onClick={() => setIsMobileMenuOpen(false)}>
-                                                    <FaUser style={styles.mobileNavIcon} />
-                                                    My Profile
-                                                </Link>
-                                                <Link to="/orders" style={styles.mobileNavLink} onClick={() => setIsMobileMenuOpen(false)}>
-                                                    <FaClipboardList style={styles.mobileNavIcon} />
-                                                    My Orders
-                                                </Link>
-                                                <Link to="/wishlist" style={styles.mobileNavLink} onClick={() => setIsMobileMenuOpen(false)}>
-                                                    <FaHeart style={styles.mobileNavIcon} />
-                                                    Wishlist
-                                                    {wishlistCount > 0 && (
-                                                        <span style={{...styles.countBadge, marginLeft: 'auto'}}>{wishlistCount}</span>
-                                                    )}
-                                                </Link>
-                                            </>
-                                        )}
-
-                                        {/* Common links */}
-                                        <Link to="/notifications" style={styles.mobileNavLink} onClick={() => setIsMobileMenuOpen(false)}>
-                                            <FaBell style={styles.mobileNavIcon} />
-                                            Notifications
-                                        </Link>
-                                        
-                                        <Link to="/cart" style={styles.mobileNavLink} onClick={() => setIsMobileMenuOpen(false)}>
-                                            <FaShoppingCart style={styles.mobileNavIcon} />
+                                )}
+                                
+                                {user.role === 'admin' && (
+                                    <div style={styles.mobileSection}>
+                                        <div style={styles.mobileSectionTitle}>Admin Panel</div>
+                                        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                                            <MobileNavLink to="/admin/dashboard" icon={<FaTachometerAlt />}>Dashboard</MobileNavLink>
+                                            <MobileNavLink to="/admin/users" icon={<FaUser />}>Users</MobileNavLink>
+                                            <MobileNavLink to="/admin/products" icon={<FaBox />}>Products</MobileNavLink>
+                                        </div>
+                                    </div>
+                                )}
+                                
+                                {/* Common links for logged in users */}
+                                <div style={styles.mobileSection}>
+                                    <div style={styles.mobileSectionTitle}>Account</div>
+                                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                                        <MobileNavLink to="/profile" icon={<FaUser />}>My Profile</MobileNavLink>
+                                        <MobileNavLink to="/orders" icon={<FaClipboardList />}>My Orders</MobileNavLink>
+                                        <MobileNavLink to="/wishlist" icon={<FaHeart />}>
+                                            Wishlist
+                                            {wishlistCount > 0 && (
+                                                <span style={{ ...styles.countBadge, marginLeft: 'auto' }}>{wishlistCount}</span>
+                                            )}
+                                        </MobileNavLink>
+                                        <MobileNavLink to="/notifications" icon={<FaBell />}>Notifications</MobileNavLink>
+                                        <MobileNavLink to="/cart" icon={<FaShoppingCart />}>
                                             Cart
                                             {cartCount > 0 && (
-                                                <span style={{...styles.countBadge, marginLeft: 'auto'}}>{cartCount}</span>
+                                                <span style={{ ...styles.countBadge, marginLeft: 'auto' }}>{cartCount}</span>
                                             )}
-                                        </Link>
-
-                                        <button 
-                                            onClick={handleLogout}
-                                            style={{...styles.mobileNavLink, width: '100%', textAlign: 'left', cursor: 'pointer'}}
-                                        >
-                                            <FaSignOutAlt style={styles.mobileNavIcon} />
-                                            Logout
-                                        </button>
+                                        </MobileNavLink>
                                     </div>
                                 </div>
-                            ) : (
-                                <div style={styles.mobileAuthButtons}>
-                                    <Link to="/login" style={styles.mobileButton} onClick={() => setIsMobileMenuOpen(false)}>
-                                        <FaUser /> Login
-                                    </Link>
-                                    <Link to="/register" style={{...styles.mobileButton, ...styles.mobileButtonPrimary}} onClick={() => setIsMobileMenuOpen(false)}>
-                                        <FaGift /> Register
-                                    </Link>
-                                </div>
-                            )}
 
-                            {/* Notification Bell for Mobile */}
-                            {user && (
-                                <div style={{marginTop: '1rem'}}>
-                                    <NotificationBell />
-                                </div>
-                            )}
-                        </div>
+                                <button 
+                                    onClick={handleLogout}
+                                    style={{ ...styles.mobileButton, width: '100%', marginTop: '1rem' }}
+                                >
+                                    <FaSignOutAlt /> Logout
+                                </button>
+                            </>
+                        ) : (
+                            <div style={styles.mobileAuthButtons}>
+                                <Link to="/login" style={styles.mobileButton} onClick={() => setIsMobileMenuOpen(false)}>
+                                    <FaUser /> Login
+                                </Link>
+                                <Link to="/register" style={{...styles.mobileButton, ...styles.mobileButtonPrimary}} onClick={() => setIsMobileMenuOpen(false)}>
+                                    <FaGift /> Register
+                                </Link>
+                            </div>
+                        )}
                     </div>
-                )}
+                </div>
             </div>
         </nav>
     );
