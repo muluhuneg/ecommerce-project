@@ -299,32 +299,26 @@ const Navbar = () => {
         desktopNav: {
             display: 'flex',
             alignItems: 'center',
-            gap: '1.5rem',
+            gap: '0.5rem',
             flex: 1,
-            justifyContent: 'flex-end',
-            '@media (max-width: 1023px)': {
-                display: 'none' // Hide on mobile
-            }
+            justifyContent: 'flex-end'
         },
         desktopNavLinks: {
             display: 'flex',
             alignItems: 'center',
-            gap: '0.5rem',
-            marginRight: '1rem'
+            gap: '0.3rem',
+            marginRight: '0.5rem'
         },
         desktopActions: {
             display: 'flex',
             alignItems: 'center',
-            gap: '0.8rem'
+            gap: '0.5rem'
         },
         // Mobile Navigation - Only visible on mobile
         mobileNav: {
             display: 'none',
             alignItems: 'center',
-            gap: '0.5rem',
-            '@media (max-width: 1023px)': {
-                display: 'flex' // Show on mobile
-            }
+            gap: '0.5rem'
         },
         hamburgerButton: {
             background: 'rgba(255,255,255,0.15)',
@@ -487,7 +481,8 @@ const Navbar = () => {
             transition: 'all 0.3s ease',
             position: 'relative',
             overflow: 'hidden',
-            letterSpacing: '0.5px'
+            letterSpacing: '0.5px',
+            whiteSpace: 'nowrap'
         },
         navLinkIcon: {
             fontSize: '1rem',
@@ -920,6 +915,24 @@ const Navbar = () => {
                 background: linear-gradient(135deg, rgba(255,255,255,0.3), rgba(255,255,255,0.2));
                 transform: translateY(-2px);
             }
+
+            @media (max-width: 1023px) {
+                .desktopNav {
+                    display: none !important;
+                }
+                .mobileNav {
+                    display: flex !important;
+                }
+            }
+
+            @media (min-width: 1024px) {
+                .desktopNav {
+                    display: flex !important;
+                }
+                .mobileNav {
+                    display: none !important;
+                }
+            }
         `;
         document.head.appendChild(style);
         return () => document.head.removeChild(style);
@@ -931,7 +944,7 @@ const Navbar = () => {
                 <Logo />
 
                 {/* Desktop Navigation - Only visible on desktop */}
-                <div style={styles.desktopNav}>
+                <div className="desktopNav" style={styles.desktopNav}>
                     <div style={styles.desktopNavLinks}>
                         <NavLink to="/" icon={<FaHome />}>Home</NavLink>
                         <NavLink to="/products" icon={<FaTag />}>Products</NavLink>
@@ -948,24 +961,26 @@ const Navbar = () => {
                         </button>
 
                         {/* Search Dropdown */}
-                        <div style={styles.searchContainer}>
-                            <form onSubmit={handleSearch} style={styles.searchForm}>
-                                <input
-                                    type="text"
-                                    placeholder="Search products..."
-                                    value={searchTerm}
-                                    onChange={(e) => setSearchTerm(e.target.value)}
-                                    style={styles.searchInput}
-                                    autoFocus
-                                />
-                                <button type="submit" style={styles.searchSubmit}>
-                                    <FaSearch />
-                                </button>
-                                <button type="button" style={styles.closeSearch} onClick={toggleSearch}>
-                                    <FaTimes />
-                                </button>
-                            </form>
-                        </div>
+                        {isSearchOpen && (
+                            <div style={styles.searchContainer}>
+                                <form onSubmit={handleSearch} style={styles.searchForm}>
+                                    <input
+                                        type="text"
+                                        placeholder="Search products..."
+                                        value={searchTerm}
+                                        onChange={(e) => setSearchTerm(e.target.value)}
+                                        style={styles.searchInput}
+                                        autoFocus
+                                    />
+                                    <button type="submit" style={styles.searchSubmit}>
+                                        <FaSearch />
+                                    </button>
+                                    <button type="button" style={styles.closeSearch} onClick={toggleSearch}>
+                                        <FaTimes />
+                                    </button>
+                                </form>
+                            </div>
+                        )}
                         
                         {/* Dark Mode Toggle */}
                         <button 
@@ -1001,100 +1016,102 @@ const Navbar = () => {
                                     <span style={styles.userNameText}>{user.name}</span>
                                 </div>
                                 
-                                <div style={styles.dropdown}>
-                                    <div style={styles.dropdownHeader}>
-                                        <div style={styles.dropdownUserInfo}>
-                                            <div style={styles.dropdownAvatar}>
-                                                {user.name?.charAt(0).toUpperCase()}
-                                            </div>
-                                            <div style={styles.dropdownUserDetails}>
-                                                <div style={styles.dropdownUserName}>
-                                                    {user.name || 'User'}
+                                {isDropdownOpen && (
+                                    <div style={styles.dropdown}>
+                                        <div style={styles.dropdownHeader}>
+                                            <div style={styles.dropdownUserInfo}>
+                                                <div style={styles.dropdownAvatar}>
+                                                    {user.name?.charAt(0).toUpperCase()}
                                                 </div>
-                                                <div style={styles.dropdownUserEmail}>
-                                                    {user.email}
+                                                <div style={styles.dropdownUserDetails}>
+                                                    <div style={styles.dropdownUserName}>
+                                                        {user.name || 'User'}
+                                                    </div>
+                                                    <div style={styles.dropdownUserEmail}>
+                                                        {user.email}
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
 
-                                    {/* Role-based dashboard links */}
-                                    {user.role === 'seller' && (
-                                        <>
-                                            <Link to="/seller/dashboard" style={styles.dropdownItem} className="dropdown-item">
-                                                <FaTachometerAlt style={styles.dropdownIcon} className="dropdown-icon" />
-                                                Seller Dashboard
-                                                <span style={styles.roleBadge}>Seller</span>
-                                            </Link>
-                                            <Link to="/seller/products" style={styles.dropdownItem} className="dropdown-item">
-                                                <FaBox style={styles.dropdownIcon} className="dropdown-icon" />
-                                                My Products
-                                            </Link>
-                                            <Link to="/seller/orders" style={styles.dropdownItem} className="dropdown-item">
-                                                <FaClipboardList style={styles.dropdownIcon} className="dropdown-icon" />
-                                                Orders
-                                            </Link>
-                                        </>
-                                    )}
-                                    
-                                    {user.role === 'admin' && (
-                                        <>
-                                            <Link to="/admin/dashboard" style={styles.dropdownItem} className="dropdown-item">
-                                                <FaTachometerAlt style={styles.dropdownIcon} className="dropdown-icon" />
-                                                Admin Dashboard
-                                                <span style={styles.roleBadge}>Admin</span>
-                                            </Link>
-                                            <Link to="/admin/users" style={styles.dropdownItem} className="dropdown-item">
-                                                <FaUser style={styles.dropdownIcon} className="dropdown-icon" />
-                                                Users
-                                            </Link>
-                                            <Link to="/admin/products" style={styles.dropdownItem} className="dropdown-item">
-                                                <FaBox style={styles.dropdownIcon} className="dropdown-icon" />
-                                                Products
-                                            </Link>
-                                        </>
-                                    )}
-                                    
-                                    {user.role === 'customer' && (
-                                        <>
-                                            <Link to="/profile" style={styles.dropdownItem} className="dropdown-item">
-                                                <FaUser style={styles.dropdownIcon} className="dropdown-icon" />
-                                                My Profile
-                                            </Link>
-                                            <Link to="/orders" style={styles.dropdownItem} className="dropdown-item">
-                                                <FaClipboardList style={styles.dropdownIcon} className="dropdown-icon" />
-                                                My Orders
-                                            </Link>
-                                            <Link to="/wishlist" style={styles.dropdownItem} className="dropdown-item">
-                                                <FaHeart style={styles.dropdownIcon} className="dropdown-icon" />
-                                                Wishlist 
-                                                {wishlistCount > 0 && (
-                                                    <span style={styles.countBadge}>{wishlistCount}</span>
-                                                )}
-                                            </Link>
-                                        </>
-                                    )}
-                                    
-                                    <div style={styles.dropdownDivider}></div>
-                                    
-                                    <Link to="/notifications" style={styles.dropdownItem} className="dropdown-item">
-                                        <FaBell style={styles.dropdownIcon} className="dropdown-icon" />
-                                        Notifications
-                                    </Link>
-                                    
-                                    <Link to="/cart" style={styles.dropdownItem} className="dropdown-item">
-                                        <FaShoppingCart style={styles.dropdownIcon} className="dropdown-icon" />
-                                        Cart 
-                                        {cartCount > 0 && (
-                                            <span style={styles.countBadge}>{cartCount}</span>
+                                        {/* Role-based dashboard links */}
+                                        {user.role === 'seller' && (
+                                            <>
+                                                <Link to="/seller/dashboard" style={styles.dropdownItem} className="dropdown-item">
+                                                    <FaTachometerAlt style={styles.dropdownIcon} className="dropdown-icon" />
+                                                    Seller Dashboard
+                                                    <span style={styles.roleBadge}>Seller</span>
+                                                </Link>
+                                                <Link to="/seller/products" style={styles.dropdownItem} className="dropdown-item">
+                                                    <FaBox style={styles.dropdownIcon} className="dropdown-icon" />
+                                                    My Products
+                                                </Link>
+                                                <Link to="/seller/orders" style={styles.dropdownItem} className="dropdown-item">
+                                                    <FaClipboardList style={styles.dropdownIcon} className="dropdown-icon" />
+                                                    Orders
+                                                </Link>
+                                            </>
                                         )}
-                                    </Link>
-                                    
-                                    <button onClick={handleLogout} style={styles.dropdownItem} className="dropdown-item">
-                                        <FaSignOutAlt style={styles.dropdownIcon} className="dropdown-icon" />
-                                        Logout
-                                    </button>
-                                </div>
+                                        
+                                        {user.role === 'admin' && (
+                                            <>
+                                                <Link to="/admin/dashboard" style={styles.dropdownItem} className="dropdown-item">
+                                                    <FaTachometerAlt style={styles.dropdownIcon} className="dropdown-icon" />
+                                                    Admin Dashboard
+                                                    <span style={styles.roleBadge}>Admin</span>
+                                                </Link>
+                                                <Link to="/admin/users" style={styles.dropdownItem} className="dropdown-item">
+                                                    <FaUser style={styles.dropdownIcon} className="dropdown-icon" />
+                                                    Users
+                                                </Link>
+                                                <Link to="/admin/products" style={styles.dropdownItem} className="dropdown-item">
+                                                    <FaBox style={styles.dropdownIcon} className="dropdown-icon" />
+                                                    Products
+                                                </Link>
+                                            </>
+                                        )}
+                                        
+                                        {user.role === 'customer' && (
+                                            <>
+                                                <Link to="/profile" style={styles.dropdownItem} className="dropdown-item">
+                                                    <FaUser style={styles.dropdownIcon} className="dropdown-icon" />
+                                                    My Profile
+                                                </Link>
+                                                <Link to="/orders" style={styles.dropdownItem} className="dropdown-item">
+                                                    <FaClipboardList style={styles.dropdownIcon} className="dropdown-icon" />
+                                                    My Orders
+                                                </Link>
+                                                <Link to="/wishlist" style={styles.dropdownItem} className="dropdown-item">
+                                                    <FaHeart style={styles.dropdownIcon} className="dropdown-icon" />
+                                                    Wishlist 
+                                                    {wishlistCount > 0 && (
+                                                        <span style={styles.countBadge}>{wishlistCount}</span>
+                                                    )}
+                                                </Link>
+                                            </>
+                                        )}
+                                        
+                                        <div style={styles.dropdownDivider}></div>
+                                        
+                                        <Link to="/notifications" style={styles.dropdownItem} className="dropdown-item">
+                                            <FaBell style={styles.dropdownIcon} className="dropdown-icon" />
+                                            Notifications
+                                        </Link>
+                                        
+                                        <Link to="/cart" style={styles.dropdownItem} className="dropdown-item">
+                                            <FaShoppingCart style={styles.dropdownIcon} className="dropdown-icon" />
+                                            Cart 
+                                            {cartCount > 0 && (
+                                                <span style={styles.countBadge}>{cartCount}</span>
+                                            )}
+                                        </Link>
+                                        
+                                        <button onClick={handleLogout} style={styles.dropdownItem} className="dropdown-item">
+                                            <FaSignOutAlt style={styles.dropdownIcon} className="dropdown-icon" />
+                                            Logout
+                                        </button>
+                                    </div>
+                                )}
                             </div>
                         ) : (
                             <div style={styles.authButtons}>
@@ -1106,7 +1123,7 @@ const Navbar = () => {
                 </div>
 
                 {/* Mobile Navigation - Only visible on mobile */}
-                <div style={styles.mobileNav}>
+                <div className="mobileNav" style={styles.mobileNav}>
                     {/* Cart Icon for Mobile */}
                     <Link to="/cart" style={{...styles.cartLink, padding: '0.5rem'}} className="cart-link">
                         <FaShoppingCart size={18} />
@@ -1133,165 +1150,167 @@ const Navbar = () => {
                 </div>
 
                 {/* Mobile Menu - Only shown when hamburger is clicked */}
-                <div style={styles.mobileMenu}>
-                    <div style={styles.mobileMenuContent} className="mobile-menu-content">
-                        {/* Search Bar for Mobile */}
-                        <form onSubmit={handleSearch} style={{marginBottom: '2rem'}}>
-                            <div style={{display: 'flex', gap: '0.5rem'}}>
-                                <input
-                                    type="text"
-                                    placeholder="Search products..."
-                                    value={searchTerm}
-                                    onChange={(e) => setSearchTerm(e.target.value)}
-                                    style={{
-                                        flex: 1,
-                                        padding: '1rem',
-                                        border: '2px solid rgba(255,215,0,0.3)',
-                                        borderRadius: '12px',
-                                        fontSize: '1rem',
-                                        background: 'rgba(255,255,255,0.1)',
-                                        color: 'white',
-                                        outline: 'none'
-                                    }}
-                                />
-                                <button 
-                                    type="submit"
-                                    style={{
-                                        padding: '1rem',
-                                        background: 'linear-gradient(135deg, #667eea, #764ba2, #ff6b6b)',
-                                        color: 'white',
-                                        border: 'none',
-                                        borderRadius: '12px',
-                                        cursor: 'pointer'
-                                    }}
-                                >
-                                    <FaSearch />
-                                </button>
-                            </div>
-                        </form>
-
-                        {/* Navigation Links */}
-                        <div style={styles.mobileNavLinks}>
-                            <MobileNavLink to="/" icon={<FaHome />} onClick={() => setIsMobileMenuOpen(false)}>
-                                Home
-                            </MobileNavLink>
-                            <MobileNavLink to="/products" icon={<FaTag />} onClick={() => setIsMobileMenuOpen(false)}>
-                                Products
-                            </MobileNavLink>
-                        </div>
-
-                        {/* User Section */}
-                        {user ? (
-                            <div style={styles.mobileUserSection}>
-                                <div style={styles.mobileUserInfo}>
-                                    <div style={styles.mobileUserAvatar}>
-                                        {user.name?.charAt(0).toUpperCase()}
-                                    </div>
-                                    <div style={styles.mobileUserDetails}>
-                                        <div style={styles.mobileUserName}>{user.name}</div>
-                                        <div style={styles.mobileUserEmail}>{user.email}</div>
-                                        <div style={styles.mobileRoleBadge}>{user.role}</div>
-                                    </div>
-                                </div>
-
-                                <div style={{display: 'flex', flexDirection: 'column', gap: '0.5rem'}}>
-                                    {/* Role-based links */}
-                                    {user.role === 'seller' && (
-                                        <>
-                                            <Link to="/seller/dashboard" style={styles.mobileNavLink} onClick={() => setIsMobileMenuOpen(false)}>
-                                                <FaTachometerAlt style={styles.mobileNavIcon} />
-                                                Seller Dashboard
-                                            </Link>
-                                            <Link to="/seller/products" style={styles.mobileNavLink} onClick={() => setIsMobileMenuOpen(false)}>
-                                                <FaBox style={styles.mobileNavIcon} />
-                                                My Products
-                                            </Link>
-                                            <Link to="/seller/orders" style={styles.mobileNavLink} onClick={() => setIsMobileMenuOpen(false)}>
-                                                <FaClipboardList style={styles.mobileNavIcon} />
-                                                Orders
-                                            </Link>
-                                        </>
-                                    )}
-                                    
-                                    {user.role === 'admin' && (
-                                        <>
-                                            <Link to="/admin/dashboard" style={styles.mobileNavLink} onClick={() => setIsMobileMenuOpen(false)}>
-                                                <FaTachometerAlt style={styles.mobileNavIcon} />
-                                                Admin Dashboard
-                                            </Link>
-                                            <Link to="/admin/users" style={styles.mobileNavLink} onClick={() => setIsMobileMenuOpen(false)}>
-                                                <FaUser style={styles.mobileNavIcon} />
-                                                Users
-                                            </Link>
-                                            <Link to="/admin/products" style={styles.mobileNavLink} onClick={() => setIsMobileMenuOpen(false)}>
-                                                <FaBox style={styles.mobileNavIcon} />
-                                                Products
-                                            </Link>
-                                        </>
-                                    )}
-                                    
-                                    {user.role === 'customer' && (
-                                        <>
-                                            <Link to="/profile" style={styles.mobileNavLink} onClick={() => setIsMobileMenuOpen(false)}>
-                                                <FaUser style={styles.mobileNavIcon} />
-                                                My Profile
-                                            </Link>
-                                            <Link to="/orders" style={styles.mobileNavLink} onClick={() => setIsMobileMenuOpen(false)}>
-                                                <FaClipboardList style={styles.mobileNavIcon} />
-                                                My Orders
-                                            </Link>
-                                            <Link to="/wishlist" style={styles.mobileNavLink} onClick={() => setIsMobileMenuOpen(false)}>
-                                                <FaHeart style={styles.mobileNavIcon} />
-                                                Wishlist
-                                                {wishlistCount > 0 && (
-                                                    <span style={{...styles.countBadge, marginLeft: 'auto'}}>{wishlistCount}</span>
-                                                )}
-                                            </Link>
-                                        </>
-                                    )}
-
-                                    {/* Common links */}
-                                    <Link to="/notifications" style={styles.mobileNavLink} onClick={() => setIsMobileMenuOpen(false)}>
-                                        <FaBell style={styles.mobileNavIcon} />
-                                        Notifications
-                                    </Link>
-                                    
-                                    <Link to="/cart" style={styles.mobileNavLink} onClick={() => setIsMobileMenuOpen(false)}>
-                                        <FaShoppingCart style={styles.mobileNavIcon} />
-                                        Cart
-                                        {cartCount > 0 && (
-                                            <span style={{...styles.countBadge, marginLeft: 'auto'}}>{cartCount}</span>
-                                        )}
-                                    </Link>
-
+                {isMobileMenuOpen && (
+                    <div style={styles.mobileMenu}>
+                        <div style={styles.mobileMenuContent} className="mobile-menu-content">
+                            {/* Search Bar for Mobile */}
+                            <form onSubmit={handleSearch} style={{marginBottom: '2rem'}}>
+                                <div style={{display: 'flex', gap: '0.5rem'}}>
+                                    <input
+                                        type="text"
+                                        placeholder="Search products..."
+                                        value={searchTerm}
+                                        onChange={(e) => setSearchTerm(e.target.value)}
+                                        style={{
+                                            flex: 1,
+                                            padding: '1rem',
+                                            border: '2px solid rgba(255,215,0,0.3)',
+                                            borderRadius: '12px',
+                                            fontSize: '1rem',
+                                            background: 'rgba(255,255,255,0.1)',
+                                            color: 'white',
+                                            outline: 'none'
+                                        }}
+                                    />
                                     <button 
-                                        onClick={handleLogout}
-                                        style={{...styles.mobileNavLink, width: '100%', textAlign: 'left', cursor: 'pointer'}}
+                                        type="submit"
+                                        style={{
+                                            padding: '1rem',
+                                            background: 'linear-gradient(135deg, #667eea, #764ba2, #ff6b6b)',
+                                            color: 'white',
+                                            border: 'none',
+                                            borderRadius: '12px',
+                                            cursor: 'pointer'
+                                        }}
                                     >
-                                        <FaSignOutAlt style={styles.mobileNavIcon} />
-                                        Logout
+                                        <FaSearch />
                                     </button>
                                 </div>
-                            </div>
-                        ) : (
-                            <div style={styles.mobileAuthButtons}>
-                                <Link to="/login" style={styles.mobileButton} onClick={() => setIsMobileMenuOpen(false)}>
-                                    <FaUser /> Login
-                                </Link>
-                                <Link to="/register" style={{...styles.mobileButton, ...styles.mobileButtonPrimary}} onClick={() => setIsMobileMenuOpen(false)}>
-                                    <FaGift /> Register
-                                </Link>
-                            </div>
-                        )}
+                            </form>
 
-                        {/* Notification Bell for Mobile */}
-                        {user && (
-                            <div style={{marginTop: '1rem'}}>
-                                <NotificationBell />
+                            {/* Navigation Links */}
+                            <div style={styles.mobileNavLinks}>
+                                <MobileNavLink to="/" icon={<FaHome />} onClick={() => setIsMobileMenuOpen(false)}>
+                                    Home
+                                </MobileNavLink>
+                                <MobileNavLink to="/products" icon={<FaTag />} onClick={() => setIsMobileMenuOpen(false)}>
+                                    Products
+                                </MobileNavLink>
                             </div>
-                        )}
+
+                            {/* User Section */}
+                            {user ? (
+                                <div style={styles.mobileUserSection}>
+                                    <div style={styles.mobileUserInfo}>
+                                        <div style={styles.mobileUserAvatar}>
+                                            {user.name?.charAt(0).toUpperCase()}
+                                        </div>
+                                        <div style={styles.mobileUserDetails}>
+                                            <div style={styles.mobileUserName}>{user.name}</div>
+                                            <div style={styles.mobileUserEmail}>{user.email}</div>
+                                            <div style={styles.mobileRoleBadge}>{user.role}</div>
+                                        </div>
+                                    </div>
+
+                                    <div style={{display: 'flex', flexDirection: 'column', gap: '0.5rem'}}>
+                                        {/* Role-based links */}
+                                        {user.role === 'seller' && (
+                                            <>
+                                                <Link to="/seller/dashboard" style={styles.mobileNavLink} onClick={() => setIsMobileMenuOpen(false)}>
+                                                    <FaTachometerAlt style={styles.mobileNavIcon} />
+                                                    Seller Dashboard
+                                                </Link>
+                                                <Link to="/seller/products" style={styles.mobileNavLink} onClick={() => setIsMobileMenuOpen(false)}>
+                                                    <FaBox style={styles.mobileNavIcon} />
+                                                    My Products
+                                                </Link>
+                                                <Link to="/seller/orders" style={styles.mobileNavLink} onClick={() => setIsMobileMenuOpen(false)}>
+                                                    <FaClipboardList style={styles.mobileNavIcon} />
+                                                    Orders
+                                                </Link>
+                                            </>
+                                        )}
+                                        
+                                        {user.role === 'admin' && (
+                                            <>
+                                                <Link to="/admin/dashboard" style={styles.mobileNavLink} onClick={() => setIsMobileMenuOpen(false)}>
+                                                    <FaTachometerAlt style={styles.mobileNavIcon} />
+                                                    Admin Dashboard
+                                                </Link>
+                                                <Link to="/admin/users" style={styles.mobileNavLink} onClick={() => setIsMobileMenuOpen(false)}>
+                                                    <FaUser style={styles.mobileNavIcon} />
+                                                    Users
+                                                </Link>
+                                                <Link to="/admin/products" style={styles.mobileNavLink} onClick={() => setIsMobileMenuOpen(false)}>
+                                                    <FaBox style={styles.mobileNavIcon} />
+                                                    Products
+                                                </Link>
+                                            </>
+                                        )}
+                                        
+                                        {user.role === 'customer' && (
+                                            <>
+                                                <Link to="/profile" style={styles.mobileNavLink} onClick={() => setIsMobileMenuOpen(false)}>
+                                                    <FaUser style={styles.mobileNavIcon} />
+                                                    My Profile
+                                                </Link>
+                                                <Link to="/orders" style={styles.mobileNavLink} onClick={() => setIsMobileMenuOpen(false)}>
+                                                    <FaClipboardList style={styles.mobileNavIcon} />
+                                                    My Orders
+                                                </Link>
+                                                <Link to="/wishlist" style={styles.mobileNavLink} onClick={() => setIsMobileMenuOpen(false)}>
+                                                    <FaHeart style={styles.mobileNavIcon} />
+                                                    Wishlist
+                                                    {wishlistCount > 0 && (
+                                                        <span style={{...styles.countBadge, marginLeft: 'auto'}}>{wishlistCount}</span>
+                                                    )}
+                                                </Link>
+                                            </>
+                                        )}
+
+                                        {/* Common links */}
+                                        <Link to="/notifications" style={styles.mobileNavLink} onClick={() => setIsMobileMenuOpen(false)}>
+                                            <FaBell style={styles.mobileNavIcon} />
+                                            Notifications
+                                        </Link>
+                                        
+                                        <Link to="/cart" style={styles.mobileNavLink} onClick={() => setIsMobileMenuOpen(false)}>
+                                            <FaShoppingCart style={styles.mobileNavIcon} />
+                                            Cart
+                                            {cartCount > 0 && (
+                                                <span style={{...styles.countBadge, marginLeft: 'auto'}}>{cartCount}</span>
+                                            )}
+                                        </Link>
+
+                                        <button 
+                                            onClick={handleLogout}
+                                            style={{...styles.mobileNavLink, width: '100%', textAlign: 'left', cursor: 'pointer'}}
+                                        >
+                                            <FaSignOutAlt style={styles.mobileNavIcon} />
+                                            Logout
+                                        </button>
+                                    </div>
+                                </div>
+                            ) : (
+                                <div style={styles.mobileAuthButtons}>
+                                    <Link to="/login" style={styles.mobileButton} onClick={() => setIsMobileMenuOpen(false)}>
+                                        <FaUser /> Login
+                                    </Link>
+                                    <Link to="/register" style={{...styles.mobileButton, ...styles.mobileButtonPrimary}} onClick={() => setIsMobileMenuOpen(false)}>
+                                        <FaGift /> Register
+                                    </Link>
+                                </div>
+                            )}
+
+                            {/* Notification Bell for Mobile */}
+                            {user && (
+                                <div style={{marginTop: '1rem'}}>
+                                    <NotificationBell />
+                                </div>
+                            )}
+                        </div>
                     </div>
-                </div>
+                )}
             </div>
         </nav>
     );

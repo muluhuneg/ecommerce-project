@@ -451,7 +451,7 @@ const Home = () => {
                 </div>
             </div>
 
-            {/* CSS Animations */}
+            {/* CSS Animations and Responsive Styles */}
             <style>
                 {`
                     @keyframes fadeIn {
@@ -469,6 +469,92 @@ const Home = () => {
                         0% { transform: rotate(0deg); }
                         100% { transform: rotate(360deg); }
                     }
+
+                    /* Responsive Styles */
+                    @media (max-width: 1024px) {
+                        .products-grid,
+                        .categories-grid,
+                        .brands-grid {
+                            grid-template-columns: repeat(3, 1fr) !important;
+                        }
+                    }
+
+                    @media (max-width: 768px) {
+                        .hero-title {
+                            font-size: 2rem !important;
+                        }
+                        .hero-subtitle {
+                            font-size: 1rem !important;
+                        }
+                        .hero-button {
+                            padding: 10px 20px !important;
+                        }
+                        .features-section {
+                            grid-template-columns: repeat(2, 1fr) !important;
+                        }
+                        .products-grid,
+                        .categories-grid,
+                        .brands-grid {
+                            grid-template-columns: repeat(2, 1fr) !important;
+                        }
+                        .section-title {
+                            font-size: 1.5rem !important;
+                        }
+                        .promo-banner {
+                            flex-direction: column !important;
+                        }
+                        .promo-content {
+                            left: 5% !important;
+                            right: 5% !important;
+                            text-align: center !important;
+                        }
+                        .promo-title {
+                            font-size: 1.8rem !important;
+                        }
+                        .newsletter-form {
+                            flex-direction: column !important;
+                        }
+                    }
+
+                    @media (max-width: 480px) {
+                        .hero-title {
+                            font-size: 1.5rem !important;
+                        }
+                        .hero-section {
+                            height: 400px !important;
+                        }
+                        .hero-content {
+                            left: 5% !important;
+                            right: 5% !important;
+                        }
+                        .features-section {
+                            grid-template-columns: 1fr !important;
+                        }
+                        .products-grid,
+                        .categories-grid,
+                        .brands-grid {
+                            grid-template-columns: 1fr !important;
+                        }
+                        .section-header {
+                            flex-direction: column !important;
+                            gap: 10px !important;
+                        }
+                        .promo-banner {
+                            height: 400px !important;
+                        }
+                        .promo-image {
+                            width: 100% !important;
+                        }
+                        .brands-grid {
+                            grid-template-columns: repeat(2, 1fr) !important;
+                        }
+                        .newsletter-form {
+                            flex-direction: column !important;
+                        }
+                        .newsletter-input {
+                            width: 100% !important;
+                        }
+                    }
                 `}
             </style>
         </div>
@@ -485,7 +571,13 @@ const styles = {
     heroSection: {
         position: 'relative',
         height: '600px',
-        overflow: 'hidden'
+        overflow: 'hidden',
+        '@media (max-width: 768px)': {
+            height: '450px'
+        },
+        '@media (max-width: 480px)': {
+            height: '400px'
+        }
     },
     heroSlide: {
         position: 'absolute',
@@ -514,18 +606,38 @@ const styles = {
         transform: 'translateY(-50%)',
         color: 'white',
         maxWidth: '600px',
-        zIndex: 2
+        zIndex: 2,
+        '@media (max-width: 768px)': {
+            left: '5%',
+            right: '5%',
+            maxWidth: '90%'
+        }
     },
     heroTitle: {
         fontSize: '3.5rem',
         marginBottom: '15px',
         fontWeight: '700',
-        textShadow: '2px 2px 4px rgba(0,0,0,0.3)'
+        textShadow: '2px 2px 4px rgba(0,0,0,0.3)',
+        '@media (max-width: 1024px)': {
+            fontSize: '3rem'
+        },
+        '@media (max-width: 768px)': {
+            fontSize: '2.2rem'
+        },
+        '@media (max-width: 480px)': {
+            fontSize: '1.8rem'
+        }
     },
     heroSubtitle: {
         fontSize: '1.3rem',
         marginBottom: '25px',
-        opacity: 0.95
+        opacity: 0.95,
+        '@media (max-width: 768px)': {
+            fontSize: '1.1rem'
+        },
+        '@media (max-width: 480px)': {
+            fontSize: '1rem'
+        }
     },
     heroButton: {
         padding: '12px 35px',
@@ -539,7 +651,14 @@ const styles = {
         display: 'inline-flex',
         alignItems: 'center',
         gap: '10px',
-        transition: 'background 0.3s ease'
+        transition: 'background 0.3s ease',
+        '@media (max-width: 768px)': {
+            padding: '10px 25px'
+        },
+        '@media (max-width: 480px)': {
+            padding: '8px 20px',
+            fontSize: '0.9rem'
+        }
     },
     slideIndicators: {
         position: 'absolute',
@@ -565,7 +684,18 @@ const styles = {
         padding: '0 20px',
         display: 'grid',
         gridTemplateColumns: 'repeat(4, 1fr)',
-        gap: '30px'
+        gap: '30px',
+        '@media (max-width: 1024px)': {
+            gap: '20px'
+        },
+        '@media (max-width: 768px)': {
+            gridTemplateColumns: 'repeat(2, 1fr)',
+            gap: '15px'
+        },
+        '@media (max-width: 480px)': {
+            gridTemplateColumns: '1fr',
+            gap: '15px'
+        }
     },
     featureCard: {
         textAlign: 'center',
@@ -573,42 +703,71 @@ const styles = {
         background: 'white',
         borderRadius: '8px',
         boxShadow: '0 5px 15px rgba(0,0,0,0.05)',
-        transition: 'box-shadow 0.3s ease'
+        transition: 'box-shadow 0.3s ease',
+        '@media (max-width: 768px)': {
+            padding: '20px'
+        }
     },
     featureIcon: {
         fontSize: '2.2rem',
         color: '#3498db',
-        marginBottom: '15px'
+        marginBottom: '15px',
+        '@media (max-width: 768px)': {
+            fontSize: '1.8rem'
+        }
     },
     featureTitle: {
         fontSize: '1.1rem',
         fontWeight: '600',
         color: '#333',
-        marginBottom: '8px'
+        marginBottom: '8px',
+        '@media (max-width: 768px)': {
+            fontSize: '1rem'
+        }
     },
     featureText: {
         fontSize: '0.9rem',
         color: '#666',
-        margin: 0
+        margin: 0,
+        '@media (max-width: 768px)': {
+            fontSize: '0.85rem'
+        }
     },
 
     // Section Styles
     section: {
         maxWidth: '1200px',
         margin: '60px auto',
-        padding: '40px 20px'
+        padding: '40px 20px',
+        '@media (max-width: 768px)': {
+            margin: '40px auto',
+            padding: '30px 15px'
+        }
     },
     sectionHeader: {
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'center',
-        marginBottom: '30px'
+        marginBottom: '30px',
+        '@media (max-width: 480px)': {
+            flexDirection: 'column',
+            gap: '15px'
+        }
     },
     sectionTitle: {
         fontSize: '2rem',
         color: '#333',
         fontWeight: '600',
-        margin: 0
+        margin: 0,
+        '@media (max-width: 1024px)': {
+            fontSize: '1.8rem'
+        },
+        '@media (max-width: 768px)': {
+            fontSize: '1.5rem'
+        },
+        '@media (max-width: 480px)': {
+            fontSize: '1.3rem'
+        }
     },
     viewAllLink: {
         color: '#3498db',
@@ -618,14 +777,27 @@ const styles = {
         gap: '5px',
         fontSize: '0.95rem',
         fontWeight: '500',
-        transition: 'color 0.3s ease'
+        transition: 'color 0.3s ease',
+        '@media (max-width: 480px)': {
+            fontSize: '0.9rem'
+        }
     },
 
     // Categories Grid
     categoriesGrid: {
         display: 'grid',
         gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
-        gap: '20px'
+        gap: '20px',
+        '@media (max-width: 1024px)': {
+            gridTemplateColumns: 'repeat(3, 1fr)'
+        },
+        '@media (max-width: 768px)': {
+            gridTemplateColumns: 'repeat(2, 1fr)',
+            gap: '15px'
+        },
+        '@media (max-width: 480px)': {
+            gridTemplateColumns: '1fr'
+        }
     },
     categoryCard: {
         position: 'relative',
@@ -633,7 +805,10 @@ const styles = {
         borderRadius: '8px',
         overflow: 'hidden',
         textDecoration: 'none',
-        boxShadow: '0 5px 15px rgba(0,0,0,0.08)'
+        boxShadow: '0 5px 15px rgba(0,0,0,0.08)',
+        '@media (max-width: 768px)': {
+            height: '180px'
+        }
     },
     categoryImageContainer: {
         width: '100%',
@@ -659,19 +834,35 @@ const styles = {
     categoryIcon: {
         fontSize: '1.8rem',
         marginBottom: '5px',
-        opacity: 0.9
+        opacity: 0.9,
+        '@media (max-width: 768px)': {
+            fontSize: '1.5rem'
+        }
     },
     categoryName: {
         fontSize: '1rem',
         margin: 0,
-        fontWeight: '500'
+        fontWeight: '500',
+        '@media (max-width: 768px)': {
+            fontSize: '0.9rem'
+        }
     },
 
     // Products Grid
     productsGrid: {
         display: 'grid',
         gridTemplateColumns: 'repeat(4, 1fr)',
-        gap: '20px'
+        gap: '20px',
+        '@media (max-width: 1024px)': {
+            gridTemplateColumns: 'repeat(3, 1fr)'
+        },
+        '@media (max-width: 768px)': {
+            gridTemplateColumns: 'repeat(2, 1fr)',
+            gap: '15px'
+        },
+        '@media (max-width: 480px)': {
+            gridTemplateColumns: '1fr'
+        }
     },
     productCard: {
         background: 'white',
@@ -722,7 +913,10 @@ const styles = {
     },
     productImageContainer: {
         height: '200px',
-        overflow: 'hidden'
+        overflow: 'hidden',
+        '@media (max-width: 768px)': {
+            height: '180px'
+        }
     },
     productImage: {
         width: '100%',
@@ -730,14 +924,20 @@ const styles = {
         objectFit: 'cover'
     },
     productInfo: {
-        padding: '15px'
+        padding: '15px',
+        '@media (max-width: 768px)': {
+            padding: '12px'
+        }
     },
     productName: {
         fontSize: '0.95rem',
         marginBottom: '8px',
         color: '#333',
         fontWeight: '500',
-        lineHeight: '1.4'
+        lineHeight: '1.4',
+        '@media (max-width: 768px)': {
+            fontSize: '0.9rem'
+        }
     },
     productRating: {
         display: 'flex',
@@ -754,17 +954,26 @@ const styles = {
         display: 'flex',
         alignItems: 'center',
         gap: '8px',
-        marginBottom: '12px'
+        marginBottom: '12px',
+        '@media (max-width: 768px)': {
+            flexWrap: 'wrap'
+        }
     },
     productPrice: {
         fontSize: '1.1rem',
         fontWeight: '600',
-        color: '#333'
+        color: '#333',
+        '@media (max-width: 768px)': {
+            fontSize: '1rem'
+        }
     },
     discountPrice: {
         fontSize: '1.1rem',
         fontWeight: '600',
-        color: '#e74c3c'
+        color: '#e74c3c',
+        '@media (max-width: 768px)': {
+            fontSize: '1rem'
+        }
     },
     originalPrice: {
         fontSize: '0.85rem',
@@ -783,7 +992,11 @@ const styles = {
         justifyContent: 'center',
         gap: '5px',
         fontSize: '0.9rem',
-        fontWeight: '500'
+        fontWeight: '500',
+        '@media (max-width: 768px)': {
+            padding: '6px',
+            fontSize: '0.85rem'
+        }
     },
 
     // Promo Banner
@@ -792,7 +1005,13 @@ const styles = {
         height: '350px',
         margin: '40px 0',
         overflow: 'hidden',
-        background: '#f8f9fa'
+        background: '#f8f9fa',
+        '@media (max-width: 768px)': {
+            height: '300px'
+        },
+        '@media (max-width: 480px)': {
+            height: '400px'
+        }
     },
     promoContent: {
         position: 'absolute',
@@ -800,7 +1019,13 @@ const styles = {
         left: '10%',
         transform: 'translateY(-50%)',
         zIndex: 2,
-        maxWidth: '500px'
+        maxWidth: '500px',
+        '@media (max-width: 768px)': {
+            left: '5%',
+            right: '5%',
+            maxWidth: '90%',
+            textAlign: 'center'
+        }
     },
     promoTag: {
         display: 'inline-block',
@@ -816,12 +1041,21 @@ const styles = {
         fontSize: '2.5rem',
         color: '#333',
         marginBottom: '10px',
-        fontWeight: '700'
+        fontWeight: '700',
+        '@media (max-width: 768px)': {
+            fontSize: '2rem'
+        },
+        '@media (max-width: 480px)': {
+            fontSize: '1.8rem'
+        }
     },
     promoText: {
         fontSize: '1.1rem',
         color: '#666',
-        marginBottom: '20px'
+        marginBottom: '20px',
+        '@media (max-width: 768px)': {
+            fontSize: '1rem'
+        }
     },
     promoButton: {
         padding: '10px 30px',
@@ -834,7 +1068,10 @@ const styles = {
         cursor: 'pointer',
         display: 'inline-flex',
         alignItems: 'center',
-        gap: '8px'
+        gap: '8px',
+        '@media (max-width: 768px)': {
+            padding: '8px 20px'
+        }
     },
     promoImage: {
         position: 'absolute',
@@ -843,7 +1080,14 @@ const styles = {
         width: '50%',
         height: '100%',
         objectFit: 'cover',
-        opacity: 0.8
+        opacity: 0.8,
+        '@media (max-width: 768px)': {
+            width: '40%'
+        },
+        '@media (max-width: 480px)': {
+            width: '100%',
+            opacity: 0.3
+        }
     },
 
     // Brands Section
@@ -857,19 +1101,35 @@ const styles = {
         fontSize: '1.8rem',
         color: '#333',
         marginBottom: '30px',
-        fontWeight: '600'
+        fontWeight: '600',
+        '@media (max-width: 768px)': {
+            fontSize: '1.5rem'
+        }
     },
     brandsGrid: {
         display: 'grid',
         gridTemplateColumns: 'repeat(6, 1fr)',
-        gap: '20px'
+        gap: '20px',
+        '@media (max-width: 1024px)': {
+            gridTemplateColumns: 'repeat(4, 1fr)'
+        },
+        '@media (max-width: 768px)': {
+            gridTemplateColumns: 'repeat(3, 1fr)'
+        },
+        '@media (max-width: 480px)': {
+            gridTemplateColumns: 'repeat(2, 1fr)',
+            gap: '15px'
+        }
     },
     brandCard: {
         padding: '15px',
         background: 'white',
         borderRadius: '8px',
         boxShadow: '0 3px 10px rgba(0,0,0,0.05)',
-        transition: 'box-shadow 0.3s ease'
+        transition: 'box-shadow 0.3s ease',
+        '@media (max-width: 768px)': {
+            padding: '12px'
+        }
     },
     brandImage: {
         width: '100%',
@@ -883,7 +1143,10 @@ const styles = {
     newsletterSection: {
         background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
         padding: '60px 20px',
-        marginTop: '40px'
+        marginTop: '40px',
+        '@media (max-width: 768px)': {
+            padding: '40px 15px'
+        }
     },
     newsletterContent: {
         maxWidth: '500px',
@@ -894,7 +1157,10 @@ const styles = {
     newsletterTitle: {
         fontSize: '2rem',
         marginBottom: '10px',
-        fontWeight: '600'
+        fontWeight: '600',
+        '@media (max-width: 768px)': {
+            fontSize: '1.8rem'
+        }
     },
     newsletterText: {
         fontSize: '1rem',
@@ -903,7 +1169,10 @@ const styles = {
     },
     newsletterForm: {
         display: 'flex',
-        gap: '10px'
+        gap: '10px',
+        '@media (max-width: 480px)': {
+            flexDirection: 'column'
+        }
     },
     newsletterInput: {
         flex: 1,
@@ -911,7 +1180,10 @@ const styles = {
         border: 'none',
         borderRadius: '4px',
         fontSize: '0.95rem',
-        outline: 'none'
+        outline: 'none',
+        '@media (max-width: 480px)': {
+            width: '100%'
+        }
     },
     newsletterButton: {
         padding: '12px 25px',
@@ -922,7 +1194,10 @@ const styles = {
         fontSize: '0.95rem',
         fontWeight: '600',
         cursor: 'pointer',
-        transition: 'transform 0.3s ease'
+        transition: 'transform 0.3s ease',
+        '@media (max-width: 480px)': {
+            padding: '12px'
+        }
     },
 
     // Loading
