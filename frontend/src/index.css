@@ -1,422 +1,143 @@
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+/* ========== GLOBAL FIX FOR ALL PAGES ========== */
+
+/* Force everything to stay within screen width */
+html, body {
+  max-width: 100% !important;
+  overflow-x: hidden !important;
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+/* Fix for all main containers */
+#root,
+.app,
+.container,
+.main-content,
+.page-container {
+  width: 100% !important;
+  max-width: 100vw !important;
+  overflow-x: hidden !important;
+  padding-left: 15px !important;
+  padding-right: 15px !important;
+  box-sizing: border-box !important;
 }
 
-/* ========== GLOBAL RESPONSIVE STYLES ========== */
-* {
-  box-sizing: border-box;
-}
-
-img {
-  max-width: 100%;
-  height: auto;
-}
-
-/* ========== CONTAINER ========== */
-.container {
-  width: 100%;
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 15px;
-}
-
-/* ========== RESPONSIVE GRIDS ========== */
+/* Fix for all grid layouts */
 .products-grid,
+.categories-grid,
+.features-section,
+.brands-grid,
+.stats-grid,
 .dashboard-grid,
 .admin-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 20px;
+  width: 100% !important;
+  max-width: 100% !important;
+  margin: 0 auto !important;
+  padding-left: 10px !important;
+  padding-right: 10px !important;
+  box-sizing: border-box !important;
 }
 
-.categories-grid {
-  display: grid;
-  grid-template-columns: repeat(6, 1fr);
-  gap: 20px;
+/* Fix for flex containers */
+.flex-row,
+.flex-column,
+.row,
+.column {
+  max-width: 100% !important;
+  flex-wrap: wrap !important;
 }
 
-.features-section {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 20px;
+/* Fix for all images and media */
+img,
+video,
+iframe {
+  max-width: 100% !important;
+  height: auto !important;
 }
 
-.brands-grid {
-  display: grid;
-  grid-template-columns: repeat(6, 1fr);
-  gap: 20px;
+/* Fix for tables */
+table {
+  width: 100% !important;
+  max-width: 100% !important;
+  overflow-x: auto !important;
+  display: block !important;
 }
 
-.stats-section {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 20px;
-}
-
-/* ========== SIDEBAR ========== */
-.sidebar {
-  width: 280px;
-  position: fixed;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  background: white;
-  box-shadow: 2px 0 5px rgba(0,0,0,0.1);
-  overflow-y: auto;
-  z-index: 100;
-}
-
-.main-content {
-  margin-left: 280px;
-  padding: 20px;
-}
-
-/* ========== CARDS ========== */
+/* Fix for cards and boxes */
+.card,
 .product-card,
 .category-card,
 .stat-card,
 .dashboard-card {
-  background: white;
-  border-radius: 10px;
-  overflow: hidden;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-  transition: transform 0.3s;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
 }
 
-/* ========== FORMS ========== */
-.form-container {
-  max-width: 500px;
-  margin: 0 auto;
-  padding: 20px;
-}
-
-.form-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 15px;
-}
-
-.form-group {
-  margin-bottom: 15px;
-}
-
-.form-group-full {
-  grid-column: span 2;
-}
-
-.form-label {
-  display: block;
-  margin-bottom: 5px;
-  font-weight: 500;
-  color: #333;
-}
-
-.form-input,
-.form-select,
-.form-textarea {
-  width: 100%;
-  padding: 10px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  font-size: 16px; /* Prevents zoom on mobile */
-}
-
-/* ========== TABLES ========== */
-.table-container {
-  overflow-x: auto;
-  margin: 20px 0;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-}
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-  min-width: 600px; /* Ensures table is readable */
-}
-
-th {
-  background: #f8f9fa;
-  padding: 12px;
-  text-align: left;
-  font-weight: 600;
-}
-
-td {
-  padding: 12px;
-  border-bottom: 1px solid #eee;
-}
-
-/* ========== AUTH PAGES (Login/Register) ========== */
-.auth-container {
-  min-height: calc(100vh - 80px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
-}
-
-.auth-card {
-  background: white;
-  border-radius: 10px;
-  padding: 40px;
-  width: 100%;
-  max-width: 500px;
-  box-shadow: 0 10px 40px rgba(0,0,0,0.1);
-}
-
-/* ========== PROFILE PAGE ========== */
-.profile-container {
-  padding: 20px;
-  max-width: 800px;
-  margin: 0 auto;
-}
-
-.profile-header {
-  display: flex;
-  align-items: center;
-  gap: 30px;
-  margin-bottom: 30px;
-  padding: 20px;
-  background: white;
-  border-radius: 10px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-}
-
-.profile-avatar {
-  width: 100px;
-  height: 100px;
-  border-radius: 50%;
-  object-fit: cover;
-}
-
-.profile-info {
-  flex: 1;
-}
-
-/* ========== CART PAGE ========== */
-.cart-container {
-  display: grid;
-  grid-template-columns: 1fr 350px;
-  gap: 30px;
-  padding: 20px;
-  max-width: 1200px;
-  margin: 0 auto;
-}
-
-.cart-items {
-  background: white;
-  border-radius: 10px;
-  padding: 20px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-}
-
-.cart-summary {
-  background: white;
-  border-radius: 10px;
-  padding: 20px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-  position: sticky;
-  top: 100px;
-  height: fit-content;
-}
-
-/* ========== CHECKOUT PAGE ========== */
-.checkout-container {
-  display: grid;
-  grid-template-columns: 1fr 350px;
-  gap: 30px;
-  padding: 20px;
-  max-width: 1200px;
-  margin: 0 auto;
-}
-
-.checkout-form {
-  background: white;
-  border-radius: 10px;
-  padding: 30px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-}
-
-/* ========== ORDER PAGES ========== */
-.orders-container {
-  padding: 20px;
-  max-width: 1200px;
-  margin: 0 auto;
-}
-
-.order-card {
-  background: white;
-  border-radius: 10px;
-  padding: 20px;
-  margin-bottom: 20px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-}
-
-.order-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 15px;
-  padding-bottom: 15px;
-  border-bottom: 1px solid #eee;
-}
-
-/* ========== DASHBOARD PAGES ========== */
-.dashboard-container {
-  padding: 20px;
-  max-width: 1400px;
-  margin: 0 auto;
-}
-
-.stats-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 20px;
-  margin-bottom: 30px;
-}
-
-/* ========== PRODUCT DETAILS PAGE ========== */
-.product-details-container {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 40px;
-  padding: 20px;
-  max-width: 1200px;
-  margin: 0 auto;
-}
-
-.product-images {
-  position: relative;
-}
-
-.main-image {
-  width: 100%;
-  height: auto;
-  border-radius: 10px;
-  margin-bottom: 10px;
-}
-
-.thumbnail-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 10px;
-}
-
-.thumbnail {
-  width: 100%;
-  height: 80px;
-  object-fit: cover;
-  border-radius: 5px;
-  cursor: pointer;
-  opacity: 0.7;
-  transition: opacity 0.3s;
-}
-
-.thumbnail:hover,
-.thumbnail.active {
-  opacity: 1;
-}
-
-/* ========== FIX: HIDE FASHION PANEL ON MOBILE ========== */
-.fashion-panel,
-.panel-with-fashion {
-  display: block;
-}
-
-/* If the panel is inside the header or navigation */
-.header-fashion-panel,
-.nav-categories {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-}
-
-/* Alternative: Target by content if no class is available */
-[class*="fashion"],
-[class*="categories"],
-[class*="panel"]:contains("Fashion") {
-  /* Note: :contains() doesn't work in CSS, this is just for reference */
-}
-
-/* ========== MOBILE (≤ 576px) ========== */
-@media screen and (max-width: 576px) {
-  /* Grids - single column */
+/* ========== MOBILE SPECIFIC FIXES ========== */
+@media screen and (max-width: 768px) {
+  /* Force all elements to respect container width */
+  * {
+    max-width: 100vw !important;
+    box-sizing: border-box !important;
+  }
+  
+  /* Fix for any fixed-width elements */
+  [style*="width"] {
+    max-width: 100% !important;
+  }
+  
+  /* Fix for margins that cause overflow */
+  [style*="margin-left"],
+  [style*="margin-right"] {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+  
+  /* Fix for padding that causes overflow */
+  [style*="padding-left"],
+  [style*="padding-right"] {
+    padding-left: 10px !important;
+    padding-right: 10px !important;
+  }
+  
+  /* Make grids stack properly */
   .products-grid,
-  .dashboard-grid,
-  .admin-grid,
-  .stats-grid {
-    grid-template-columns: 1fr !important;
-    gap: 15px !important;
-  }
-  
-  .categories-grid {
-    grid-template-columns: repeat(2, 1fr) !important;
-    gap: 10px !important;
-  }
-  
+  .categories-grid,
   .features-section,
   .brands-grid {
-    grid-template-columns: repeat(2, 1fr) !important;
+    grid-template-columns: 1fr 1fr !important;
     gap: 10px !important;
   }
   
-  /* Sidebar */
-  .sidebar {
-    transform: translateX(-100%);
-    transition: transform 0.3s ease;
+  /* Single column for very small screens */
+  @media screen and (max-width: 480px) {
+    .products-grid,
+    .categories-grid,
+    .features-section,
+    .brands-grid {
+      grid-template-columns: 1fr !important;
+    }
   }
   
-  .sidebar.open {
-    transform: translateX(0);
+  /* Fix sidebar and main content */
+  .sidebar {
+    width: 100% !important;
+    position: relative !important;
   }
   
   .main-content {
     margin-left: 0 !important;
-    padding: 15px !important;
+    width: 100% !important;
   }
   
-  /* Mobile menu toggle */
-  .mobile-menu-toggle {
-    display: block !important;
-    position: fixed;
-    top: 10px;
-    left: 10px;
-    z-index: 1000;
-    background: #333;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    padding: 10px;
-    font-size: 1.2rem;
+  /* Fix cart and checkout pages */
+  .cart-container,
+  .checkout-container,
+  .product-details-container {
+    grid-template-columns: 1fr !important;
+    width: 100% !important;
+    padding: 10px !important;
   }
   
-  /* Desktop nav */
-  .desktop-nav {
-    display: none !important;
-  }
-  
-  /* Tables */
-  .table-container {
-    margin: 10px -15px;
-    border-radius: 0;
-  }
-  
-  table {
-    min-width: 500px;
-  }
-  
-  /* Forms */
+  /* Fix forms */
   .form-grid {
     grid-template-columns: 1fr !important;
   }
@@ -425,239 +146,23 @@ td {
     grid-column: span 1 !important;
   }
   
-  .auth-card {
-    padding: 20px !important;
-  }
-  
-  /* Cart & Checkout */
-  .cart-container,
-  .checkout-container {
-    grid-template-columns: 1fr !important;
-    gap: 20px !important;
-    padding: 10px !important;
-  }
-  
-  .cart-summary {
-    position: relative !important;
-    top: 0 !important;
-  }
-  
-  /* Product Details */
-  .product-details-container {
-    grid-template-columns: 1fr !important;
-    gap: 20px !important;
-  }
-  
-  .thumbnail-grid {
-    grid-template-columns: repeat(4, 1fr) !important;
-  }
-  
-  .thumbnail {
-    height: 60px !important;
-  }
-  
-  /* Profile */
-  .profile-header {
-    flex-direction: column !important;
-    text-align: center !important;
-    gap: 15px !important;
-  }
-  
-  /* Order cards */
-  .order-header {
-    flex-direction: column !important;
-    gap: 10px !important;
-    text-align: center !important;
-  }
-  
-  /* Hero Section */
-  .hero-title {
-    font-size: 2rem !important;
-  }
-  
-  .hero-subtitle {
-    font-size: 1rem !important;
-  }
-  
-  .hero-content {
-    left: 5% !important;
-    right: 5% !important;
-    text-align: center !important;
+  /* Fix any absolutely positioned elements */
+  [style*="position: absolute"],
+  [style*="position:absolute"] {
     max-width: 90% !important;
   }
-  
-  /* Buttons */
-  button,
-  .button,
-  .hero-button,
-  .add-to-cart-btn {
-    width: 100% !important;
-    margin: 5px 0 !important;
-  }
-  
-  /* Modals */
-  .modal-content {
-    width: 95% !important;
-    margin: 10px !important;
-    padding: 15px !important;
-  }
-  
-  /* Pagination */
-  .pagination {
-    flex-wrap: wrap !important;
-    justify-content: center !important;
-  }
-  
-  /* Alerts */
-  .alert {
-    margin: 10px !important;
-    padding: 10px !important;
-  }
-  
-  /* ===== FIX: Hide Fashion Panel on Mobile ===== */
-  .fashion-panel,
-  .panel-with-fashion,
-  .hide-on-mobile-fashion,
-  [class*="fashion"]:not(.show-on-mobile),
-  [class*="Fashion"]:not(.show-on-mobile),
-  .category-panel:not(.show-on-mobile),
-  /* If it's a specific div containing Fashion and Home & Garden */
-  div:has(> :contains("Fashion")) /* Note: :has() has limited support */ {
-    display: none !important;
-  }
-  
-  /* If it's inside a specific section like header */
-  header .categories-links,
-  .top-nav .category-links,
-  .nav-menu .categories {
-    display: none !important;
-  }
 }
 
-/* ========== TABLET (577px - 768px) ========== */
-@media screen and (min-width: 577px) and (max-width: 768px) {
-  .products-grid,
-  .dashboard-grid,
-  .admin-grid {
-    grid-template-columns: repeat(2, 1fr) !important;
-  }
-  
-  .categories-grid {
-    grid-template-columns: repeat(3, 1fr) !important;
-  }
-  
-  .features-section,
-  .stats-grid {
-    grid-template-columns: repeat(2, 1fr) !important;
-  }
-  
-  .brands-grid {
-    grid-template-columns: repeat(4, 1fr) !important;
-  }
-  
-  .main-content {
-    margin-left: 0 !important;
-  }
-  
-  .sidebar {
-    transform: translateX(-100%);
-    transition: transform 0.3s ease;
-  }
-  
-  .sidebar.open {
-    transform: translateX(0);
-  }
-  
-  .cart-container,
-  .checkout-container {
-    grid-template-columns: 1fr !important;
-  }
-  
-  .product-details-container {
-    grid-template-columns: 1fr !important;
-  }
-  
-  .hero-title {
-    font-size: 2.5rem !important;
-  }
+/* ========== EMERGENCY FIX ========== */
+/* This will catch ANY element causing horizontal scroll */
+body {
+  overflow-x: hidden !important;
+  position: relative !important;
 }
 
-/* ========== SMALL DESKTOP (769px - 1024px) ========== */
-@media screen and (min-width: 769px) and (max-width: 1024px) {
-  .products-grid,
-  .dashboard-grid,
-  .admin-grid {
-    grid-template-columns: repeat(3, 1fr) !important;
-  }
-  
-  .categories-grid {
-    grid-template-columns: repeat(4, 1fr) !important;
-  }
-  
-  .brands-grid {
-    grid-template-columns: repeat(5, 1fr) !important;
-  }
-  
-  .main-content {
-    margin-left: 280px !important;
-  }
-  
-  .hero-title {
-    font-size: 3rem !important;
-  }
+/* Debug - highlight elements that are too wide (optional) */
+/*
+.too-wide {
+  border: 2px solid red !important;
 }
-
-/* ========== UTILITY CLASSES ========== */
-.hide-on-mobile {
-  display: block;
-}
-
-.show-on-mobile {
-  display: none;
-}
-
-/* Additional utility classes for the fashion panel */
-.hide-fashion-on-mobile {
-  display: block;
-}
-
-@media screen and (max-width: 576px) {
-  .hide-on-mobile {
-    display: none !important;
-  }
-  
-  .show-on-mobile {
-    display: block !important;
-  }
-  
-  .hide-fashion-on-mobile {
-    display: none !important;
-  }
-}
-
-.text-center-mobile {
-  text-align: left;
-}
-
-@media screen and (max-width: 576px) {
-  .text-center-mobile {
-    text-align: center !important;
-  }
-}
-
-/* Touch device optimizations */
-@media (hover: none) and (pointer: coarse) {
-  button,
-  .button,
-  .nav-link,
-  .product-card,
-  .category-card {
-    min-height: 44px;
-    min-width: 44px;
-  }
-  
-  .product-card:hover,
-  .category-card:hover {
-    transform: none !important;
-  }
-}
+*/
