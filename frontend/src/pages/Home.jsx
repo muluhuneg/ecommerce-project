@@ -173,7 +173,6 @@ const Home = () => {
                 <div 
                     style={{
                         ...styles.productCard,
-                        animation: `fadeIn 0.8s ease-out ${index * 0.1}s both`,
                         transform: isHovered ? 'translateY(-8px)' : 'translateY(0)',
                         boxShadow: isHovered ? '0 20px 30px rgba(0,0,0,0.1)' : '0 10px 20px rgba(0,0,0,0.05)',
                         transition: 'all 0.3s ease'
@@ -249,7 +248,6 @@ const Home = () => {
                 to={`/products?category=${category.id}`} 
                 style={{
                     ...styles.categoryCard,
-                    animation: `fadeIn 0.8s ease-out ${index * 0.1 + 0.2}s both`,
                     transform: isHovered ? 'scale(1.03)' : 'scale(1)',
                     transition: 'transform 0.3s ease'
                 }}
@@ -275,7 +273,7 @@ const Home = () => {
         );
     };
 
-    // Hero Banner
+    // Hero Banner - NO SLIDE ANIMATION, just fade
     const Banner = ({ slide, isActive }) => (
         <div style={{
             ...styles.heroSlide,
@@ -451,20 +449,9 @@ const Home = () => {
                 </div>
             </div>
 
-            {/* CSS Animations and Responsive Styles - FIXED with z-index rules */}
+            {/* CSS Animations and Responsive Styles - NO SLIDE ANIMATIONS */}
             <style>
                 {`
-                    @keyframes fadeIn {
-                        from {
-                            opacity: 0;
-                            transform: translateY(20px);
-                        }
-                        to {
-                            opacity: 1;
-                            transform: translateY(0);
-                        }
-                    }
-                    
                     @keyframes spin {
                         0% { transform: rotate(0deg); }
                         100% { transform: rotate(360deg); }
