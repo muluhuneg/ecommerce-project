@@ -451,7 +451,7 @@ const Home = () => {
                 </div>
             </div>
 
-            {/* CSS Animations and Responsive Styles */}
+            {/* CSS Animations and Responsive Styles - FIXED with z-index rules */}
             <style>
                 {`
                     @keyframes fadeIn {
@@ -468,6 +468,19 @@ const Home = () => {
                     @keyframes spin {
                         0% { transform: rotate(0deg); }
                         100% { transform: rotate(360deg); }
+                    }
+
+                    /* FIX: Ensure mobile menu appears above all content */
+                    .mobile-menu-open {
+                        overflow: hidden !important;
+                    }
+                    
+                    /* Lower z-index for hero content when mobile menu is open */
+                    body.mobile-menu-open .hero-section,
+                    body.mobile-menu-open .hero-slide,
+                    body.mobile-menu-open .hero-content,
+                    body.mobile-menu-open .slide-indicators {
+                        z-index: 1 !important;
                     }
 
                     /* Responsive Styles */
