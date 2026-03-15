@@ -335,7 +335,7 @@ const Navbar = () => {
             transition: 'all 0.3s ease',
             zIndex: 1002
         },
-        // Mobile menu
+        // CHANGED: Mobile menu - full screen overlay that appears OVER content
         mobileMenu: {
             position: 'fixed',
             top: 0,
@@ -348,7 +348,7 @@ const Navbar = () => {
             overflowY: 'auto',
             WebkitOverflowScrolling: 'touch',
             display: isMobileMenuOpen ? 'block' : 'none',
-            animation: 'slideInRight 0.3s ease'
+            animation: 'fadeIn 0.3s ease' // Changed from slideInRight to fadeIn
         },
         mobileMenuContent: {
             display: 'flex',
@@ -805,10 +805,19 @@ const Navbar = () => {
         }
     };
 
-    // Add animations
+    // Add animations - Added fadeIn animation
     useEffect(() => {
         const style = document.createElement('style');
         style.textContent = `
+            @keyframes fadeIn {
+                from {
+                    opacity: 0;
+                }
+                to {
+                    opacity: 1;
+                }
+            }
+            
             @keyframes slideDown {
                 from {
                     opacity: 0;
@@ -1149,7 +1158,7 @@ const Navbar = () => {
                     </button>
                 </div>
 
-                {/* Mobile Menu - Only shown when hamburger is clicked */}
+                {/* Mobile Menu - Full screen overlay that appears OVER content */}
                 {isMobileMenuOpen && (
                     <div style={styles.mobileMenu}>
                         <div style={styles.mobileMenuContent} className="mobile-menu-content">
