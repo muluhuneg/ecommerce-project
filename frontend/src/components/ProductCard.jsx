@@ -34,11 +34,11 @@ const ProductCard = ({ product }) => {
         
         for (let i = 0; i < 5; i++) {
             if (i < fullStars) {
-                stars.push(<FaStar key={i} color="#FFD700" size={window.innerWidth <= 480 ? 10 : 14} />);
+                stars.push(<FaStar key={i} color="#FFD700" size={window.innerWidth <= 480 ? 8 : 12} />);
             } else if (i === fullStars && hasHalfStar) {
-                stars.push(<FaStarHalfAlt key={i} color="#FFD700" size={window.innerWidth <= 480 ? 10 : 14} />);
+                stars.push(<FaStarHalfAlt key={i} color="#FFD700" size={window.innerWidth <= 480 ? 8 : 12} />);
             } else {
-                stars.push(<FaStar key={i} color="#e4e5e9" size={window.innerWidth <= 480 ? 10 : 14} />);
+                stars.push(<FaStar key={i} color="#e4e5e9" size={window.innerWidth <= 480 ? 8 : 12} />);
             }
         }
         
@@ -54,10 +54,7 @@ const ProductCard = ({ product }) => {
         setIsAddingToCart(true);
         
         try {
-            // Add visual feedback
             await addToCart(product, 1);
-            
-            // Show success feedback
             setTimeout(() => {
                 setIsAddingToCart(false);
             }, 500);
@@ -84,7 +81,6 @@ const ProductCard = ({ product }) => {
     };
 
     const handleCardClick = (e) => {
-        // Only navigate if the click wasn't on a button
         if (!e.target.closest('button')) {
             navigate(`/product/${product.id}`);
         }
@@ -94,56 +90,27 @@ const ProductCard = ({ product }) => {
     const hasDiscount = discountPercentage > 0;
     const isInWishlistFlag = isInWishlist(product.id);
 
-    // Responsive styles based on screen size
-    const getResponsiveStyles = () => {
-        const isMobile = window.innerWidth <= 480;
-        const isTablet = window.innerWidth <= 768 && window.innerWidth > 480;
-        
-        return {
-            cardWidth: isMobile ? '100%' : isTablet ? '220px' : '280px',
-            imageSize: isMobile ? '130px' : isTablet ? '150px' : '200px',
-            fontSize: {
-                name: isMobile ? '0.8rem' : isTablet ? '0.9rem' : '1rem',
-                price: isMobile ? '0.9rem' : isTablet ? '1rem' : '1.1rem',
-                category: isMobile ? '0.6rem' : '0.7rem',
-                button: isMobile ? '0.7rem' : isTablet ? '0.8rem' : '0.9rem',
-                badge: isMobile ? '0.5rem' : '0.6rem'
-            },
-            padding: {
-                content: isMobile ? '8px' : isTablet ? '12px' : '15px',
-                button: isMobile ? '6px' : isTablet ? '8px' : '10px'
-            },
-            iconSize: {
-                wishlist: isMobile ? 12 : 14,
-                cart: isMobile ? 10 : 12,
-                quickView: isMobile ? 14 : 16
-            }
-        };
-    };
-
-    const responsive = getResponsiveStyles();
-
     const styles = {
         card: {
             border: 'none',
-            borderRadius: window.innerWidth <= 480 ? '8px' : '12px',
+            borderRadius: '8px',
             padding: '0',
             textAlign: 'center',
             background: 'white',
             position: 'relative',
-            transition: 'all 0.3s ease',
+            transition: 'all 0.2s ease',
             overflow: 'hidden',
-            boxShadow: isHovered 
-                ? '0 20px 30px -10px rgba(0,0,0,0.2)' 
-                : '0 5px 15px rgba(0,0,0,0.08)',
+            boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
             height: '100%',
             display: 'flex',
             flexDirection: 'column',
-            maxWidth: responsive.cardWidth,
-            margin: '0 auto',
             width: '100%',
-            transform: isHovered && window.innerWidth > 768 ? 'translateY(-5px)' : 'translateY(0)',
-            cursor: 'pointer'
+            cursor: 'pointer',
+            '@media (min-width: 481px)': {
+                borderRadius: '12px',
+                boxShadow: isHovered ? '0 20px 30px -10px rgba(0,0,0,0.2)' : '0 5px 15px rgba(0,0,0,0.08)',
+                transform: isHovered ? 'translateY(-5px)' : 'translateY(0)',
+            }
         },
         imageWrapper: {
             position: 'relative',
@@ -151,15 +118,18 @@ const ProductCard = ({ product }) => {
             aspectRatio: '1/1',
             overflow: 'hidden',
             backgroundColor: '#f8f9fa',
-            borderTopLeftRadius: window.innerWidth <= 480 ? '8px' : '12px',
-            borderTopRightRadius: window.innerWidth <= 480 ? '8px' : '12px'
+            borderTopLeftRadius: '8px',
+            borderTopRightRadius: '8px',
+            '@media (min-width: 481px)': {
+                borderTopLeftRadius: '12px',
+                borderTopRightRadius: '12px',
+            }
         },
         image: {
             width: '100%',
             height: '100%',
             objectFit: 'cover',
-            transition: 'transform 0.6s ease',
-            transform: isHovered && window.innerWidth > 768 ? 'scale(1.1)' : 'scale(1)'
+            transition: 'transform 0.3s ease',
         },
         overlay: {
             position: 'absolute',
@@ -168,194 +138,258 @@ const ProductCard = ({ product }) => {
             right: 0,
             bottom: 0,
             background: 'linear-gradient(to bottom, rgba(0,0,0,0.1), rgba(0,0,0,0.3))',
-            opacity: isHovered && window.innerWidth > 768 ? 1 : 0,
+            opacity: isHovered ? 1 : 0,
             transition: 'opacity 0.3s ease',
-            display: window.innerWidth <= 768 ? 'none' : 'flex',
+            display: 'none',
             alignItems: 'center',
             justifyContent: 'center',
-            gap: '10px'
+            gap: '10px',
+            '@media (min-width: 769px)': {
+                display: 'flex',
+            }
         },
         quickViewBtn: {
             background: 'white',
             border: 'none',
             borderRadius: '50%',
-            width: window.innerWidth <= 480 ? '35px' : '45px',
-            height: window.innerWidth <= 480 ? '35px' : '45px',
+            width: '40px',
+            height: '40px',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             cursor: 'pointer',
             boxShadow: '0 5px 15px rgba(0,0,0,0.2)',
             color: '#333',
-            fontSize: responsive.iconSize.quickView,
+            fontSize: '16px',
             transform: isHovered ? 'translateY(0)' : 'translateY(20px)',
             transition: 'all 0.3s ease',
             opacity: isHovered ? 1 : 0,
-            zIndex: 10
+            zIndex: 10,
+            '@media (max-width: 480px)': {
+                display: 'none',
+            }
         },
         wishlistBtn: {
             position: 'absolute',
-            top: window.innerWidth <= 480 ? '8px' : '15px',
-            right: window.innerWidth <= 480 ? '8px' : '15px',
+            top: '8px',
+            right: '8px',
             background: 'white',
             border: 'none',
             borderRadius: '50%',
-            width: window.innerWidth <= 480 ? '30px' : '38px',
-            height: window.innerWidth <= 480 ? '30px' : '38px',
+            width: '28px',
+            height: '28px',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             cursor: 'pointer',
-            boxShadow: '0 3px 10px rgba(0,0,0,0.1)',
+            boxShadow: '0 2px 5px rgba(0,0,0,0.1)',
             zIndex: 10,
-            fontSize: responsive.iconSize.wishlist,
+            fontSize: '12px',
             transition: 'all 0.2s ease',
             color: isInWishlistFlag ? '#ff4757' : '#747d8c',
             backgroundColor: 'white',
-            transform: isHovered && window.innerWidth > 768 ? 'scale(1.1)' : 'scale(1)'
+            '@media (min-width: 481px)': {
+                top: '12px',
+                right: '12px',
+                width: '35px',
+                height: '35px',
+                fontSize: '14px',
+            }
         },
         badgeContainer: {
             position: 'absolute',
-            top: window.innerWidth <= 480 ? '8px' : '15px',
-            left: window.innerWidth <= 480 ? '8px' : '15px',
+            top: '8px',
+            left: '8px',
             zIndex: 5,
             display: 'flex',
-            flexDirection: window.innerWidth <= 480 ? 'row' : 'column',
-            gap: window.innerWidth <= 480 ? '4px' : '5px',
-            flexWrap: 'wrap'
+            flexDirection: 'row',
+            gap: '4px',
+            flexWrap: 'wrap',
+            '@media (min-width: 481px)': {
+                top: '12px',
+                left: '12px',
+                flexDirection: 'column',
+                gap: '5px',
+            }
         },
         badgeNew: {
             background: 'linear-gradient(135deg, #2ecc71, #27ae60)',
             color: 'white',
-            padding: window.innerWidth <= 480 ? '2px 6px' : '4px 10px',
-            borderRadius: '20px',
-            fontSize: responsive.fontSize.badge,
+            padding: '2px 6px',
+            borderRadius: '12px',
+            fontSize: '0.5rem',
             fontWeight: 'bold',
             textTransform: 'uppercase',
             letterSpacing: '0.5px',
-            boxShadow: '0 3px 10px rgba(46, 204, 113, 0.3)',
-            whiteSpace: 'nowrap'
+            boxShadow: '0 2px 5px rgba(46, 204, 113, 0.3)',
+            whiteSpace: 'nowrap',
+            '@media (min-width: 481px)': {
+                padding: '4px 10px',
+                fontSize: '0.65rem',
+                borderRadius: '20px',
+            }
         },
         badgeSale: {
             background: 'linear-gradient(135deg, #ff4757, #ee5a24)',
             color: 'white',
-            padding: window.innerWidth <= 480 ? '2px 6px' : '4px 10px',
-            borderRadius: '20px',
-            fontSize: responsive.fontSize.badge,
+            padding: '2px 6px',
+            borderRadius: '12px',
+            fontSize: '0.5rem',
             fontWeight: 'bold',
             textTransform: 'uppercase',
             letterSpacing: '0.5px',
-            boxShadow: '0 3px 10px rgba(255, 71, 87, 0.3)',
-            whiteSpace: 'nowrap'
+            boxShadow: '0 2px 5px rgba(255, 71, 87, 0.3)',
+            whiteSpace: 'nowrap',
+            '@media (min-width: 481px)': {
+                padding: '4px 10px',
+                fontSize: '0.65rem',
+                borderRadius: '20px',
+            }
         },
         content: {
-            padding: responsive.padding.content,
+            padding: '8px',
             flex: 1,
             display: 'flex',
             flexDirection: 'column',
-            background: 'white'
+            background: 'white',
+            '@media (min-width: 481px)': {
+                padding: '12px',
+            }
         },
         category: {
-            fontSize: responsive.fontSize.category,
+            fontSize: '0.6rem',
             color: '#747d8c',
             textTransform: 'uppercase',
             letterSpacing: '0.5px',
-            marginBottom: window.innerWidth <= 480 ? '3px' : '5px',
+            marginBottom: '3px',
             textAlign: 'left',
             whiteSpace: 'nowrap',
             overflow: 'hidden',
-            textOverflow: 'ellipsis'
+            textOverflow: 'ellipsis',
+            '@media (min-width: 481px)': {
+                fontSize: '0.7rem',
+                marginBottom: '5px',
+            }
         },
         name: {
-            fontSize: responsive.fontSize.name,
-            margin: window.innerWidth <= 480 ? '0 0 4px 0' : '0 0 8px 0',
+            fontSize: '0.7rem',
+            margin: '0 0 4px 0',
             color: '#2c3e50',
             fontWeight: '600',
             lineHeight: '1.3',
             textAlign: 'left',
-            display: '-webkit-box',
-            WebkitLineClamp: window.innerWidth <= 480 ? 1 : 2,
-            WebkitBoxOrient: 'vertical',
+            whiteSpace: 'nowrap',
             overflow: 'hidden',
             textOverflow: 'ellipsis',
-            minHeight: 'auto'
+            '@media (min-width: 481px)': {
+                fontSize: '0.9rem',
+                margin: '0 0 6px 0',
+                whiteSpace: 'normal',
+                display: '-webkit-box',
+                WebkitLineClamp: 2,
+                WebkitBoxOrient: 'vertical',
+                minHeight: '2.4rem',
+            }
         },
         ratingContainer: {
             display: 'flex',
             alignItems: 'center',
-            gap: window.innerWidth <= 480 ? '3px' : '5px',
-            marginBottom: window.innerWidth <= 480 ? '4px' : '8px',
+            gap: '3px',
+            marginBottom: '4px',
             textAlign: 'left',
-            flexWrap: 'wrap'
+            flexWrap: 'wrap',
+            '@media (min-width: 481px)': {
+                gap: '5px',
+                marginBottom: '8px',
+            }
         },
         ratingStars: {
             display: 'flex',
-            gap: '2px'
+            gap: '1px',
+            '@media (min-width: 481px)': {
+                gap: '2px',
+            }
         },
         reviewCount: {
-            fontSize: window.innerWidth <= 480 ? '0.6rem' : '0.7rem',
+            fontSize: '0.55rem',
             color: '#a4b0be',
-            marginLeft: window.innerWidth <= 480 ? '2px' : '5px'
+            marginLeft: '2px',
+            '@media (min-width: 481px)': {
+                fontSize: '0.7rem',
+                marginLeft: '5px',
+            }
         },
         priceContainer: {
             display: 'flex',
             alignItems: 'baseline',
-            gap: window.innerWidth <= 480 ? '4px' : '8px',
-            marginBottom: window.innerWidth <= 480 ? '8px' : '12px',
+            gap: '4px',
+            marginBottom: '6px',
             textAlign: 'left',
-            flexWrap: 'wrap'
+            flexWrap: 'wrap',
+            '@media (min-width: 481px)': {
+                gap: '8px',
+                marginBottom: '12px',
+            }
         },
         currentPrice: {
-            fontSize: responsive.fontSize.price,
+            fontSize: '0.8rem',
             fontWeight: '700',
-            color: '#2c3e50'
+            color: '#2c3e50',
+            '@media (min-width: 481px)': {
+                fontSize: '1rem',
+            }
         },
         originalPrice: {
-            fontSize: window.innerWidth <= 480 ? '0.7rem' : '0.9rem',
+            fontSize: '0.6rem',
             color: '#a4b0be',
-            textDecoration: 'line-through'
+            textDecoration: 'line-through',
+            '@media (min-width: 481px)': {
+                fontSize: '0.85rem',
+            }
         },
-        discountBadge: {
-            background: '#ff4757',
-            color: 'white',
-            padding: window.innerWidth <= 480 ? '2px 6px' : '2px 8px',
-            borderRadius: '20px',
-            fontSize: window.innerWidth <= 480 ? '0.6rem' : '0.7rem',
-            fontWeight: 'bold',
-            marginLeft: 'auto'
+        stockStatus: {
+            fontSize: '0.55rem',
+            color: '#27ae60',
+            marginBottom: '4px',
+            textAlign: 'left',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '3px',
+            '@media (min-width: 481px)': {
+                fontSize: '0.7rem',
+                marginBottom: '6px',
+                gap: '5px',
+            }
+        },
+        outOfStock: {
+            color: '#ff4757'
         },
         addButton: {
-            background: product.stock === 0 ? '#95a5a6' : isAddingToCart ? '#27ae60' : 'linear-gradient(135deg, #3498db, #2980b9)',
+            background: product.stock === 0 ? '#95a5a6' : isAddingToCart ? '#27ae60' : '#3498db',
             color: 'white',
             border: 'none',
-            padding: responsive.padding.button,
-            borderRadius: window.innerWidth <= 480 ? '4px' : '6px',
+            padding: '6px 8px',
+            borderRadius: '4px',
             cursor: product.stock === 0 ? 'not-allowed' : 'pointer',
             width: '100%',
-            fontSize: responsive.fontSize.button,
+            fontSize: '0.65rem',
             fontWeight: '600',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            gap: window.innerWidth <= 480 ? '4px' : '6px',
-            transition: 'all 0.3s ease',
+            gap: '4px',
+            transition: 'all 0.2s ease',
             marginTop: 'auto',
             opacity: product.stock === 0 ? 0.6 : 1,
-            boxShadow: product.stock > 0 ? '0 5px 15px rgba(52, 152, 219, 0.3)' : 'none',
+            boxShadow: product.stock > 0 ? '0 3px 8px rgba(52, 152, 219, 0.3)' : 'none',
             zIndex: 10,
-            position: 'relative'
-        },
-        stockStatus: {
-            fontSize: window.innerWidth <= 480 ? '0.6rem' : '0.7rem',
-            color: '#27ae60',
-            marginBottom: window.innerWidth <= 480 ? '4px' : '6px',
-            textAlign: 'left',
-            display: 'flex',
-            alignItems: 'center',
-            gap: window.innerWidth <= 480 ? '3px' : '5px'
-        },
-        outOfStock: {
-            color: '#ff4757'
+            '@media (min-width: 481px)': {
+                padding: '8px 12px',
+                fontSize: '0.8rem',
+                gap: '6px',
+                borderRadius: '6px',
+                background: product.stock === 0 ? '#95a5a6' : isAddingToCart ? '#27ae60' : 'linear-gradient(135deg, #3498db, #2980b9)',
+            }
         }
     };
 
@@ -364,8 +398,8 @@ const ProductCard = ({ product }) => {
     return (
         <div 
             style={styles.card}
-            onMouseEnter={() => window.innerWidth > 768 && setIsHovered(true)}
-            onMouseLeave={() => window.innerWidth > 768 && setIsHovered(false)}
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
             onClick={handleCardClick}
             role="button"
             tabIndex={0}
@@ -409,16 +443,6 @@ const ProductCard = ({ product }) => {
                 <button 
                     style={styles.wishlistBtn}
                     onClick={handleWishlistToggle}
-                    onMouseEnter={(e) => {
-                        if (window.innerWidth > 768 && !isInWishlistFlag) {
-                            e.currentTarget.style.color = '#ff4757';
-                        }
-                    }}
-                    onMouseLeave={(e) => {
-                        if (window.innerWidth > 768 && !isInWishlistFlag) {
-                            e.currentTarget.style.color = '#747d8c';
-                        }
-                    }}
                     aria-label={isInWishlistFlag ? 'Remove from wishlist' : 'Add to wishlist'}
                 >
                     {isInWishlistFlag ? <FaHeart /> : <FaRegHeart />}
@@ -445,19 +469,19 @@ const ProductCard = ({ product }) => {
                 {product.stock > 0 ? (
                     <div style={styles.stockStatus}>
                         <span style={{ 
-                            width: window.innerWidth <= 480 ? '6px' : '8px', 
-                            height: window.innerWidth <= 480 ? '6px' : '8px', 
+                            width: '6px', 
+                            height: '6px', 
                             background: '#27ae60', 
                             borderRadius: '50%', 
                             display: 'inline-block' 
                         }}></span>
-                        In Stock ({product.stock})
+                        In Stock
                     </div>
                 ) : (
                     <div style={{...styles.stockStatus, ...styles.outOfStock}}>
                         <span style={{ 
-                            width: window.innerWidth <= 480 ? '6px' : '8px', 
-                            height: window.innerWidth <= 480 ? '6px' : '8px', 
+                            width: '6px', 
+                            height: '6px', 
                             background: '#ff4757', 
                             borderRadius: '50%', 
                             display: 'inline-block' 
@@ -484,7 +508,7 @@ const ProductCard = ({ product }) => {
                     aria-label={product.stock > 0 ? 'Add to cart' : 'Out of stock'}
                 >
                     <FaShoppingCart size={window.innerWidth <= 480 ? 10 : 12} /> 
-                    {isAddingToCart ? 'Adding...' : (product.stock > 0 ? 'Add to Cart' : 'Out of Stock')}
+                    {isAddingToCart ? 'Added!' : (product.stock > 0 ? 'Add' : 'Out')}
                 </button>
             </div>
         </div>
