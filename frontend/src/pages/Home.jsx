@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import API from '../services/api';
-import { useWishlist } from '../context/WishlistContext'; // Added this import
+import { useWishlist } from '../context/WishlistContext';
+import { useCart } from '../context/CartContext';
 import { 
     FaStar, 
     FaArrowRight, 
@@ -45,6 +46,7 @@ const Home = () => {
     const [loading, setLoading] = useState(true);
     const [currentSlide, setCurrentSlide] = useState(0);
     const heroRef = useRef(null);
+    const navigate = useNavigate();
 
     // Format Birr price
     const formatBirr = (price) => {
@@ -165,10 +167,12 @@ const Home = () => {
         }
     };
 
-    // Product Card with proper mobile sizing - FIXED with wishlist
+    // FIXED: Product Card with working add to cart and proper responsiveness
     const ProductCard = ({ product, index }) => {
         const [isHovered, setIsHovered] = useState(false);
-        const { isInWishlist } = useWishlist(); // Added this line
+        const [isAdding, setIsAdding] = useState(false);
+        const { isInWishlist } = useWishlist();
+        const { addToCart } = useCart();
         const API_BASE_URL = 'https://ecommerce-backend-39jf.onrender.com';
         
         const getImageUrl = (imagePath) => {
@@ -177,71 +181,111 @@ const Home = () => {
             return `${API_BASE_URL}${imagePath}`;
         };
         
-        // Check if product is in wishlist
-        const inWishlist = isInWishlist(product.id); // Use the function
+        const inWishlist = isInWishlist(product.id);
+        
+        const handleAddToCart = async (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            if (product.stock === 0) return;
+            
+            setIsAdding(true);
+            try {
+                await addToCart(product, 1);
+                // Show success feedback
+                setTimeout(() => {
+                    setIsAdding(false);
+                }, 500);
+            } catch (error) {
+                console.error('Error adding to cart:', error);
+                setIsAdding(false);
+            }
+        };
+        
+        const handleCardClick = (e) => {
+            // Only navigate if the click wasn't on a button
+            if (!e.target.closest('button')) {
+                navigate(`/product/${product.id}`);
+            }
+        };
         
         return (
-            <Link to={`/product/${product.id}`} style={{ textDecoration: 'none' }}>
-                <div 
+            <div 
+                style={{
+                    ...styles.productCard,
+                    transform: isHovered ? 'translateY(-4px)' : 'translateY(0)',
+                    boxShadow: isHovered ? '0 10px 20px rgba(0,0,0,0.1)' : '0 2px 8px rgba(0,0,0,0.05)',
+                    transition: 'all 0.2s ease',
+                    cursor: 'pointer'
+                }}
+                onMouseEnter={() => window.innerWidth > 768 && setIsHovered(true)}
+                onMouseLeave={() => window.innerWidth > 768 && setIsHovered(false)}
+                onClick={handleCardClick}
+            >
+                <div style={styles.productBadge}>
+                    {index === 0 && <span style={styles.badgeNew}>NEW</span>}
+                    {product.discount_price && <span style={styles.badgeSale}>SALE</span>}
+                </div>
+                <button 
                     style={{
-                        ...styles.productCard,
-                        transform: isHovered ? 'translateY(-4px)' : 'translateY(0)',
-                        boxShadow: isHovered ? '0 10px 20px rgba(0,0,0,0.1)' : '0 2px 8px rgba(0,0,0,0.05)',
-                        transition: 'all 0.2s ease'
-                    }}
-                    onMouseEnter={() => setIsHovered(true)}
-                    onMouseLeave={() => setIsHovered(false)}
-                >
-                    <div style={styles.productBadge}>
-                        {index === 0 && <span style={styles.badgeNew}>NEW</span>}
-                        {product.discount_price && <span style={styles.badgeSale}>SALE</span>}
-                    </div>
-                    <button style={{
                         ...styles.wishlistButton,
                         color: inWishlist ? '#ff6b6b' : '#ddd'
-                    }} onClick={(e) => e.preventDefault()}>
-                        <FaHeart size={14} />
-                    </button>
-                    <div style={styles.productImageContainer}>
-                        <img 
-                            src={getImageUrl(product.image_url)}
-                            alt={product.name}
-                            style={{
-                                ...styles.productImage,
-                                transform: isHovered ? 'scale(1.05)' : 'scale(1)'
-                            }}
-                            onError={(e) => {
-                                e.target.src = 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=300';
-                            }}
-                        />
-                    </div>
-                    <div style={styles.productInfo}>
-                        <h3 style={styles.productName}>{product.name}</h3>
-                        <div style={styles.productRating}>
-                            {[1,2,3,4,5].map(star => (
-                                <FaStar key={star} color={star <= 4 ? '#f1c40f' : '#e4e5e9'} size={12} />
-                            ))}
-                            <span style={styles.reviewCount}>({product.review_count || 0})</span>
-                        </div>
-                        <div style={styles.productPriceRow}>
-                            {product.discount_price ? (
-                                <>
-                                    <span style={styles.discountPrice}>{formatBirr(product.discount_price)} Br</span>
-                                    <span style={styles.originalPrice}>{formatBirr(product.price)} Br</span>
-                                </>
-                            ) : (
-                                <span style={styles.productPrice}>{formatBirr(product.price)} Br</span>
-                            )}
-                        </div>
-                        <button 
-                            style={styles.addToCartBtn}
-                            onClick={(e) => e.preventDefault()}
-                        >
-                            <FaShoppingCart size={12} /> Add
-                        </button>
-                    </div>
+                    }}
+                    onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        // Toggle wishlist logic here
+                    }}
+                >
+                    <FaHeart size={window.innerWidth <= 480 ? 12 : 14} />
+                </button>
+                <div style={styles.productImageContainer}>
+                    <img 
+                        src={getImageUrl(product.image_url)}
+                        alt={product.name}
+                        style={{
+                            ...styles.productImage,
+                            transform: isHovered ? 'scale(1.05)' : 'scale(1)'
+                        }}
+                        onError={(e) => {
+                            e.target.src = 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=300';
+                        }}
+                        loading="lazy"
+                    />
                 </div>
-            </Link>
+                <div style={styles.productInfo}>
+                    <h3 style={styles.productName}>{product.name}</h3>
+                    <div style={styles.productRating}>
+                        {[1,2,3,4,5].map(star => (
+                            <FaStar key={star} color={star <= 4 ? '#f1c40f' : '#e4e5e9'} size={window.innerWidth <= 480 ? 10 : 12} />
+                        ))}
+                        <span style={styles.reviewCount}>({product.review_count || 0})</span>
+                    </div>
+                    <div style={styles.productPriceRow}>
+                        {product.discount_price ? (
+                            <>
+                                <span style={styles.discountPrice}>{formatBirr(product.discount_price)} Br</span>
+                                <span style={styles.originalPrice}>{formatBirr(product.price)} Br</span>
+                            </>
+                        ) : (
+                            <span style={styles.productPrice}>{formatBirr(product.price)} Br</span>
+                        )}
+                    </div>
+                    <button 
+                        style={{
+                            ...styles.addToCartBtn,
+                            background: isAdding ? '#27ae60' : (product.stock === 0 ? '#95a5a6' : '#3498db'),
+                            cursor: product.stock === 0 ? 'not-allowed' : 'pointer',
+                            opacity: product.stock === 0 ? 0.6 : 1
+                        }}
+                        onClick={handleAddToCart}
+                        disabled={product.stock === 0 || isAdding}
+                    >
+                        <FaShoppingCart size={window.innerWidth <= 480 ? 10 : 12} /> 
+                        {isAdding ? 'Adding...' : (product.stock > 0 ? 'Add' : 'Out of Stock')}
+                    </button>
+                </div>
+            </div>
         );
     };
 
@@ -269,6 +313,7 @@ const Home = () => {
                             transform: isHovered ? 'scale(1.08)' : 'scale(1)',
                             transition: 'transform 0.4s ease'
                         }}
+                        loading="lazy"
                     />
                     <div style={styles.categoryOverlay}>
                         <div style={styles.categoryIcon}>{category.icon}</div>
@@ -287,12 +332,12 @@ const Home = () => {
             zIndex: isActive ? 1 : 0,
             transition: 'opacity 0.8s ease'
         }}>
-            <img src={slide.image} alt={slide.title} style={styles.heroImage} />
+            <img src={slide.image} alt={slide.title} style={styles.heroImage} loading="lazy" />
             <div style={styles.heroOverlay}></div>
             <div style={styles.heroContent}>
                 <h1 style={styles.heroTitle}>{slide.title}</h1>
                 <p style={styles.heroSubtitle}>{slide.subtitle}</p>
-                <button style={styles.heroButton}>
+                <button style={styles.heroButton} onClick={() => navigate('/products')}>
                     {slide.cta} <FaArrowRight />
                 </button>
             </div>
@@ -406,7 +451,7 @@ const Home = () => {
                         <span style={styles.promoTag}>Limited Offer</span>
                         <h2 style={styles.promoTitle}>Summer Sale</h2>
                         <p style={styles.promoText}>Up to 50% off on selected items</p>
-                        <button style={styles.promoButton}>
+                        <button style={styles.promoButton} onClick={() => navigate('/products')}>
                             Shop Now <FaArrowRight />
                         </button>
                     </div>
@@ -414,6 +459,7 @@ const Home = () => {
                         src="https://images.unsplash.com/photo-1607082350899-7e105aa886ae?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80" 
                         alt="Summer Sale" 
                         style={styles.promoImage}
+                        loading="lazy"
                     />
                 </div>
             </div>
@@ -442,7 +488,7 @@ const Home = () => {
                     <div style={styles.brandsGrid}>
                         {brandLogos.map(brand => (
                             <div key={brand.id} style={styles.brandCard}>
-                                <img src={brand.image} alt={brand.name} style={styles.brandImage} />
+                                <img src={brand.image} alt={brand.name} style={styles.brandImage} loading="lazy" />
                             </div>
                         ))}
                     </div>
@@ -482,6 +528,9 @@ const Home = () => {
                     /* FIX: Ensure mobile menu appears above all content */
                     .mobile-menu-open {
                         overflow: hidden !important;
+                        position: fixed !important;
+                        width: 100% !important;
+                        height: 100% !important;
                     }
                     
                     /* Lower z-index for hero content when mobile menu is open */
@@ -600,7 +649,7 @@ const Home = () => {
                         .products-grid {
                             grid-template-columns: repeat(2, 1fr) !important;
                             gap: 8px !important;
-                            padding: 0 !important;
+                            padding: 0 5px !important;
                         }
                         .categories-grid {
                             grid-template-columns: repeat(2, 1fr) !important;
@@ -675,7 +724,7 @@ const Home = () => {
                             padding: 2px 4px !important;
                         }
                         .category-card {
-                            height: 120px !important;
+                            height: 100px !important;
                             max-width: 100% !important;
                         }
                         .category-icon {
@@ -685,7 +734,7 @@ const Home = () => {
                             font-size: 0.7rem !important;
                         }
                         .promo-banner {
-                            height: 300px !important;
+                            height: 280px !important;
                             margin: 20px 0 !important;
                         }
                         .promo-content {
@@ -713,10 +762,10 @@ const Home = () => {
                             margin-bottom: 15px !important;
                         }
                         .brand-card {
-                            padding: 8px !important;
+                            padding: 6px !important;
                         }
                         .brand-image {
-                            height: 20px !important;
+                            height: 18px !important;
                         }
                         .newsletter-section {
                             padding: 30px 0 !important;
@@ -750,7 +799,7 @@ const Home = () => {
                             font-size: 0.75rem !important;
                         }
                         .hero-section {
-                            height: 280px !important;
+                            height: 250px !important;
                         }
                         .products-grid {
                             gap: 5px !important;
@@ -765,16 +814,22 @@ const Home = () => {
                             font-size: 0.75rem !important;
                         }
                         .category-card {
-                            height: 100px !important;
+                            height: 85px !important;
                         }
                         .category-icon {
                             font-size: 1rem !important;
                         }
                         .category-name {
-                            font-size: 0.65rem !important;
+                            font-size: 0.6rem !important;
                         }
                         .brands-grid {
                             grid-template-columns: repeat(2, 1fr) !important;
+                        }
+                        .brand-card {
+                            padding: 4px !important;
+                        }
+                        .brand-image {
+                            height: 15px !important;
                         }
                     }
                 `}
@@ -816,7 +871,7 @@ const styles = {
             height: '350px'
         },
         '@media (max-width: 360px)': {
-            height: '280px'
+            height: '250px'
         }
     },
     heroSlide: {
@@ -1096,9 +1151,12 @@ const styles = {
             height: '150px'
         },
         '@media (max-width: 480px)': {
-            height: '120px',
+            height: '100px',
             maxWidth: '100%',
             margin: '0 auto'
+        },
+        '@media (max-width: 360px)': {
+            height: '85px'
         }
     },
     categoryImageContainer: {
@@ -1121,8 +1179,11 @@ const styles = {
         padding: '15px',
         color: 'white',
         textAlign: 'center',
+        '@media (max-width: 768px)': {
+            padding: '10px'
+        },
         '@media (max-width: 480px)': {
-            padding: '8px'
+            padding: '5px'
         }
     },
     categoryIcon: {
@@ -1135,6 +1196,9 @@ const styles = {
         '@media (max-width: 480px)': {
             fontSize: '1.2rem',
             marginBottom: '2px'
+        },
+        '@media (max-width: 360px)': {
+            fontSize: '1rem'
         }
     },
     categoryName: {
@@ -1146,6 +1210,9 @@ const styles = {
         },
         '@media (max-width: 480px)': {
             fontSize: '0.7rem'
+        },
+        '@media (max-width: 360px)': {
+            fontSize: '0.6rem'
         }
     },
 
@@ -1166,7 +1233,7 @@ const styles = {
             gridTemplateColumns: 'repeat(2, 1fr)',
             gap: '8px',
             justifyItems: 'center',
-            padding: '0'
+            padding: '0 5px'
         }
     },
     productCard: {
@@ -1279,6 +1346,9 @@ const styles = {
         '@media (max-width: 480px)': {
             fontSize: '0.7rem',
             marginBottom: '4px'
+        },
+        '@media (max-width: 360px)': {
+            fontSize: '0.65rem'
         }
     },
     productRating: {
@@ -1319,6 +1389,9 @@ const styles = {
         },
         '@media (max-width: 480px)': {
             fontSize: '0.8rem'
+        },
+        '@media (max-width: 360px)': {
+            fontSize: '0.75rem'
         }
     },
     discountPrice: {
@@ -1330,6 +1403,9 @@ const styles = {
         },
         '@media (max-width: 480px)': {
             fontSize: '0.8rem'
+        },
+        '@media (max-width: 360px)': {
+            fontSize: '0.75rem'
         }
     },
     originalPrice: {
@@ -1354,7 +1430,7 @@ const styles = {
         gap: '5px',
         fontSize: '0.8rem',
         fontWeight: '500',
-        transition: 'background 0.3s ease',
+        transition: 'all 0.2s ease',
         '@media (max-width: 768px)': {
             padding: '6px',
             fontSize: '0.7rem'
@@ -1379,8 +1455,11 @@ const styles = {
             height: '300px'
         },
         '@media (max-width: 480px)': {
-            height: '300px',
+            height: '280px',
             margin: '20px 0'
+        },
+        '@media (max-width: 360px)': {
+            height: '250px'
         }
     },
     promoContent: {
@@ -1514,9 +1593,6 @@ const styles = {
         '@media (max-width: 480px)': {
             gridTemplateColumns: 'repeat(2, 1fr)',
             gap: '8px'
-        },
-        '@media (max-width: 360px)': {
-            gridTemplateColumns: 'repeat(2, 1fr)'
         }
     },
     brandCard: {
@@ -1529,7 +1605,10 @@ const styles = {
             padding: '12px'
         },
         '@media (max-width: 480px)': {
-            padding: '8px'
+            padding: '6px'
+        },
+        '@media (max-width: 360px)': {
+            padding: '4px'
         }
     },
     brandImage: {
@@ -1542,7 +1621,10 @@ const styles = {
             height: '25px'
         },
         '@media (max-width: 480px)': {
-            height: '20px'
+            height: '18px'
+        },
+        '@media (max-width: 360px)': {
+            height: '15px'
         }
     },
 
@@ -1656,7 +1738,11 @@ const styles = {
         padding: '40px',
         color: '#666',
         background: '#f8f9fa',
-        borderRadius: '8px'
+        borderRadius: '8px',
+        '@media (max-width: 480px)': {
+            padding: '20px',
+            fontSize: '0.9rem'
+        }
     }
 };
 

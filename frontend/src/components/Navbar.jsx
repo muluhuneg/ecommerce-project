@@ -212,7 +212,7 @@ const Navbar = () => {
         navbar: {
             position: 'sticky',
             top: 0,
-            zIndex: 1000,
+            zIndex: 1001,
             background: isScrolled 
                 ? 'linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)'
                 : 'linear-gradient(135deg, #667eea 0%, #764ba2 30%, #ff6b6b 70%, #ffd93d 100%)',
