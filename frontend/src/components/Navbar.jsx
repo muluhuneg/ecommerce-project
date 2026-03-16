@@ -335,7 +335,21 @@ const Navbar = () => {
             transition: 'all 0.3s ease',
             zIndex: 1002
         },
-        // CHANGED: Mobile menu - full screen overlay that appears OVER content
+        // FIXED: Mobile menu overlay - appears OVER content
+        mobileMenuOverlay: {
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: 'rgba(0, 0, 0, 0.7)',
+            zIndex: 999998,
+            backdropFilter: 'blur(5px)',
+            WebkitBackdropFilter: 'blur(5px)',
+            display: isMobileMenuOpen ? 'block' : 'none',
+            animation: 'fadeIn 0.3s ease'
+        },
+        // FIXED: Mobile menu - highest z-index to appear above all
         mobileMenu: {
             position: 'fixed',
             top: 0,
@@ -343,12 +357,12 @@ const Navbar = () => {
             right: 0,
             bottom: 0,
             background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)',
-            zIndex: 9999,
+            zIndex: 999999,
             padding: '80px 20px 30px',
             overflowY: 'auto',
             WebkitOverflowScrolling: 'touch',
             display: isMobileMenuOpen ? 'block' : 'none',
-            animation: 'fadeIn 0.3s ease' // Changed from slideInRight to fadeIn
+            animation: 'fadeIn 0.3s ease'
         },
         mobileMenuContent: {
             display: 'flex',
@@ -358,6 +372,24 @@ const Navbar = () => {
             overflowY: 'auto',
             paddingBottom: '30px',
             paddingRight: '5px'
+        },
+        mobileCloseButton: {
+            position: 'absolute',
+            top: '20px',
+            right: '20px',
+            background: 'rgba(255,255,255,0.1)',
+            border: '2px solid rgba(255,215,0,0.3)',
+            color: 'white',
+            width: '45px',
+            height: '45px',
+            borderRadius: '50%',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: '1.4rem',
+            cursor: 'pointer',
+            zIndex: 1000000,
+            transition: 'all 0.3s ease'
         },
         mobileNavLinks: {
             display: 'flex',
@@ -1158,9 +1190,22 @@ const Navbar = () => {
                     </button>
                 </div>
 
-                {/* Mobile Menu - Full screen overlay that appears OVER content */}
+                {/* Mobile Menu Overlay - Dark background */}
+                {isMobileMenuOpen && (
+                    <div style={styles.mobileMenuOverlay} onClick={() => setIsMobileMenuOpen(false)} />
+                )}
+
+                {/* Mobile Menu - Full screen overlay with highest z-index */}
                 {isMobileMenuOpen && (
                     <div style={styles.mobileMenu}>
+                        {/* Close Button */}
+                        <button 
+                            style={styles.mobileCloseButton}
+                            onClick={() => setIsMobileMenuOpen(false)}
+                        >
+                            <FaTimes />
+                        </button>
+
                         <div style={styles.mobileMenuContent} className="mobile-menu-content">
                             {/* Search Bar for Mobile */}
                             <form onSubmit={handleSearch} style={{marginBottom: '2rem'}}>
