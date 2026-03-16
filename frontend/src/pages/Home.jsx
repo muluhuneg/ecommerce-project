@@ -35,7 +35,8 @@ import {
     FaShippingFast,
     FaCreditCard,
     FaSmile,
-    FaMedal
+    FaMedal,
+    FaCheckCircle
 } from 'react-icons/fa';
 
 const Home = () => {
@@ -45,12 +46,23 @@ const Home = () => {
     const [categories, setCategories] = useState([]);
     const [loading, setLoading] = useState(true);
     const [currentSlide, setCurrentSlide] = useState(0);
+    const [showToast, setShowToast] = useState(false);
+    const [toastMessage, setToastMessage] = useState('');
     const heroRef = useRef(null);
     const navigate = useNavigate();
 
     // Format Birr price
     const formatBirr = (price) => {
         return Math.round(price).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    };
+
+    // Show toast message
+    const showToastMessage = (message) => {
+        setToastMessage(message);
+        setShowToast(true);
+        setTimeout(() => {
+            setShowToast(false);
+        }, 3000);
     };
 
     // Hero slides with beautiful images
@@ -167,11 +179,11 @@ const Home = () => {
         }
     };
 
-    // FIXED: Product Card with working add to cart and proper responsiveness
+    // Product Card with working add to cart and success popup
     const ProductCard = ({ product, index }) => {
         const [isHovered, setIsHovered] = useState(false);
         const [isAdding, setIsAdding] = useState(false);
-        const { isInWishlist } = useWishlist();
+        const { isInWishlist, addToWishlist, removeFromWishlist } = useWishlist();
         const { addToCart } = useCart();
         const API_BASE_URL = 'https://ecommerce-backend-39jf.onrender.com';
         
@@ -192,13 +204,27 @@ const Home = () => {
             setIsAdding(true);
             try {
                 await addToCart(product, 1);
-                // Show success feedback
+                showToastMessage(`${product.name} added to cart!`);
                 setTimeout(() => {
                     setIsAdding(false);
                 }, 500);
             } catch (error) {
                 console.error('Error adding to cart:', error);
                 setIsAdding(false);
+                showToastMessage('Failed to add to cart');
+            }
+        };
+        
+        const handleWishlistToggle = (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            if (inWishlist) {
+                removeFromWishlist(product.id);
+                showToastMessage(`${product.name} removed from wishlist`);
+            } else {
+                addToWishlist(product);
+                showToastMessage(`${product.name} added to wishlist!`);
             }
         };
         
@@ -229,13 +255,10 @@ const Home = () => {
                 <button 
                     style={{
                         ...styles.wishlistButton,
-                        color: inWishlist ? '#ff6b6b' : '#ddd'
+                        color: inWishlist ? '#ff6b6b' : '#999',
+                        backgroundColor: 'white'
                     }}
-                    onClick={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        // Toggle wishlist logic here
-                    }}
+                    onClick={handleWishlistToggle}
                 >
                     <FaHeart size={window.innerWidth <= 480 ? 12 : 14} />
                 </button>
@@ -282,7 +305,7 @@ const Home = () => {
                         disabled={product.stock === 0 || isAdding}
                     >
                         <FaShoppingCart size={window.innerWidth <= 480 ? 10 : 12} /> 
-                        {isAdding ? 'Adding...' : (product.stock > 0 ? 'Add' : 'Out of Stock')}
+                        {isAdding ? 'Added!' : (product.stock > 0 ? 'Add' : 'Out')}
                     </button>
                 </div>
             </div>
@@ -355,6 +378,14 @@ const Home = () => {
 
     return (
         <div style={styles.container} ref={heroRef}>
+            {/* Toast Notification */}
+            {showToast && (
+                <div style={styles.toast}>
+                    <FaCheckCircle style={{ color: '#27ae60', marginRight: '8px' }} />
+                    <span>{toastMessage}</span>
+                </div>
+            )}
+
             {/* Hero Section - Full width */}
             <div style={styles.heroSection}>
                 <div style={styles.contentWrapper}>
@@ -525,6 +556,17 @@ const Home = () => {
                         100% { transform: rotate(360deg); }
                     }
 
+                    @keyframes slideIn {
+                        from {
+                            transform: translateX(100%);
+                            opacity: 0;
+                        }
+                        to {
+                            transform: translateX(0);
+                            opacity: 1;
+                        }
+                    }
+
                     /* FIX: Ensure mobile menu appears above all content */
                     .mobile-menu-open {
                         overflow: hidden !important;
@@ -673,12 +715,15 @@ const Home = () => {
                         .product-card {
                             margin: 0 !important;
                             max-width: 100% !important;
+                            width: 100% !important;
                         }
                         .product-image-container {
-                            height: 130px !important;
+                            height: auto !important;
+                            aspect-ratio: 1/1 !important;
+                            width: 100% !important;
                         }
                         .product-info {
-                            padding: 6px !important;
+                            padding: 8px !important;
                         }
                         .product-name {
                             font-size: 0.7rem !important;
@@ -716,8 +761,8 @@ const Home = () => {
                             width: 24px !important;
                             height: 24px !important;
                             font-size: 0.7rem !important;
-                            top: 5px !important;
-                            right: 5px !important;
+                            top: 4px !important;
+                            right: 4px !important;
                         }
                         .product-badge span {
                             font-size: 0.5rem !important;
@@ -805,7 +850,7 @@ const Home = () => {
                             gap: 5px !important;
                         }
                         .product-image-container {
-                            height: 110px !important;
+                            aspect-ratio: 1/1 !important;
                         }
                         .product-name {
                             font-size: 0.65rem !important;
@@ -841,7 +886,32 @@ const Home = () => {
 const styles = {
     container: {
         width: '100%',
-        overflow: 'hidden'
+        overflow: 'hidden',
+        position: 'relative'
+    },
+    
+    // Toast Notification
+    toast: {
+        position: 'fixed',
+        top: '80px',
+        right: '20px',
+        backgroundColor: 'white',
+        color: '#333',
+        padding: '12px 20px',
+        borderRadius: '8px',
+        boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+        zIndex: 9999,
+        display: 'flex',
+        alignItems: 'center',
+        animation: 'slideIn 0.3s ease',
+        fontSize: '0.9rem',
+        '@media (max-width: 480px)': {
+            top: '70px',
+            right: '10px',
+            left: '10px',
+            width: 'calc(100% - 20px)',
+            fontSize: '0.8rem'
+        }
     },
     
     // Content wrapper for consistent width
@@ -1216,7 +1286,7 @@ const styles = {
         }
     },
 
-    // Products Grid - COMPACT FOR MOBILE
+    // Products Grid - 2 columns on mobile with square images
     productsGrid: {
         display: 'grid',
         gridTemplateColumns: 'repeat(4, 1fr)',
@@ -1232,7 +1302,6 @@ const styles = {
         '@media (max-width: 480px)': {
             gridTemplateColumns: 'repeat(2, 1fr)',
             gap: '8px',
-            justifyItems: 'center',
             padding: '0 5px'
         }
     },
@@ -1245,6 +1314,9 @@ const styles = {
         width: '100%',
         maxWidth: '280px',
         margin: '0 auto',
+        '@media (max-width: 768px)': {
+            maxWidth: '100%'
+        },
         '@media (max-width: 480px)': {
             maxWidth: '100%',
             borderRadius: '6px'
@@ -1306,8 +1378,7 @@ const styles = {
             width: '24px',
             height: '24px',
             top: '4px',
-            right: '4px',
-            fontSize: '0.7rem'
+            right: '4px'
         }
     },
     productImageContainer: {
@@ -1328,7 +1399,7 @@ const styles = {
             padding: '10px'
         },
         '@media (max-width: 480px)': {
-            padding: '6px'
+            padding: '8px'
         }
     },
     productName: {
