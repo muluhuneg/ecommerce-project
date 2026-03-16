@@ -167,6 +167,13 @@ const Home = () => {
     // Product Card with elegant hover effect
     const ProductCard = ({ product, index }) => {
         const [isHovered, setIsHovered] = useState(false);
+        const API_BASE_URL = 'https://ecommerce-backend-39jf.onrender.com';
+        
+        const getImageUrl = (imagePath) => {
+            if (!imagePath) return 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=300';
+            if (imagePath.startsWith('http')) return imagePath;
+            return `${API_BASE_URL}${imagePath}`;
+        };
         
         return (
             <Link to={`/product/${product.id}`} style={{ textDecoration: 'none' }}>
@@ -193,7 +200,7 @@ const Home = () => {
                     </button>
                     <div style={styles.productImageContainer}>
                         <img 
-                            src={product.image_url || 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=300'} 
+                            src={getImageUrl(product.image_url)}
                             alt={product.name}
                             style={{
                                 ...styles.productImage,
@@ -304,147 +311,163 @@ const Home = () => {
 
     return (
         <div style={styles.container} ref={heroRef}>
-            {/* Hero Section */}
+            {/* Hero Section - Full width */}
             <div style={styles.heroSection}>
-                {heroSlides.map((slide, index) => (
-                    <Banner key={slide.id} slide={slide} isActive={index === currentSlide} />
-                ))}
-                <div style={styles.slideIndicators}>
-                    {heroSlides.map((_, index) => (
-                        <button
-                            key={index}
-                            style={{
-                                ...styles.slideIndicator,
-                                backgroundColor: index === currentSlide ? '#fff' : 'rgba(255,255,255,0.4)',
-                                width: index === currentSlide ? '30px' : '10px'
-                            }}
-                            onClick={() => setCurrentSlide(index)}
-                        />
+                <div style={styles.contentWrapper}>
+                    {heroSlides.map((slide, index) => (
+                        <Banner key={slide.id} slide={slide} isActive={index === currentSlide} />
                     ))}
+                    <div style={styles.slideIndicators}>
+                        {heroSlides.map((_, index) => (
+                            <button
+                                key={index}
+                                style={{
+                                    ...styles.slideIndicator,
+                                    backgroundColor: index === currentSlide ? '#fff' : 'rgba(255,255,255,0.4)',
+                                    width: index === currentSlide ? '30px' : '10px'
+                                }}
+                                onClick={() => setCurrentSlide(index)}
+                            />
+                        ))}
+                    </div>
                 </div>
             </div>
 
             {/* Features Section */}
-            <div style={styles.featuresSection}>
-                <div style={styles.featureCard}>
-                    <FaTruck style={styles.featureIcon} />
-                    <h4 style={styles.featureTitle}>Free Shipping</h4>
-                    <p style={styles.featureText}>On orders 3,000 Br+</p>
-                </div>
-                <div style={styles.featureCard}>
-                    <FaShieldAlt style={styles.featureIcon} />
-                    <h4 style={styles.featureTitle}>Secure Payment</h4>
-                    <p style={styles.featureText}>100% protected</p>
-                </div>
-                <div style={styles.featureCard}>
-                    <FaUndo style={styles.featureIcon} />
-                    <h4 style={styles.featureTitle}>30 Days Return</h4>
-                    <p style={styles.featureText}>Money back guarantee</p>
-                </div>
-                <div style={styles.featureCard}>
-                    <FaHeadphones style={styles.featureIcon} />
-                    <h4 style={styles.featureTitle}>24/7 Support</h4>
-                    <p style={styles.featureText}>Dedicated help</p>
+            <div style={styles.contentWrapper}>
+                <div style={styles.featuresSection}>
+                    <div style={styles.featureCard}>
+                        <FaTruck style={styles.featureIcon} />
+                        <h4 style={styles.featureTitle}>Free Shipping</h4>
+                        <p style={styles.featureText}>On orders 3,000 Br+</p>
+                    </div>
+                    <div style={styles.featureCard}>
+                        <FaShieldAlt style={styles.featureIcon} />
+                        <h4 style={styles.featureTitle}>Secure Payment</h4>
+                        <p style={styles.featureText}>100% protected</p>
+                    </div>
+                    <div style={styles.featureCard}>
+                        <FaUndo style={styles.featureIcon} />
+                        <h4 style={styles.featureTitle}>30 Days Return</h4>
+                        <p style={styles.featureText}>Money back guarantee</p>
+                    </div>
+                    <div style={styles.featureCard}>
+                        <FaHeadphones style={styles.featureIcon} />
+                        <h4 style={styles.featureTitle}>24/7 Support</h4>
+                        <p style={styles.featureText}>Dedicated help</p>
+                    </div>
                 </div>
             </div>
 
             {/* Categories Section */}
-            <section style={styles.section}>
-                <div style={styles.sectionHeader}>
-                    <h2 style={styles.sectionTitle}>Shop by Category</h2>
-                    <Link to="/products" style={styles.viewAllLink}>
-                        View All <FaArrowRight />
-                    </Link>
-                </div>
-                
-                {categories.length === 0 ? (
-                    <div style={styles.noCategories}>
-                        <p>No categories available yet.</p>
+            <div style={styles.contentWrapper}>
+                <section style={styles.section}>
+                    <div style={styles.sectionHeader}>
+                        <h2 style={styles.sectionTitle}>Shop by Category</h2>
+                        <Link to="/products" style={styles.viewAllLink}>
+                            View All <FaArrowRight />
+                        </Link>
                     </div>
-                ) : (
-                    <div style={styles.categoriesGrid}>
-                        {categories.map((category, index) => (
-                            <CategoryCard key={category.id} category={category} index={index} />
-                        ))}
-                    </div>
-                )}
-            </section>
+                    
+                    {categories.length === 0 ? (
+                        <div style={styles.noCategories}>
+                            <p>No categories available yet.</p>
+                        </div>
+                    ) : (
+                        <div style={styles.categoriesGrid}>
+                            {categories.map((category, index) => (
+                                <CategoryCard key={category.id} category={category} index={index} />
+                            ))}
+                        </div>
+                    )}
+                </section>
+            </div>
 
             {/* Featured Products */}
-            <section style={{...styles.section, backgroundColor: '#f8f9fa', borderRadius: '20px'}}>
-                <div style={styles.sectionHeader}>
-                    <h2 style={styles.sectionTitle}>Featured Products</h2>
-                    <Link to="/products" style={styles.viewAllLink}>
-                        View All <FaArrowRight />
-                    </Link>
-                </div>
-                <div style={styles.productsGrid}>
-                    {featuredProducts.map((product, index) => (
-                        <ProductCard key={product.id} product={product} index={index} />
-                    ))}
-                </div>
-            </section>
+            <div style={styles.contentWrapper}>
+                <section style={{...styles.section, backgroundColor: '#f8f9fa', borderRadius: '20px'}}>
+                    <div style={styles.sectionHeader}>
+                        <h2 style={styles.sectionTitle}>Featured Products</h2>
+                        <Link to="/products" style={styles.viewAllLink}>
+                            View All <FaArrowRight />
+                        </Link>
+                    </div>
+                    <div style={styles.productsGrid}>
+                        {featuredProducts.map((product, index) => (
+                            <ProductCard key={product.id} product={product} index={index} />
+                        ))}
+                    </div>
+                </section>
+            </div>
 
-            {/* Promotional Banner */}
+            {/* Promotional Banner - Full width with constrained content */}
             <div style={styles.promoBanner}>
-                <div style={styles.promoContent}>
-                    <span style={styles.promoTag}>Limited Offer</span>
-                    <h2 style={styles.promoTitle}>Summer Sale</h2>
-                    <p style={styles.promoText}>Up to 50% off on selected items</p>
-                    <button style={styles.promoButton}>
-                        Shop Now <FaArrowRight />
-                    </button>
+                <div style={styles.contentWrapper}>
+                    <div style={styles.promoContent}>
+                        <span style={styles.promoTag}>Limited Offer</span>
+                        <h2 style={styles.promoTitle}>Summer Sale</h2>
+                        <p style={styles.promoText}>Up to 50% off on selected items</p>
+                        <button style={styles.promoButton}>
+                            Shop Now <FaArrowRight />
+                        </button>
+                    </div>
+                    <img 
+                        src="https://images.unsplash.com/photo-1607082350899-7e105aa886ae?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80" 
+                        alt="Summer Sale" 
+                        style={styles.promoImage}
+                    />
                 </div>
-                <img 
-                    src="https://images.unsplash.com/photo-1607082350899-7e105aa886ae?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80" 
-                    alt="Summer Sale" 
-                    style={styles.promoImage}
-                />
             </div>
 
             {/* New Arrivals */}
-            <section style={styles.section}>
-                <div style={styles.sectionHeader}>
-                    <h2 style={styles.sectionTitle}>New Arrivals</h2>
-                    <Link to="/products?sort=newest" style={styles.viewAllLink}>
-                        View All <FaArrowRight />
-                    </Link>
-                </div>
-                <div style={styles.productsGrid}>
-                    {newArrivals.map((product, index) => (
-                        <ProductCard key={product.id} product={product} index={index + 4} />
-                    ))}
-                </div>
-            </section>
+            <div style={styles.contentWrapper}>
+                <section style={styles.section}>
+                    <div style={styles.sectionHeader}>
+                        <h2 style={styles.sectionTitle}>New Arrivals</h2>
+                        <Link to="/products?sort=newest" style={styles.viewAllLink}>
+                            View All <FaArrowRight />
+                        </Link>
+                    </div>
+                    <div style={styles.productsGrid}>
+                        {newArrivals.map((product, index) => (
+                            <ProductCard key={product.id} product={product} index={index + 4} />
+                        ))}
+                    </div>
+                </section>
+            </div>
 
             {/* Brand Showcase */}
-            <div style={styles.brandsSection}>
-                <h2 style={styles.brandsTitle}>Trusted by Leading Brands</h2>
-                <div style={styles.brandsGrid}>
-                    {brandLogos.map(brand => (
-                        <div key={brand.id} style={styles.brandCard}>
-                            <img src={brand.image} alt={brand.name} style={styles.brandImage} />
-                        </div>
-                    ))}
+            <div style={styles.contentWrapper}>
+                <div style={styles.brandsSection}>
+                    <h2 style={styles.brandsTitle}>Trusted by Leading Brands</h2>
+                    <div style={styles.brandsGrid}>
+                        {brandLogos.map(brand => (
+                            <div key={brand.id} style={styles.brandCard}>
+                                <img src={brand.image} alt={brand.name} style={styles.brandImage} />
+                            </div>
+                        ))}
+                    </div>
                 </div>
             </div>
 
             {/* Newsletter */}
             <div style={styles.newsletterSection}>
-                <div style={styles.newsletterContent}>
-                    <h2 style={styles.newsletterTitle}>Stay Updated</h2>
-                    <p style={styles.newsletterText}>
-                        Subscribe to get exclusive offers and updates
-                    </p>
-                    <div style={styles.newsletterForm}>
-                        <input 
-                            type="email" 
-                            placeholder="Your email address" 
-                            style={styles.newsletterInput}
-                        />
-                        <button style={styles.newsletterButton}>
-                            Subscribe
-                        </button>
+                <div style={styles.contentWrapper}>
+                    <div style={styles.newsletterContent}>
+                        <h2 style={styles.newsletterTitle}>Stay Updated</h2>
+                        <p style={styles.newsletterText}>
+                            Subscribe to get exclusive offers and updates
+                        </p>
+                        <div style={styles.newsletterForm}>
+                            <input 
+                                type="email" 
+                                placeholder="Your email address" 
+                                style={styles.newsletterInput}
+                            />
+                            <button style={styles.newsletterButton}>
+                                Subscribe
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -553,7 +576,6 @@ const Home = () => {
                         .features-section {
                             grid-template-columns: 1fr !important;
                             gap: 12px !important;
-                            padding: 0 15px !important;
                             margin: 30px auto !important;
                         }
                         .feature-card {
@@ -645,7 +667,6 @@ const Home = () => {
                             opacity: 0.2 !important;
                         }
                         .brands-section {
-                            padding: 0 15px !important;
                             margin: 40px auto !important;
                         }
                         .brands-title {
@@ -723,11 +744,23 @@ const styles = {
         overflow: 'hidden'
     },
     
-    // Hero Section
+    // NEW: Content wrapper for consistent width
+    contentWrapper: {
+        width: '100%',
+        maxWidth: '1200px',
+        margin: '0 auto',
+        padding: '0 20px',
+        '@media (max-width: 768px)': {
+            padding: '0 15px'
+        }
+    },
+    
+    // Hero Section - Full width with constrained content
     heroSection: {
         position: 'relative',
         height: '600px',
         overflow: 'hidden',
+        width: '100%',
         '@media (max-width: 768px)': {
             height: '450px'
         },
@@ -862,9 +895,8 @@ const styles = {
 
     // Features Section
     featuresSection: {
-        maxWidth: '1200px',
+        width: '100%',
         margin: '50px auto',
-        padding: '0 20px',
         display: 'grid',
         gridTemplateColumns: 'repeat(4, 1fr)',
         gap: '30px',
@@ -878,7 +910,6 @@ const styles = {
         '@media (max-width: 480px)': {
             gridTemplateColumns: '1fr',
             gap: '12px',
-            padding: '0 15px',
             margin: '30px auto'
         }
     },
@@ -935,12 +966,12 @@ const styles = {
 
     // Section Styles
     section: {
-        maxWidth: '1200px',
+        width: '100%',
         margin: '60px auto',
-        padding: '40px 20px',
+        padding: '40px 0',
         '@media (max-width: 768px)': {
             margin: '40px auto',
-            padding: '30px 15px'
+            padding: '30px 0'
         }
     },
     sectionHeader: {
@@ -1247,6 +1278,7 @@ const styles = {
         margin: '40px 0',
         overflow: 'hidden',
         background: '#f8f9fa',
+        width: '100%',
         '@media (max-width: 768px)': {
             height: '300px'
         },
@@ -1348,12 +1380,10 @@ const styles = {
 
     // Brands Section
     brandsSection: {
-        maxWidth: '1200px',
+        width: '100%',
         margin: '60px auto',
-        padding: '0 20px',
         textAlign: 'center',
         '@media (max-width: 480px)': {
-            padding: '0 15px',
             margin: '40px auto'
         }
     },
@@ -1415,10 +1445,11 @@ const styles = {
     // Newsletter Section
     newsletterSection: {
         background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-        padding: '60px 20px',
+        padding: '60px 0',
         marginTop: '40px',
+        width: '100%',
         '@media (max-width: 768px)': {
-            padding: '40px 15px'
+            padding: '40px 0'
         }
     },
     newsletterContent: {
