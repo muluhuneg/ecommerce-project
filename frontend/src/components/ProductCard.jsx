@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import { useWishlist } from '../context/WishlistContext';
 import { FaHeart, FaShoppingCart, FaRegHeart, FaStar, FaStarHalfAlt, FaEye } from 'react-icons/fa';
@@ -9,6 +9,8 @@ const ProductCard = ({ product }) => {
     const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlist();
     const [imageError, setImageError] = useState(false);
     const [isHovered, setIsHovered] = useState(false);
+    const [isAddingToCart, setIsAddingToCart] = useState(false);
+    const navigate = useNavigate();
 
     // Format price with commas
     const formatPrice = (price) => {
@@ -43,10 +45,26 @@ const ProductCard = ({ product }) => {
         return stars;
     };
 
-    const handleAddToCart = (e) => {
+    const handleAddToCart = async (e) => {
         e.preventDefault();
         e.stopPropagation();
-        addToCart(product, 1);
+        
+        if (product.stock <= 0) return;
+        
+        setIsAddingToCart(true);
+        
+        try {
+            // Add visual feedback
+            await addToCart(product, 1);
+            
+            // Show success feedback
+            setTimeout(() => {
+                setIsAddingToCart(false);
+            }, 500);
+        } catch (error) {
+            console.error('Error adding to cart:', error);
+            setIsAddingToCart(false);
+        }
     };
 
     const handleWishlistToggle = (e) => {
@@ -56,6 +74,19 @@ const ProductCard = ({ product }) => {
             removeFromWishlist(product.id);
         } else {
             addToWishlist(product);
+        }
+    };
+
+    const handleQuickView = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        navigate(`/product/${product.id}`);
+    };
+
+    const handleCardClick = (e) => {
+        // Only navigate if the click wasn't on a button
+        if (!e.target.closest('button')) {
+            navigate(`/product/${product.id}`);
         }
     };
 
@@ -159,7 +190,8 @@ const ProductCard = ({ product }) => {
             fontSize: responsive.iconSize.quickView,
             transform: isHovered ? 'translateY(0)' : 'translateY(20px)',
             transition: 'all 0.3s ease',
-            opacity: isHovered ? 1 : 0
+            opacity: isHovered ? 1 : 0,
+            zIndex: 10
         },
         wishlistBtn: {
             position: 'absolute',
@@ -175,7 +207,7 @@ const ProductCard = ({ product }) => {
             justifyContent: 'center',
             cursor: 'pointer',
             boxShadow: '0 3px 10px rgba(0,0,0,0.1)',
-            zIndex: 3,
+            zIndex: 10,
             fontSize: responsive.iconSize.wishlist,
             transition: 'all 0.2s ease',
             color: isInWishlistFlag ? '#ff4757' : '#747d8c',
@@ -186,7 +218,7 @@ const ProductCard = ({ product }) => {
             position: 'absolute',
             top: window.innerWidth <= 480 ? '8px' : '15px',
             left: window.innerWidth <= 480 ? '8px' : '15px',
-            zIndex: 3,
+            zIndex: 5,
             display: 'flex',
             flexDirection: window.innerWidth <= 480 ? 'row' : 'column',
             gap: window.innerWidth <= 480 ? '4px' : '5px',
@@ -293,7 +325,7 @@ const ProductCard = ({ product }) => {
             marginLeft: 'auto'
         },
         addButton: {
-            background: product.stock === 0 ? '#95a5a6' : 'linear-gradient(135deg, #3498db, #2980b9)',
+            background: product.stock === 0 ? '#95a5a6' : isAddingToCart ? '#27ae60' : 'linear-gradient(135deg, #3498db, #2980b9)',
             color: 'white',
             border: 'none',
             padding: responsive.padding.button,
@@ -309,7 +341,9 @@ const ProductCard = ({ product }) => {
             transition: 'all 0.3s ease',
             marginTop: 'auto',
             opacity: product.stock === 0 ? 0.6 : 1,
-            boxShadow: product.stock > 0 ? '0 5px 15px rgba(52, 152, 219, 0.3)' : 'none'
+            boxShadow: product.stock > 0 ? '0 5px 15px rgba(52, 152, 219, 0.3)' : 'none',
+            zIndex: 10,
+            position: 'relative'
         },
         stockStatus: {
             fontSize: window.innerWidth <= 480 ? '0.6rem' : '0.7rem',
@@ -327,13 +361,6 @@ const ProductCard = ({ product }) => {
 
     const discount = hasDiscount ? discountPercentage : 0;
 
-    // Mobile touch handling
-    const handleCardClick = (e) => {
-        if (window.innerWidth <= 768) {
-            window.location.href = `/product/${product.id}`;
-        }
-    };
-
     return (
         <div 
             style={styles.card}
@@ -342,11 +369,11 @@ const ProductCard = ({ product }) => {
             onClick={handleCardClick}
             role="button"
             tabIndex={0}
-            onKeyPress={(e) => {
+            onKeyDown={(e) => {
                 if (e.key === 'Enter' || e.key === ' ') {
                     handleCardClick(e);
                 }
-              }}
+            }}
         >
             {/* Image Section */}
             <div style={styles.imageWrapper}>
@@ -365,11 +392,7 @@ const ProductCard = ({ product }) => {
                 <div style={styles.overlay}>
                     <button 
                         style={styles.quickViewBtn}
-                        onClick={(e) => {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            window.location.href = `/product/${product.id}`;
-                        }}
+                        onClick={handleQuickView}
                         aria-label="Quick view"
                     >
                         <FaEye />
@@ -456,18 +479,12 @@ const ProductCard = ({ product }) => {
                 {/* Add to Cart Button */}
                 <button 
                     style={styles.addButton}
-                    onClick={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        if (product.stock > 0) {
-                            handleAddToCart(e);
-                        }
-                    }}
-                    disabled={product.stock === 0}
+                    onClick={handleAddToCart}
+                    disabled={product.stock === 0 || isAddingToCart}
                     aria-label={product.stock > 0 ? 'Add to cart' : 'Out of stock'}
                 >
                     <FaShoppingCart size={window.innerWidth <= 480 ? 10 : 12} /> 
-                    {product.stock > 0 ? 'Add to Cart' : 'Out of Stock'}
+                    {isAddingToCart ? 'Adding...' : (product.stock > 0 ? 'Add to Cart' : 'Out of Stock')}
                 </button>
             </div>
         </div>
