@@ -1218,6 +1218,29 @@ body {
   .sidebar-menu {
     grid-template-columns: 1fr !important;
   }
+  @media (max-width: 480px) {
+    .product-card {
+        max-width: 260px !important;
+    }
+    
+    .product-image-container {
+        aspect-ratio: 1/1 !important;
+    }
+    
+    .product-name {
+        font-size: 0.8rem !important;
+        height: 2rem !important;
+    }
+    
+    .product-price {
+        font-size: 0.9rem !important;
+    }
+    
+    .add-to-cart-btn {
+        padding: 5px !important;
+        font-size: 0.7rem !important;
+    }
+}
 }
 
 /* ===== ENSURE NO HORIZONTAL SCROLL ===== */
