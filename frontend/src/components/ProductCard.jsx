@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import { useWishlist } from '../context/WishlistContext';
-import { FaHeart, FaShoppingCart, FaRegHeart, FaStar, FaStarHalfAlt, FaEye } from 'react-icons/fa';
+import { FaHeart, FaShoppingCart, FaRegHeart, FaStar } from 'react-icons/fa';
 
 const ProductCard = ({ product }) => {
     const { addToCart } = useCart();
@@ -10,37 +10,8 @@ const ProductCard = ({ product }) => {
     const [imageError, setImageError] = useState(false);
     const [isHovered, setIsHovered] = useState(false);
 
-    // Format price with commas
     const formatPrice = (price) => {
         return Math.round(price).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-    };
-
-    // Calculate discount percentage
-    const getDiscountPercentage = () => {
-        if (product.discount_price && product.price) {
-            return Math.round(((product.price - product.discount_price) / product.price) * 100);
-        }
-        return 0;
-    };
-
-    // Generate star rating
-    const renderRating = () => {
-        const rating = product.rating || 4.5;
-        const fullStars = Math.floor(rating);
-        const hasHalfStar = rating % 1 >= 0.5;
-        const stars = [];
-        
-        for (let i = 0; i < 5; i++) {
-            if (i < fullStars) {
-                stars.push(<FaStar key={i} color="#FFD700" size={14} />);
-            } else if (i === fullStars && hasHalfStar) {
-                stars.push(<FaStarHalfAlt key={i} color="#FFD700" size={14} />);
-            } else {
-                stars.push(<FaStar key={i} color="#e4e5e9" size={14} />);
-            }
-        }
-        
-        return stars;
     };
 
     const handleAddToCart = (e) => {
@@ -59,236 +30,135 @@ const ProductCard = ({ product }) => {
         }
     };
 
-    const discountPercentage = getDiscountPercentage();
-    const hasDiscount = discountPercentage > 0;
-
     const styles = {
         card: {
-            border: 'none',
-            borderRadius: '12px',
-            padding: '0',
-            textAlign: 'center',
+            border: '1px solid #f0f0f0',
+            borderRadius: '10px',
+            overflow: 'hidden',
             background: 'white',
             position: 'relative',
-            transition: 'all 0.3s ease',
-            overflow: 'hidden',
-            boxShadow: isHovered 
-                ? '0 20px 30px -10px rgba(0,0,0,0.2)' 
-                : '0 5px 15px rgba(0,0,0,0.08)',
+            transition: 'all 0.2s ease',
+            boxShadow: '0 2px 8px rgba(0,0,0,0.04)',
             height: '100%',
             display: 'flex',
             flexDirection: 'column',
-            maxWidth: '300px',
-            margin: '0 auto',
+            maxWidth: '200px', // Fixed width for mobile
             width: '100%',
-            transform: isHovered ? 'translateY(-5px)' : 'translateY(0)',
-            cursor: 'pointer'
+            margin: '0 auto'
         },
         imageWrapper: {
             position: 'relative',
             width: '100%',
-            aspectRatio: '1/1',
-            overflow: 'hidden',
-            backgroundColor: '#f8f9fa',
-            borderTopLeftRadius: '12px',
-            borderTopRightRadius: '12px'
+            aspectRatio: '1/1', // Square image
+            backgroundColor: '#fafafa',
+            overflow: 'hidden'
         },
         image: {
             width: '100%',
             height: '100%',
-            objectFit: 'cover',
-            transition: 'transform 0.6s ease',
-            transform: isHovered ? 'scale(1.1)' : 'scale(1)'
-        },
-        overlay: {
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            background: 'linear-gradient(to bottom, rgba(0,0,0,0.1), rgba(0,0,0,0.3))',
-            opacity: isHovered ? 1 : 0,
-            transition: 'opacity 0.3s ease',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: '10px'
-        },
-        quickViewBtn: {
-            background: 'white',
-            border: 'none',
-            borderRadius: '50%',
-            width: '45px',
-            height: '45px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            cursor: 'pointer',
-            boxShadow: '0 5px 15px rgba(0,0,0,0.2)',
-            color: '#333',
-            fontSize: '1.2rem',
-            transform: isHovered ? 'translateY(0)' : 'translateY(20px)',
-            transition: 'all 0.3s ease',
-            opacity: isHovered ? 1 : 0
+            objectFit: 'cover'
         },
         wishlistBtn: {
             position: 'absolute',
-            top: '15px',
-            right: '15px',
+            top: '8px',
+            right: '8px',
             background: 'white',
             border: 'none',
             borderRadius: '50%',
-            width: '38px',
-            height: '38px',
+            width: '28px',
+            height: '28px',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             cursor: 'pointer',
-            boxShadow: '0 3px 10px rgba(0,0,0,0.1)',
-            zIndex: 3,
-            fontSize: '1.1rem',
-            transition: 'all 0.2s ease',
-            color: isInWishlist(product.id) ? '#ff4757' : '#747d8c',
-            backgroundColor: 'white',
-            transform: isHovered ? 'scale(1.1)' : 'scale(1)'
+            boxShadow: '0 2px 5px rgba(0,0,0,0.1)',
+            zIndex: 2,
+            fontSize: '0.8rem',
+            color: isInWishlist(product.id) ? '#ff4757' : '#999'
         },
-        badgeContainer: {
+        badge: {
             position: 'absolute',
-            top: '15px',
-            left: '15px',
-            zIndex: 3,
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '5px'
-        },
-        badgeNew: {
-            background: 'linear-gradient(135deg, #2ecc71, #27ae60)',
+            top: '8px',
+            left: '8px',
+            background: '#ff4757',
             color: 'white',
-            padding: '4px 10px',
-            borderRadius: '20px',
-            fontSize: '0.7rem',
+            padding: '2px 6px',
+            borderRadius: '3px',
+            fontSize: '0.55rem',
             fontWeight: 'bold',
-            textTransform: 'uppercase',
-            letterSpacing: '0.5px',
-            boxShadow: '0 3px 10px rgba(46, 204, 113, 0.3)'
-        },
-        badgeSale: {
-            background: 'linear-gradient(135deg, #ff4757, #ee5a24)',
-            color: 'white',
-            padding: '4px 10px',
-            borderRadius: '20px',
-            fontSize: '0.7rem',
-            fontWeight: 'bold',
-            textTransform: 'uppercase',
-            letterSpacing: '0.5px',
-            boxShadow: '0 3px 10px rgba(255, 71, 87, 0.3)'
+            zIndex: 2
         },
         content: {
-            padding: '16px 15px 20px',
-            flex: 1,
+            padding: '8px',
             display: 'flex',
             flexDirection: 'column',
-            background: 'white'
-        },
-        category: {
-            fontSize: '0.7rem',
-            color: '#747d8c',
-            textTransform: 'uppercase',
-            letterSpacing: '0.5px',
-            marginBottom: '5px',
-            textAlign: 'left'
+            gap: '4px'
         },
         name: {
-            fontSize: '1rem',
-            margin: '0 0 8px 0',
-            color: '#2c3e50',
-            fontWeight: '600',
-            lineHeight: '1.4',
-            textAlign: 'left',
-            display: '-webkit-box',
-            WebkitLineClamp: 2,
-            WebkitBoxOrient: 'vertical',
+            fontSize: '0.8rem',
+            color: '#333',
+            fontWeight: '500',
+            margin: 0,
+            whiteSpace: 'nowrap',
             overflow: 'hidden',
-            textOverflow: 'ellipsis',
-            minHeight: '2.8rem'
+            textOverflow: 'ellipsis'
         },
-        ratingContainer: {
+        rating: {
             display: 'flex',
             alignItems: 'center',
-            gap: '5px',
-            marginBottom: '10px',
-            textAlign: 'left'
+            gap: '2px',
+            fontSize: '0.7rem'
         },
         ratingStars: {
             display: 'flex',
-            gap: '2px'
+            gap: '1px',
+            color: '#FFD700'
         },
         reviewCount: {
-            fontSize: '0.7rem',
-            color: '#a4b0be',
-            marginLeft: '5px'
+            color: '#999',
+            fontSize: '0.6rem',
+            marginLeft: '2px'
         },
-        priceContainer: {
-            display: 'flex',
-            alignItems: 'baseline',
-            gap: '8px',
-            marginBottom: '15px',
-            textAlign: 'left',
-            flexWrap: 'wrap'
-        },
-        currentPrice: {
-            fontSize: '1.3rem',
-            fontWeight: '700',
-            color: '#2c3e50'
-        },
-        originalPrice: {
-            fontSize: '0.9rem',
-            color: '#a4b0be',
-            textDecoration: 'line-through'
-        },
-        discountBadge: {
-            background: '#ff4757',
-            color: 'white',
-            padding: '2px 8px',
-            borderRadius: '20px',
-            fontSize: '0.7rem',
-            fontWeight: 'bold',
-            marginLeft: 'auto'
-        },
-        addButton: {
-            background: 'linear-gradient(135deg, #3498db, #2980b9)',
-            color: 'white',
-            border: 'none',
-            padding: '10px 15px',
-            borderRadius: '8px',
-            cursor: 'pointer',
-            width: '100%',
+        price: {
             fontSize: '0.9rem',
             fontWeight: '600',
+            color: '#2c3e50',
+            margin: '2px 0'
+        },
+        addButton: {
+            background: '#3498db',
+            color: 'white',
+            border: 'none',
+            padding: '6px 0',
+            borderRadius: '5px',
+            cursor: 'pointer',
+            width: '100%',
+            fontSize: '0.7rem',
+            fontWeight: '500',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            gap: '8px',
-            transition: 'all 0.3s ease',
-            marginTop: 'auto',
-            boxShadow: '0 5px 15px rgba(52, 152, 219, 0.3)',
-            transform: isHovered ? 'translateY(-2px)' : 'translateY(0)'
-        },
-        stockStatus: {
-            fontSize: '0.7rem',
-            color: '#27ae60',
-            marginBottom: '8px',
-            textAlign: 'left',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '5px'
-        },
-        outOfStock: {
-            color: '#ff4757'
+            gap: '4px',
+            marginTop: '4px',
+            transition: 'background 0.2s ease'
         }
     };
 
-    const discount = hasDiscount ? discountPercentage : 0;
+    // Generate 5 stars
+    const renderStars = () => {
+        const rating = product.rating || 4;
+        const stars = [];
+        for (let i = 0; i < 5; i++) {
+            stars.push(
+                <FaStar 
+                    key={i} 
+                    size={10} 
+                    color={i < rating ? '#FFD700' : '#e4e5e9'} 
+                />
+            );
+        }
+        return stars;
+    };
 
     return (
         <div 
@@ -296,113 +166,55 @@ const ProductCard = ({ product }) => {
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
         >
-            {/* Image Section */}
+            {/* Image */}
             <div style={styles.imageWrapper}>
                 <img 
                     src={!imageError 
-                        ? (product.image_url || 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400') 
-                        : 'https://via.placeholder.com/400x400?text=Product+Image'
+                        ? (product.image_url || 'https://via.placeholder.com/200') 
+                        : 'https://via.placeholder.com/200'
                     } 
                     alt={product.name}
                     style={styles.image}
                     onError={() => setImageError(true)}
                 />
                 
-                {/* Overlay with Quick View */}
-                <div style={styles.overlay}>
-                    <button 
-                        style={styles.quickViewBtn}
-                        onClick={(e) => {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            window.location.href = `/product/${product.id}`;
-                        }}
-                    >
-                        <FaEye />
-                    </button>
-                </div>
-
-                {/* Badges */}
-                <div style={styles.badgeContainer}>
-                    {product.is_new && <span style={styles.badgeNew}>New</span>}
-                    {hasDiscount && <span style={styles.badgeSale}>-{discount}%</span>}
-                </div>
-
+                {/* Sale Badge */}
+                {product.discount_price && (
+                    <span style={styles.badge}>SALE</span>
+                )}
+                
                 {/* Wishlist Button */}
                 <button 
                     style={styles.wishlistBtn}
                     onClick={handleWishlistToggle}
-                    onMouseEnter={(e) => {
-                        if (!isInWishlist(product.id)) {
-                            e.currentTarget.style.color = '#ff4757';
-                        }
-                    }}
-                    onMouseLeave={(e) => {
-                        if (!isInWishlist(product.id)) {
-                            e.currentTarget.style.color = '#747d8c';
-                        }
-                    }}
                 >
                     {isInWishlist(product.id) ? <FaHeart /> : <FaRegHeart />}
                 </button>
             </div>
 
-            {/* Content Section */}
+            {/* Content */}
             <div style={styles.content}>
-                {product.category && (
-                    <div style={styles.category}>{product.category.name || 'Category'}</div>
-                )}
-                
-                <Link to={`/product/${product.id}`} style={{ textDecoration: 'none' }}>
-                    <h3 style={styles.name}>{product.name}</h3>
-                </Link>
+                <h4 style={styles.name}>{product.name}</h4>
                 
                 {/* Rating */}
-                <div style={styles.ratingContainer}>
+                <div style={styles.rating}>
                     <div style={styles.ratingStars}>
-                        {renderRating()}
+                        {renderStars()}
                     </div>
                     <span style={styles.reviewCount}>({product.review_count || 0})</span>
                 </div>
-
-                {/* Stock Status */}
-                {product.stock > 0 ? (
-                    <div style={styles.stockStatus}>
-                        <span style={{ width: '8px', height: '8px', background: '#27ae60', borderRadius: '50%', display: 'inline-block' }}></span>
-                        In Stock ({product.stock})
-                    </div>
-                ) : (
-                    <div style={{...styles.stockStatus, ...styles.outOfStock}}>
-                        <span style={{ width: '8px', height: '8px', background: '#ff4757', borderRadius: '50%', display: 'inline-block' }}></span>
-                        Out of Stock
-                    </div>
-                )}
                 
                 {/* Price */}
-                <div style={styles.priceContainer}>
-                    <span style={styles.currentPrice}>
-                        {formatPrice(hasDiscount ? product.discount_price : product.price)} Br
-                    </span>
-                    {hasDiscount && (
-                        <>
-                            <span style={styles.originalPrice}>{formatPrice(product.price)} Br</span>
-                        </>
-                    )}
+                <div style={styles.price}>
+                    {formatPrice(product.discount_price || product.price)} Br
                 </div>
                 
-                {/* Add to Cart Button */}
+                {/* Add to Cart */}
                 <button 
-                    style={{
-                        ...styles.addButton,
-                        opacity: product.stock === 0 ? 0.5 : 1,
-                        cursor: product.stock === 0 ? 'not-allowed' : 'pointer',
-                        background: product.stock === 0 ? '#95a5a6' : 'linear-gradient(135deg, #3498db, #2980b9)'
-                    }}
-                    onClick={product.stock > 0 ? handleAddToCart : null}
-                    disabled={product.stock === 0}
+                    style={styles.addButton}
+                    onClick={handleAddToCart}
                 >
-                    <FaShoppingCart size={14} /> 
-                    {product.stock > 0 ? 'Add to Cart' : 'Out of Stock'}
+                    <FaShoppingCart size={10} /> Add
                 </button>
             </div>
         </div>
