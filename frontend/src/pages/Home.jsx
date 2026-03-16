@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import API from '../services/api';
+import { useWishlist } from '../context/WishlistContext'; // Added this import
 import { 
     FaStar, 
     FaArrowRight, 
@@ -164,9 +165,10 @@ const Home = () => {
         }
     };
 
-    // Product Card with proper mobile sizing
+    // Product Card with proper mobile sizing - FIXED with wishlist
     const ProductCard = ({ product, index }) => {
         const [isHovered, setIsHovered] = useState(false);
+        const { isInWishlist } = useWishlist(); // Added this line
         const API_BASE_URL = 'https://ecommerce-backend-39jf.onrender.com';
         
         const getImageUrl = (imagePath) => {
@@ -174,6 +176,9 @@ const Home = () => {
             if (imagePath.startsWith('http')) return imagePath;
             return `${API_BASE_URL}${imagePath}`;
         };
+        
+        // Check if product is in wishlist
+        const inWishlist = isInWishlist(product.id); // Use the function
         
         return (
             <Link to={`/product/${product.id}`} style={{ textDecoration: 'none' }}>
@@ -193,7 +198,7 @@ const Home = () => {
                     </div>
                     <button style={{
                         ...styles.wishlistButton,
-                        color: isInWishlist ? '#ff6b6b' : '#ddd'
+                        color: inWishlist ? '#ff6b6b' : '#ddd'
                     }} onClick={(e) => e.preventDefault()}>
                         <FaHeart size={14} />
                     </button>
