@@ -449,7 +449,7 @@ const Home = () => {
                 </div>
             </div>
 
-            {/* CSS Animations and Responsive Styles - NO SLIDE ANIMATIONS */}
+            {/* CSS Animations and Responsive Styles */}
             <style>
                 {`
                     @keyframes spin {
@@ -488,14 +488,17 @@ const Home = () => {
                         }
                         .hero-button {
                             padding: 10px 20px !important;
+                            font-size: 0.9rem !important;
                         }
                         .features-section {
                             grid-template-columns: repeat(2, 1fr) !important;
+                            gap: 15px !important;
                         }
                         .products-grid,
                         .categories-grid,
                         .brands-grid {
                             grid-template-columns: repeat(2, 1fr) !important;
+                            gap: 15px !important;
                         }
                         .section-title {
                             font-size: 1.5rem !important;
@@ -516,43 +519,196 @@ const Home = () => {
                         }
                     }
 
+                    @media (max-width: 600px) {
+                        .hero-title {
+                            font-size: 1.8rem !important;
+                        }
+                        .hero-subtitle {
+                            font-size: 0.9rem !important;
+                        }
+                    }
+
                     @media (max-width: 480px) {
                         .hero-title {
                             font-size: 1.5rem !important;
+                            margin-bottom: 8px !important;
+                        }
+                        .hero-subtitle {
+                            font-size: 0.8rem !important;
+                            margin-bottom: 12px !important;
+                        }
+                        .hero-button {
+                            padding: 8px 16px !important;
+                            font-size: 0.8rem !important;
                         }
                         .hero-section {
-                            height: 400px !important;
+                            height: 350px !important;
                         }
                         .hero-content {
                             left: 5% !important;
                             right: 5% !important;
+                            width: 90% !important;
+                            max-width: 100% !important;
                         }
                         .features-section {
                             grid-template-columns: 1fr !important;
+                            gap: 12px !important;
+                            padding: 0 15px !important;
+                            margin: 30px auto !important;
+                        }
+                        .feature-card {
+                            padding: 15px !important;
+                        }
+                        .feature-icon {
+                            font-size: 1.5rem !important;
+                            margin-bottom: 8px !important;
+                        }
+                        .feature-title {
+                            font-size: 0.9rem !important;
+                            margin-bottom: 4px !important;
+                        }
+                        .feature-text {
+                            font-size: 0.8rem !important;
                         }
                         .products-grid,
                         .categories-grid,
                         .brands-grid {
                             grid-template-columns: 1fr !important;
+                            gap: 12px !important;
                         }
                         .section-header {
                             flex-direction: column !important;
                             gap: 10px !important;
+                            text-align: center !important;
+                        }
+                        .section-title {
+                            font-size: 1.3rem !important;
+                        }
+                        .view-all-link {
+                            font-size: 0.85rem !important;
+                        }
+                        .product-card {
+                            margin: 0 auto !important;
+                            max-width: 280px !important;
+                        }
+                        .product-image-container {
+                            height: 160px !important;
+                        }
+                        .product-info {
+                            padding: 10px !important;
+                        }
+                        .product-name {
+                            font-size: 0.85rem !important;
+                        }
+                        .product-price {
+                            font-size: 1rem !important;
+                        }
+                        .add-to-cart-btn {
+                            padding: 6px !important;
+                            font-size: 0.8rem !important;
+                        }
+                        .category-card {
+                            height: 150px !important;
+                            max-width: 280px !important;
+                            margin: 0 auto !important;
+                        }
+                        .category-icon {
+                            font-size: 1.3rem !important;
+                        }
+                        .category-name {
+                            font-size: 0.85rem !important;
                         }
                         .promo-banner {
-                            height: 400px !important;
+                            height: 350px !important;
+                            margin: 30px 0 !important;
+                        }
+                        .promo-content {
+                            text-align: center !important;
+                            padding: 0 15px !important;
+                        }
+                        .promo-tag {
+                            font-size: 0.7rem !important;
+                            padding: 3px 8px !important;
+                        }
+                        .promo-title {
+                            font-size: 1.5rem !important;
+                        }
+                        .promo-text {
+                            font-size: 0.9rem !important;
+                        }
+                        .promo-button {
+                            padding: 8px 20px !important;
+                            font-size: 0.85rem !important;
                         }
                         .promo-image {
                             width: 100% !important;
+                            opacity: 0.2 !important;
+                        }
+                        .brands-section {
+                            padding: 0 15px !important;
+                            margin: 40px auto !important;
+                        }
+                        .brands-title {
+                            font-size: 1.3rem !important;
+                            margin-bottom: 20px !important;
                         }
                         .brands-grid {
                             grid-template-columns: repeat(2, 1fr) !important;
+                            gap: 10px !important;
+                        }
+                        .brand-card {
+                            padding: 10px !important;
+                        }
+                        .brand-image {
+                            height: 25px !important;
+                        }
+                        .newsletter-section {
+                            padding: 40px 15px !important;
+                        }
+                        .newsletter-title {
+                            font-size: 1.5rem !important;
+                        }
+                        .newsletter-text {
+                            font-size: 0.9rem !important;
+                            margin-bottom: 20px !important;
                         }
                         .newsletter-form {
                             flex-direction: column !important;
+                            gap: 10px !important;
                         }
                         .newsletter-input {
-                            width: 100% !important;
+                            padding: 10px !important;
+                            font-size: 0.9rem !important;
+                        }
+                        .newsletter-button {
+                            padding: 10px !important;
+                            font-size: 0.9rem !important;
+                        }
+                    }
+
+                    @media (max-width: 360px) {
+                        .hero-title {
+                            font-size: 1.3rem !important;
+                        }
+                        .hero-subtitle {
+                            font-size: 0.75rem !important;
+                        }
+                        .hero-button {
+                            padding: 6px 12px !important;
+                            font-size: 0.75rem !important;
+                        }
+                        .hero-section {
+                            height: 300px !important;
+                        }
+                        .product-image-container {
+                            height: 140px !important;
+                        }
+                        .product-card,
+                        .category-card {
+                            max-width: 240px !important;
+                        }
+                        .brands-grid {
+                            grid-template-columns: 1fr !important;
                         }
                     }
                 `}
@@ -576,7 +732,10 @@ const styles = {
             height: '450px'
         },
         '@media (max-width: 480px)': {
-            height: '400px'
+            height: '350px'
+        },
+        '@media (max-width: 360px)': {
+            height: '300px'
         }
     },
     heroSlide: {
@@ -622,10 +781,17 @@ const styles = {
             fontSize: '3rem'
         },
         '@media (max-width: 768px)': {
-            fontSize: '2.2rem'
+            fontSize: '2rem'
+        },
+        '@media (max-width: 600px)': {
+            fontSize: '1.8rem'
         },
         '@media (max-width: 480px)': {
-            fontSize: '1.8rem'
+            fontSize: '1.5rem',
+            marginBottom: '8px'
+        },
+        '@media (max-width: 360px)': {
+            fontSize: '1.3rem'
         }
     },
     heroSubtitle: {
@@ -633,10 +799,17 @@ const styles = {
         marginBottom: '25px',
         opacity: 0.95,
         '@media (max-width: 768px)': {
-            fontSize: '1.1rem'
+            fontSize: '1rem'
+        },
+        '@media (max-width: 600px)': {
+            fontSize: '0.9rem'
         },
         '@media (max-width: 480px)': {
-            fontSize: '1rem'
+            fontSize: '0.8rem',
+            marginBottom: '12px'
+        },
+        '@media (max-width: 360px)': {
+            fontSize: '0.75rem'
         }
     },
     heroButton: {
@@ -653,11 +826,21 @@ const styles = {
         gap: '10px',
         transition: 'background 0.3s ease',
         '@media (max-width: 768px)': {
-            padding: '10px 25px'
+            padding: '10px 20px',
+            fontSize: '0.9rem'
+        },
+        '@media (max-width: 600px)': {
+            padding: '8px 16px',
+            fontSize: '0.85rem'
         },
         '@media (max-width: 480px)': {
-            padding: '8px 20px',
-            fontSize: '0.9rem'
+            padding: '8px 16px',
+            fontSize: '0.8rem',
+            gap: '5px'
+        },
+        '@media (max-width: 360px)': {
+            padding: '6px 12px',
+            fontSize: '0.75rem'
         }
     },
     slideIndicators: {
@@ -694,7 +877,9 @@ const styles = {
         },
         '@media (max-width: 480px)': {
             gridTemplateColumns: '1fr',
-            gap: '15px'
+            gap: '12px',
+            padding: '0 15px',
+            margin: '30px auto'
         }
     },
     featureCard: {
@@ -706,6 +891,9 @@ const styles = {
         transition: 'box-shadow 0.3s ease',
         '@media (max-width: 768px)': {
             padding: '20px'
+        },
+        '@media (max-width: 480px)': {
+            padding: '15px'
         }
     },
     featureIcon: {
@@ -714,6 +902,10 @@ const styles = {
         marginBottom: '15px',
         '@media (max-width: 768px)': {
             fontSize: '1.8rem'
+        },
+        '@media (max-width: 480px)': {
+            fontSize: '1.5rem',
+            marginBottom: '8px'
         }
     },
     featureTitle: {
@@ -723,6 +915,10 @@ const styles = {
         marginBottom: '8px',
         '@media (max-width: 768px)': {
             fontSize: '1rem'
+        },
+        '@media (max-width: 480px)': {
+            fontSize: '0.9rem',
+            marginBottom: '4px'
         }
     },
     featureText: {
@@ -731,6 +927,9 @@ const styles = {
         margin: 0,
         '@media (max-width: 768px)': {
             fontSize: '0.85rem'
+        },
+        '@media (max-width: 480px)': {
+            fontSize: '0.8rem'
         }
     },
 
@@ -751,7 +950,8 @@ const styles = {
         marginBottom: '30px',
         '@media (max-width: 480px)': {
             flexDirection: 'column',
-            gap: '15px'
+            gap: '10px',
+            textAlign: 'center'
         }
     },
     sectionTitle: {
@@ -779,7 +979,7 @@ const styles = {
         fontWeight: '500',
         transition: 'color 0.3s ease',
         '@media (max-width: 480px)': {
-            fontSize: '0.9rem'
+            fontSize: '0.85rem'
         }
     },
 
@@ -796,7 +996,9 @@ const styles = {
             gap: '15px'
         },
         '@media (max-width: 480px)': {
-            gridTemplateColumns: '1fr'
+            gridTemplateColumns: '1fr',
+            gap: '12px',
+            justifyItems: 'center'
         }
     },
     categoryCard: {
@@ -808,6 +1010,11 @@ const styles = {
         boxShadow: '0 5px 15px rgba(0,0,0,0.08)',
         '@media (max-width: 768px)': {
             height: '180px'
+        },
+        '@media (max-width: 480px)': {
+            height: '150px',
+            maxWidth: '280px',
+            margin: '0 auto'
         }
     },
     categoryImageContainer: {
@@ -837,6 +1044,9 @@ const styles = {
         opacity: 0.9,
         '@media (max-width: 768px)': {
             fontSize: '1.5rem'
+        },
+        '@media (max-width: 480px)': {
+            fontSize: '1.3rem'
         }
     },
     categoryName: {
@@ -845,6 +1055,9 @@ const styles = {
         fontWeight: '500',
         '@media (max-width: 768px)': {
             fontSize: '0.9rem'
+        },
+        '@media (max-width: 480px)': {
+            fontSize: '0.85rem'
         }
     },
 
@@ -861,7 +1074,9 @@ const styles = {
             gap: '15px'
         },
         '@media (max-width: 480px)': {
-            gridTemplateColumns: '1fr'
+            gridTemplateColumns: '1fr',
+            gap: '12px',
+            justifyItems: 'center'
         }
     },
     productCard: {
@@ -869,7 +1084,11 @@ const styles = {
         borderRadius: '8px',
         overflow: 'hidden',
         position: 'relative',
-        boxShadow: '0 5px 15px rgba(0,0,0,0.05)'
+        boxShadow: '0 5px 15px rgba(0,0,0,0.05)',
+        '@media (max-width: 480px)': {
+            maxWidth: '280px',
+            margin: '0 auto'
+        }
     },
     productBadge: {
         position: 'absolute',
@@ -916,6 +1135,12 @@ const styles = {
         overflow: 'hidden',
         '@media (max-width: 768px)': {
             height: '180px'
+        },
+        '@media (max-width: 480px)': {
+            height: '160px'
+        },
+        '@media (max-width: 360px)': {
+            height: '140px'
         }
     },
     productImage: {
@@ -927,6 +1152,9 @@ const styles = {
         padding: '15px',
         '@media (max-width: 768px)': {
             padding: '12px'
+        },
+        '@media (max-width: 480px)': {
+            padding: '10px'
         }
     },
     productName: {
@@ -937,6 +1165,9 @@ const styles = {
         lineHeight: '1.4',
         '@media (max-width: 768px)': {
             fontSize: '0.9rem'
+        },
+        '@media (max-width: 480px)': {
+            fontSize: '0.85rem'
         }
     },
     productRating: {
@@ -965,6 +1196,9 @@ const styles = {
         color: '#333',
         '@media (max-width: 768px)': {
             fontSize: '1rem'
+        },
+        '@media (max-width: 480px)': {
+            fontSize: '1rem'
         }
     },
     discountPrice: {
@@ -972,6 +1206,9 @@ const styles = {
         fontWeight: '600',
         color: '#e74c3c',
         '@media (max-width: 768px)': {
+            fontSize: '1rem'
+        },
+        '@media (max-width: 480px)': {
             fontSize: '1rem'
         }
     },
@@ -996,6 +1233,10 @@ const styles = {
         '@media (max-width: 768px)': {
             padding: '6px',
             fontSize: '0.85rem'
+        },
+        '@media (max-width: 480px)': {
+            padding: '6px',
+            fontSize: '0.8rem'
         }
     },
 
@@ -1010,7 +1251,8 @@ const styles = {
             height: '300px'
         },
         '@media (max-width: 480px)': {
-            height: '400px'
+            height: '350px',
+            margin: '30px 0'
         }
     },
     promoContent: {
@@ -1025,6 +1267,9 @@ const styles = {
             right: '5%',
             maxWidth: '90%',
             textAlign: 'center'
+        },
+        '@media (max-width: 480px)': {
+            padding: '0 15px'
         }
     },
     promoTag: {
@@ -1035,7 +1280,11 @@ const styles = {
         fontSize: '0.8rem',
         fontWeight: '600',
         borderRadius: '20px',
-        marginBottom: '15px'
+        marginBottom: '15px',
+        '@media (max-width: 480px)': {
+            fontSize: '0.7rem',
+            padding: '3px 8px'
+        }
     },
     promoTitle: {
         fontSize: '2.5rem',
@@ -1046,7 +1295,7 @@ const styles = {
             fontSize: '2rem'
         },
         '@media (max-width: 480px)': {
-            fontSize: '1.8rem'
+            fontSize: '1.5rem'
         }
     },
     promoText: {
@@ -1055,6 +1304,9 @@ const styles = {
         marginBottom: '20px',
         '@media (max-width: 768px)': {
             fontSize: '1rem'
+        },
+        '@media (max-width: 480px)': {
+            fontSize: '0.9rem'
         }
     },
     promoButton: {
@@ -1071,6 +1323,10 @@ const styles = {
         gap: '8px',
         '@media (max-width: 768px)': {
             padding: '8px 20px'
+        },
+        '@media (max-width: 480px)': {
+            padding: '8px 20px',
+            fontSize: '0.85rem'
         }
     },
     promoImage: {
@@ -1086,7 +1342,7 @@ const styles = {
         },
         '@media (max-width: 480px)': {
             width: '100%',
-            opacity: 0.3
+            opacity: 0.2
         }
     },
 
@@ -1095,7 +1351,11 @@ const styles = {
         maxWidth: '1200px',
         margin: '60px auto',
         padding: '0 20px',
-        textAlign: 'center'
+        textAlign: 'center',
+        '@media (max-width: 480px)': {
+            padding: '0 15px',
+            margin: '40px auto'
+        }
     },
     brandsTitle: {
         fontSize: '1.8rem',
@@ -1104,6 +1364,10 @@ const styles = {
         fontWeight: '600',
         '@media (max-width: 768px)': {
             fontSize: '1.5rem'
+        },
+        '@media (max-width: 480px)': {
+            fontSize: '1.3rem',
+            marginBottom: '20px'
         }
     },
     brandsGrid: {
@@ -1118,7 +1382,10 @@ const styles = {
         },
         '@media (max-width: 480px)': {
             gridTemplateColumns: 'repeat(2, 1fr)',
-            gap: '15px'
+            gap: '10px'
+        },
+        '@media (max-width: 360px)': {
+            gridTemplateColumns: '1fr'
         }
     },
     brandCard: {
@@ -1129,6 +1396,9 @@ const styles = {
         transition: 'box-shadow 0.3s ease',
         '@media (max-width: 768px)': {
             padding: '12px'
+        },
+        '@media (max-width: 480px)': {
+            padding: '10px'
         }
     },
     brandImage: {
@@ -1136,7 +1406,10 @@ const styles = {
         height: '35px',
         objectFit: 'contain',
         opacity: 0.7,
-        transition: 'opacity 0.3s ease'
+        transition: 'opacity 0.3s ease',
+        '@media (max-width: 480px)': {
+            height: '25px'
+        }
     },
 
     // Newsletter Section
@@ -1160,18 +1433,26 @@ const styles = {
         fontWeight: '600',
         '@media (max-width: 768px)': {
             fontSize: '1.8rem'
+        },
+        '@media (max-width: 480px)': {
+            fontSize: '1.5rem'
         }
     },
     newsletterText: {
         fontSize: '1rem',
         marginBottom: '25px',
-        opacity: 0.9
+        opacity: 0.9,
+        '@media (max-width: 480px)': {
+            fontSize: '0.9rem',
+            marginBottom: '20px'
+        }
     },
     newsletterForm: {
         display: 'flex',
         gap: '10px',
         '@media (max-width: 480px)': {
-            flexDirection: 'column'
+            flexDirection: 'column',
+            gap: '10px'
         }
     },
     newsletterInput: {
@@ -1182,7 +1463,9 @@ const styles = {
         fontSize: '0.95rem',
         outline: 'none',
         '@media (max-width: 480px)': {
-            width: '100%'
+            width: '100%',
+            padding: '10px',
+            fontSize: '0.9rem'
         }
     },
     newsletterButton: {
@@ -1196,7 +1479,8 @@ const styles = {
         cursor: 'pointer',
         transition: 'transform 0.3s ease',
         '@media (max-width: 480px)': {
-            padding: '12px'
+            padding: '10px',
+            fontSize: '0.9rem'
         }
     },
 
