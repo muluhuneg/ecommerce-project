@@ -74,13 +74,28 @@ const Navbar = () => {
     useEffect(() => {
         if (isMobileMenuOpen) {
             document.body.style.overflow = 'hidden';
+            document.body.style.position = 'fixed';
+            document.body.style.width = '100%';
+            document.body.style.height = '100%';
+            document.body.style.top = '0';
+            document.body.style.left = '0';
             document.body.classList.add('mobile-menu-open');
         } else {
             document.body.style.overflow = 'unset';
+            document.body.style.position = 'relative';
+            document.body.style.width = 'auto';
+            document.body.style.height = 'auto';
+            document.body.style.top = 'auto';
+            document.body.style.left = 'auto';
             document.body.classList.remove('mobile-menu-open');
         }
         return () => {
             document.body.style.overflow = 'unset';
+            document.body.style.position = 'relative';
+            document.body.style.width = 'auto';
+            document.body.style.height = 'auto';
+            document.body.style.top = 'auto';
+            document.body.style.left = 'auto';
             document.body.classList.remove('mobile-menu-open');
         };
     }, [isMobileMenuOpen]);
@@ -342,10 +357,10 @@ const Navbar = () => {
             left: 0,
             right: 0,
             bottom: 0,
-            backgroundColor: 'rgba(0, 0, 0, 0.7)',
-            zIndex: 999998,
-            backdropFilter: 'blur(5px)',
-            WebkitBackdropFilter: 'blur(5px)',
+            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+            zIndex: 9999998,
+            backdropFilter: 'blur(8px)',
+            WebkitBackdropFilter: 'blur(8px)',
             display: isMobileMenuOpen ? 'block' : 'none',
             animation: 'fadeIn 0.3s ease'
         },
@@ -357,7 +372,7 @@ const Navbar = () => {
             right: 0,
             bottom: 0,
             background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)',
-            zIndex: 999999,
+            zIndex: 9999999,
             padding: '80px 20px 30px',
             overflowY: 'auto',
             WebkitOverflowScrolling: 'touch',
@@ -377,8 +392,8 @@ const Navbar = () => {
             position: 'absolute',
             top: '20px',
             right: '20px',
-            background: 'rgba(255,255,255,0.1)',
-            border: '2px solid rgba(255,215,0,0.3)',
+            background: 'rgba(255,255,255,0.2)',
+            border: '2px solid #FFD700',
             color: 'white',
             width: '45px',
             height: '45px',
@@ -388,7 +403,7 @@ const Navbar = () => {
             justifyContent: 'center',
             fontSize: '1.4rem',
             cursor: 'pointer',
-            zIndex: 1000000,
+            zIndex: 10000000,
             transition: 'all 0.3s ease'
         },
         mobileNavLinks: {
@@ -903,6 +918,9 @@ const Navbar = () => {
             
             .mobile-menu-open {
                 overflow: hidden !important;
+                position: fixed !important;
+                width: 100% !important;
+                height: 100% !important;
             }
             
             .nav-link:hover {
@@ -1185,6 +1203,7 @@ const Navbar = () => {
                     <button 
                         style={styles.hamburgerButton}
                         onClick={toggleMobileMenu}
+                        aria-label="Toggle mobile menu"
                     >
                         {isMobileMenuOpen ? <FaTimes /> : <FaBars />}
                     </button>
@@ -1202,6 +1221,7 @@ const Navbar = () => {
                         <button 
                             style={styles.mobileCloseButton}
                             onClick={() => setIsMobileMenuOpen(false)}
+                            aria-label="Close menu"
                         >
                             <FaTimes />
                         </button>
