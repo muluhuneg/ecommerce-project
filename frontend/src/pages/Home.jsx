@@ -67,34 +67,47 @@ const Home = () => {
 const heroSlides = [
     {
         id: 1,
-        title: "Creative Vision",
-        subtitle: "Where ideas take shape",
-        image: "https://images.unsplash.com/photo-1557804506-669a67965ba0?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80",
-        cta: "Explore Now"
-    },
-    {
-        id: 2,
-        title: "Elegant Simplicity",
-        subtitle: "Designed for modern life",
-        image: "https://images.unsplash.com/photo-1581291518633-83b4ebd1d83e?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80",
-        cta: "Discover More"
-    },
-    {
-        id: 3,
-        title: "Vibrant Energy",
-        subtitle: "Add color to your world",
-        image: "https://images.unsplash.com/photo-1528698827591-e19e25e50d7d?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80",
+        title: "⚡ Flash Sale",
+        subtitle: "Up to 70% off on electronics. Today only!",
+        image: "https://images.unsplash.com/photo-1550009158-9ebf69173e03?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80",
         cta: "Shop Now"
     },
     {
+        id: 2,
+        title: "New Season",
+        subtitle: "Discover the latest trends in fashion",
+        image: "https://images.unsplash.com/photo-1483985988355-763728e1935b?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80",
+        cta: "Explore Collection"
+    },
+    {
+        id: 3,
+        title: "Summer Sale",
+        subtitle: "Up to 50% off on outdoor gear",
+        image: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80",
+        cta: "Shop Sale"
+    },
+    {
         id: 4,
-        title: "Golden Moments",
-        subtitle: "Capture the beauty",
-        image: "https://images.unsplash.com/photo-1477346611705-65d1883cee1e?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80",
-        cta: "Learn More"
+        title: "Free Shipping",
+        subtitle: "On all home decor orders over $50",
+        image: "https://images.unsplash.com/photo-1556228453-efd6c1ff04f6?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80",
+        cta: "Shop Now"
+    },
+    {
+        id: 5,
+        title: "Premium Collection",
+        subtitle: "Hand-picked luxury items for you",
+        image: "https://images.unsplash.com/photo-1441986300917-64674bd600d8?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80",
+        cta: "View Collection"
+    },
+    {
+        id: 6,
+        title: "Customer Favorites",
+        subtitle: "See what everyone's buying this week",
+        image: "https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80",
+        cta: "Shop Best Sellers"
     }
 ];
-
     // Brand logos
     const brandLogos = [
         { id: 1, name: 'Nike', image: 'https://logos-world.net/wp-content/uploads/2020/04/Nike-Logo.png' },
