@@ -64,31 +64,36 @@ const Home = () => {
             setShowToast(false);
         }, 3000);
     };
-
-    // Hero slides with beautiful images
-    const heroSlides = [
-        {
-            id: 1,
-            title: "Summer Sale",
-            subtitle: "Up to 50% off on selected items",
-            image: "https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80",
-            cta: "Shop Now"
-        },
-        {
-            id: 2,
-            title: "New Arrivals",
-            subtitle: "Discover the latest trends",
-            image: "https://images.unsplash.com/photo-1441986300917-64674bd600d8?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80",
-            cta: "Explore"
-        },
-        {
-            id: 3,
-            title: "Free Shipping",
-            subtitle: "On orders over 3,000 Br",
-            image: "https://images.unsplash.com/photo-1566576721346-d4a3b4eaeb55?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80",
-            cta: "Learn More"
-        }
-    ];
+const heroSlides = [
+    {
+        id: 1,
+        title: "Creative Vision",
+        subtitle: "Where ideas take shape",
+        image: "https://images.unsplash.com/photo-1557804506-669a67965ba0?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80",
+        cta: "Explore Now"
+    },
+    {
+        id: 2,
+        title: "Elegant Simplicity",
+        subtitle: "Designed for modern life",
+        image: "https://images.unsplash.com/photo-1581291518633-83b4ebd1d83e?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80",
+        cta: "Discover More"
+    },
+    {
+        id: 3,
+        title: "Vibrant Energy",
+        subtitle: "Add color to your world",
+        image: "https://images.unsplash.com/photo-1528698827591-e19e25e50d7d?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80",
+        cta: "Shop Now"
+    },
+    {
+        id: 4,
+        title: "Golden Moments",
+        subtitle: "Capture the beauty",
+        image: "https://images.unsplash.com/photo-1477346611705-65d1883cee1e?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80",
+        cta: "Learn More"
+    }
+];
 
     // Brand logos
     const brandLogos = [
