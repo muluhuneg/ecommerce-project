@@ -65,31 +65,6 @@ const Home = () => {
         }, 3000);
     };
 
-    // Hero slides with beautiful images
-    const heroSlides = [
-        {
-            id: 1,
-            title: "Summer Sale",
-            subtitle: "Up to 50% off on selected items",
-            image: "https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80",
-            cta: "Shop Now"
-        },
-        {
-            id: 2,
-            title: "New Arrivals",
-            subtitle: "Discover the latest trends",
-            image: "https://images.unsplash.com/photo-1441986300917-64674bd600d8?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80",
-            cta: "Explore"
-        },
-        {
-            id: 3,
-            title: "Free Shipping",
-            subtitle: "On orders over 3,000 Br",
-            image: "https://images.unsplash.com/photo-1566576721346-d4a3b4eaeb55?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80",
-            cta: "Learn More"
-        }
-    ];
-
     // Brand logos
     const brandLogos = [
         { id: 1, name: 'Nike', image: 'https://logos-world.net/wp-content/uploads/2020/04/Nike-Logo.png' },
@@ -138,10 +113,6 @@ const Home = () => {
 
     useEffect(() => {
         fetchHomeData();
-        const interval = setInterval(() => {
-            setCurrentSlide((prev) => (prev + 1) % heroSlides.length);
-        }, 6000);
-        return () => clearInterval(interval);
     }, []);
 
     const fetchHomeData = async () => {
@@ -347,26 +318,6 @@ const Home = () => {
         );
     };
 
-    // Hero Banner - NO SLIDE ANIMATION, just fade
-    const Banner = ({ slide, isActive }) => (
-        <div style={{
-            ...styles.heroSlide,
-            opacity: isActive ? 1 : 0,
-            zIndex: isActive ? 1 : 0,
-            transition: 'opacity 0.8s ease'
-        }}>
-            <img src={slide.image} alt={slide.title} style={styles.heroImage} loading="lazy" />
-            <div style={styles.heroOverlay}></div>
-            <div style={styles.heroContent}>
-                <h1 style={styles.heroTitle}>{slide.title}</h1>
-                <p style={styles.heroSubtitle}>{slide.subtitle}</p>
-                <button style={styles.heroButton} onClick={() => navigate('/products')}>
-                    {slide.cta} <FaArrowRight />
-                </button>
-            </div>
-        </div>
-    );
-
     if (loading) {
         return (
             <div style={styles.loadingContainer}>
@@ -386,29 +337,7 @@ const Home = () => {
                 </div>
             )}
 
-            {/* Hero Section - Full width */}
-            <div style={styles.heroSection}>
-                <div style={styles.contentWrapper}>
-                    {heroSlides.map((slide, index) => (
-                        <Banner key={slide.id} slide={slide} isActive={index === currentSlide} />
-                    ))}
-                    <div style={styles.slideIndicators}>
-                        {heroSlides.map((_, index) => (
-                            <button
-                                key={index}
-                                style={{
-                                    ...styles.slideIndicator,
-                                    backgroundColor: index === currentSlide ? '#fff' : 'rgba(255,255,255,0.4)',
-                                    width: index === currentSlide ? '30px' : '10px'
-                                }}
-                                onClick={() => setCurrentSlide(index)}
-                            />
-                        ))}
-                    </div>
-                </div>
-            </div>
-
-            {/* Features Section */}
+            {/* Features Section - Now at the top */}
             <div style={styles.contentWrapper}>
                 <div style={styles.featuresSection}>
                     <div style={styles.featureCard}>
@@ -575,11 +504,14 @@ const Home = () => {
                         height: 100% !important;
                     }
                     
-                    /* Lower z-index for hero content when mobile menu is open */
-                    body.mobile-menu-open .hero-section,
-                    body.mobile-menu-open .hero-slide,
-                    body.mobile-menu-open .hero-content,
-                    body.mobile-menu-open .slide-indicators {
+                    /* Lower z-index for content when mobile menu is open */
+                    body.mobile-menu-open .contentWrapper,
+                    body.mobile-menu-open .features-section,
+                    body.mobile-menu-open .categories-grid,
+                    body.mobile-menu-open .products-grid,
+                    body.mobile-menu-open .promo-banner,
+                    body.mobile-menu-open .brands-section,
+                    body.mobile-menu-open .newsletter-section {
                         z-index: 1 !important;
                     }
 
@@ -593,16 +525,6 @@ const Home = () => {
                     }
 
                     @media (max-width: 768px) {
-                        .hero-title {
-                            font-size: 2rem !important;
-                        }
-                        .hero-subtitle {
-                            font-size: 1rem !important;
-                        }
-                        .hero-button {
-                            padding: 10px 20px !important;
-                            font-size: 0.9rem !important;
-                        }
                         .features-section {
                             grid-template-columns: repeat(2, 1fr) !important;
                             gap: 15px !important;
@@ -638,37 +560,7 @@ const Home = () => {
                         }
                     }
 
-                    @media (max-width: 600px) {
-                        .hero-title {
-                            font-size: 1.8rem !important;
-                        }
-                        .hero-subtitle {
-                            font-size: 0.9rem !important;
-                        }
-                    }
-
                     @media (max-width: 480px) {
-                        .hero-title {
-                            font-size: 1.5rem !important;
-                            margin-bottom: 8px !important;
-                        }
-                        .hero-subtitle {
-                            font-size: 0.8rem !important;
-                            margin-bottom: 12px !important;
-                        }
-                        .hero-button {
-                            padding: 8px 16px !important;
-                            font-size: 0.8rem !important;
-                        }
-                        .hero-section {
-                            height: 350px !important;
-                        }
-                        .hero-content {
-                            left: 5% !important;
-                            right: 5% !important;
-                            width: 90% !important;
-                            max-width: 100% !important;
-                        }
                         .features-section {
                             grid-template-columns: 1fr !important;
                             gap: 12px !important;
@@ -833,19 +725,6 @@ const Home = () => {
                     }
 
                     @media (max-width: 360px) {
-                        .hero-title {
-                            font-size: 1.3rem !important;
-                        }
-                        .hero-subtitle {
-                            font-size: 0.75rem !important;
-                        }
-                        .hero-button {
-                            padding: 6px 12px !important;
-                            font-size: 0.75rem !important;
-                        }
-                        .hero-section {
-                            height: 250px !important;
-                        }
                         .products-grid {
                             gap: 5px !important;
                         }
@@ -926,144 +805,6 @@ const styles = {
         '@media (max-width: 480px)': {
             padding: '0 10px'
         }
-    },
-    
-    // Hero Section - Full width with constrained content
-    heroSection: {
-        position: 'relative',
-        height: '600px',
-        overflow: 'hidden',
-        width: '100%',
-        '@media (max-width: 768px)': {
-            height: '450px'
-        },
-        '@media (max-width: 480px)': {
-            height: '350px'
-        },
-        '@media (max-width: 360px)': {
-            height: '250px'
-        }
-    },
-    heroSlide: {
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        width: '100%',
-        height: '100%'
-    },
-    heroImage: {
-        width: '100%',
-        height: '100%',
-        objectFit: 'cover'
-    },
-    heroOverlay: {
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        width: '100%',
-        height: '100%',
-        background: 'linear-gradient(to right, rgba(0,0,0,0.6), rgba(0,0,0,0.3))'
-    },
-    heroContent: {
-        position: 'absolute',
-        top: '50%',
-        left: '10%',
-        transform: 'translateY(-50%)',
-        color: 'white',
-        maxWidth: '600px',
-        zIndex: 2,
-        '@media (max-width: 768px)': {
-            left: '5%',
-            right: '5%',
-            maxWidth: '90%'
-        }
-    },
-    heroTitle: {
-        fontSize: '3.5rem',
-        marginBottom: '15px',
-        fontWeight: '700',
-        textShadow: '2px 2px 4px rgba(0,0,0,0.3)',
-        '@media (max-width: 1024px)': {
-            fontSize: '3rem'
-        },
-        '@media (max-width: 768px)': {
-            fontSize: '2rem'
-        },
-        '@media (max-width: 600px)': {
-            fontSize: '1.8rem'
-        },
-        '@media (max-width: 480px)': {
-            fontSize: '1.5rem',
-            marginBottom: '8px'
-        },
-        '@media (max-width: 360px)': {
-            fontSize: '1.3rem'
-        }
-    },
-    heroSubtitle: {
-        fontSize: '1.3rem',
-        marginBottom: '25px',
-        opacity: 0.95,
-        '@media (max-width: 768px)': {
-            fontSize: '1rem'
-        },
-        '@media (max-width: 600px)': {
-            fontSize: '0.9rem'
-        },
-        '@media (max-width: 480px)': {
-            fontSize: '0.8rem',
-            marginBottom: '12px'
-        },
-        '@media (max-width: 360px)': {
-            fontSize: '0.75rem'
-        }
-    },
-    heroButton: {
-        padding: '12px 35px',
-        background: '#fff',
-        color: '#333',
-        border: 'none',
-        borderRadius: '4px',
-        fontSize: '1rem',
-        fontWeight: '600',
-        cursor: 'pointer',
-        display: 'inline-flex',
-        alignItems: 'center',
-        gap: '10px',
-        transition: 'background 0.3s ease',
-        '@media (max-width: 768px)': {
-            padding: '10px 20px',
-            fontSize: '0.9rem'
-        },
-        '@media (max-width: 600px)': {
-            padding: '8px 16px',
-            fontSize: '0.85rem'
-        },
-        '@media (max-width: 480px)': {
-            padding: '8px 16px',
-            fontSize: '0.8rem',
-            gap: '5px'
-        },
-        '@media (max-width: 360px)': {
-            padding: '6px 12px',
-            fontSize: '0.75rem'
-        }
-    },
-    slideIndicators: {
-        position: 'absolute',
-        bottom: '30px',
-        left: '50%',
-        transform: 'translateX(-50%)',
-        display: 'flex',
-        gap: '10px',
-        zIndex: 2
-    },
-    slideIndicator: {
-        height: '4px',
-        borderRadius: '2px',
-        border: 'none',
-        cursor: 'pointer',
-        transition: 'all 0.3s ease'
     },
 
     // Features Section
@@ -1286,7 +1027,7 @@ const styles = {
         }
     },
 
-    // Products Grid - 2 columns on mobile with square images - FIXED
+    // Products Grid - 2 columns on mobile with square images
     productsGrid: {
         display: 'grid',
         gridTemplateColumns: 'repeat(4, 1fr)',
@@ -1306,7 +1047,7 @@ const styles = {
         }
     },
     
-    // FIXED: Product card - removed max-width constraint on mobile
+    // Product card
     productCard: {
         background: 'white',
         borderRadius: '8px',
@@ -1314,14 +1055,14 @@ const styles = {
         position: 'relative',
         boxShadow: '0 2px 8px rgba(0,0,0,0.05)',
         width: '100%',
-        maxWidth: '280px', // Desktop size
+        maxWidth: '280px',
         margin: '0 auto',
         '@media (max-width: 768px)': {
-            maxWidth: '100%', // Full width on tablet
+            maxWidth: '100%',
             margin: 0
         },
         '@media (max-width: 480px)': {
-            maxWidth: '100%', // Full width on mobile
+            maxWidth: '100%',
             borderRadius: '6px',
             margin: 0
         }
