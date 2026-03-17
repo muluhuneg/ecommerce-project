@@ -352,7 +352,7 @@ const Home = () => {
         <div style={{
             ...styles.heroSlide,
             opacity: isActive ? 1 : 0,
-            zIndex: isActive ? 1 : 0,
+            zIndex: isActive ? 0.2 : 0,
             transition: 'opacity 0.8s ease'
         }}>
             <img src={slide.image} alt={slide.title} style={styles.heroImage} loading="lazy" />
