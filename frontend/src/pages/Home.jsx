@@ -1286,7 +1286,7 @@ const styles = {
         }
     },
 
-    // Products Grid - 2 columns on mobile with square images
+    // Products Grid - 2 columns on mobile with square images - FIXED
     productsGrid: {
         display: 'grid',
         gridTemplateColumns: 'repeat(4, 1fr)',
@@ -1305,6 +1305,8 @@ const styles = {
             padding: '0 5px'
         }
     },
+    
+    // FIXED: Product card - removed max-width constraint on mobile
     productCard: {
         background: 'white',
         borderRadius: '8px',
@@ -1312,14 +1314,16 @@ const styles = {
         position: 'relative',
         boxShadow: '0 2px 8px rgba(0,0,0,0.05)',
         width: '100%',
-        maxWidth: '280px',
+        maxWidth: '280px', // Desktop size
         margin: '0 auto',
         '@media (max-width: 768px)': {
-            maxWidth: '100%'
+            maxWidth: '100%', // Full width on tablet
+            margin: 0
         },
         '@media (max-width: 480px)': {
-            maxWidth: '100%',
-            borderRadius: '6px'
+            maxWidth: '100%', // Full width on mobile
+            borderRadius: '6px',
+            margin: 0
         }
     },
     productBadge: {
