@@ -70,7 +70,7 @@ const Navbar = () => {
         setIsMobileMenuOpen(false);
     }, [location]);
 
-    // Prevent body scroll when mobile menu is open
+    // Prevent body scroll when mobile menu is open - UPDATED for better mobile experience
     useEffect(() => {
         if (isMobileMenuOpen) {
             document.body.style.overflow = 'hidden';
@@ -81,21 +81,21 @@ const Navbar = () => {
             document.body.style.left = '0';
             document.body.classList.add('mobile-menu-open');
         } else {
-            document.body.style.overflow = 'unset';
-            document.body.style.position = 'relative';
-            document.body.style.width = 'auto';
-            document.body.style.height = 'auto';
-            document.body.style.top = 'auto';
-            document.body.style.left = 'auto';
+            document.body.style.overflow = '';
+            document.body.style.position = '';
+            document.body.style.width = '';
+            document.body.style.height = '';
+            document.body.style.top = '';
+            document.body.style.left = '';
             document.body.classList.remove('mobile-menu-open');
         }
         return () => {
-            document.body.style.overflow = 'unset';
-            document.body.style.position = 'relative';
-            document.body.style.width = 'auto';
-            document.body.style.height = 'auto';
-            document.body.style.top = 'auto';
-            document.body.style.left = 'auto';
+            document.body.style.overflow = '';
+            document.body.style.position = '';
+            document.body.style.width = '';
+            document.body.style.height = '';
+            document.body.style.top = '';
+            document.body.style.left = '';
             document.body.classList.remove('mobile-menu-open');
         };
     }, [isMobileMenuOpen]);
@@ -212,7 +212,7 @@ const Navbar = () => {
         navbar: {
             position: 'sticky',
             top: 0,
-            zIndex: 1001,
+            zIndex: 10000, // Increased from 1001
             background: isScrolled 
                 ? 'linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)'
                 : 'linear-gradient(135deg, #667eea 0%, #764ba2 30%, #ff6b6b 70%, #ffd93d 100%)',
@@ -223,6 +223,9 @@ const Navbar = () => {
             transition: 'all 0.4s ease',
             borderBottom: '2px solid rgba(255,255,255,0.2)',
             backdropFilter: 'blur(10px)',
+            '@media (max-width: 768px)': {
+                padding: isScrolled ? '0.6rem 1rem' : '1rem 1rem',
+            }
         },
         container: {
             maxWidth: '1400px',
@@ -237,7 +240,7 @@ const Navbar = () => {
             textDecoration: 'none',
             display: 'block',
             position: 'relative',
-            zIndex: 1002
+            zIndex: 10002 // Increased
         },
         logoContainer: {
             display: 'flex',
@@ -260,12 +263,19 @@ const Navbar = () => {
             justifyContent: 'center',
             transform: 'rotate(5deg)',
             boxShadow: '0 10px 20px rgba(255,215,0,0.4)',
-            overflow: 'hidden'
+            overflow: 'hidden',
+            '@media (max-width: 768px)': {
+                width: '35px',
+                height: '35px',
+            }
         },
         logoLightning: {
             color: '#1a1a2e',
             fontSize: '1.4rem',
-            animation: 'pulse 2s ease-in-out infinite'
+            animation: 'pulse 2s ease-in-out infinite',
+            '@media (max-width: 768px)': {
+                fontSize: '1.2rem',
+            }
         },
         logoStar1: {
             position: 'absolute',
@@ -296,7 +306,10 @@ const Navbar = () => {
             WebkitTextFillColor: 'transparent',
             textShadow: '0 2px 10px rgba(255,215,0,0.3)',
             letterSpacing: '2px',
-            lineHeight: '1'
+            lineHeight: '1',
+            '@media (max-width: 768px)': {
+                fontSize: '1.2rem',
+            }
         },
         logoBadge: {
             background: 'linear-gradient(135deg, #FFD700, #FF6B6B)',
@@ -308,7 +321,11 @@ const Navbar = () => {
             marginTop: '2px',
             textTransform: 'uppercase',
             boxShadow: '0 2px 10px rgba(255,215,0,0.5)',
-            animation: 'pulse 2s infinite'
+            animation: 'pulse 2s infinite',
+            '@media (max-width: 768px)': {
+                fontSize: '0.5rem',
+                padding: '1px 4px',
+            }
         },
         // Desktop Navigation - Only visible on desktop
         desktopNav: {
@@ -348,23 +365,28 @@ const Navbar = () => {
             justifyContent: 'center',
             fontSize: '1.4rem',
             transition: 'all 0.3s ease',
-            zIndex: 1002
+            zIndex: 10002,
+            '@media (max-width: 768px)': {
+                width: '40px',
+                height: '40px',
+                fontSize: '1.2rem',
+            }
         },
-        // FIXED: Mobile menu overlay - appears OVER content
+        // FIXED: Mobile menu overlay - appears OVER content with maximum z-index
         mobileMenuOverlay: {
             position: 'fixed',
             top: 0,
             left: 0,
             right: 0,
             bottom: 0,
-            backgroundColor: 'rgba(0, 0, 0, 0.8)',
-            zIndex: 9999998,
+            backgroundColor: 'rgba(0, 0, 0, 0.85)',
+            zIndex: 2147483646, // Maximum possible - 1
             backdropFilter: 'blur(8px)',
             WebkitBackdropFilter: 'blur(8px)',
             display: isMobileMenuOpen ? 'block' : 'none',
             animation: 'fadeIn 0.3s ease'
         },
-        // FIXED: Mobile menu - highest z-index to appear above all
+        // FIXED: Mobile menu - maximum z-index to appear above all
         mobileMenu: {
             position: 'fixed',
             top: 0,
@@ -372,7 +394,7 @@ const Navbar = () => {
             right: 0,
             bottom: 0,
             background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)',
-            zIndex: 9999999,
+            zIndex: 2147483647, // Maximum possible z-index
             padding: '80px 20px 30px',
             overflowY: 'auto',
             WebkitOverflowScrolling: 'touch',
@@ -403,8 +425,13 @@ const Navbar = () => {
             justifyContent: 'center',
             fontSize: '1.4rem',
             cursor: 'pointer',
-            zIndex: 10000000,
-            transition: 'all 0.3s ease'
+            zIndex: 2147483647, // Same as menu
+            transition: 'all 0.3s ease',
+            '@media (max-width: 768px)': {
+                width: '40px',
+                height: '40px',
+                fontSize: '1.2rem',
+            }
         },
         mobileNavLinks: {
             display: 'flex',
@@ -507,7 +534,11 @@ const Navbar = () => {
             justifyContent: 'center',
             gap: '0.5rem',
             fontSize: '1rem',
-            fontWeight: '600'
+            fontWeight: '600',
+            '@media (max-width: 768px)': {
+                padding: '0.8rem',
+                fontSize: '0.9rem',
+            }
         },
         mobileButtonPrimary: {
             background: 'linear-gradient(135deg, #FFD700, #FFA500)',
@@ -581,7 +612,7 @@ const Navbar = () => {
             padding: '20px',
             boxShadow: '0 20px 40px rgba(0,0,0,0.4)',
             display: isSearchOpen ? 'block' : 'none',
-            zIndex: 1001,
+            zIndex: 10001,
             width: '300px',
             border: '2px solid rgba(255,215,0,0.3)',
             animation: 'slideDown 0.4s ease',
@@ -763,7 +794,7 @@ const Navbar = () => {
             boxShadow: '0 20px 40px rgba(0,0,0,0.4)',
             display: isDropdownOpen ? 'block' : 'none',
             minWidth: '280px',
-            zIndex: 1000,
+            zIndex: 10001,
             overflow: 'hidden',
             border: '2px solid rgba(255,215,0,0.3)',
             animation: 'slideDown 0.3s ease'
@@ -916,11 +947,37 @@ const Navbar = () => {
                 100% { left: 200%; }
             }
             
+            /* FIX: Ensure mobile menu appears above all content */
             .mobile-menu-open {
                 overflow: hidden !important;
                 position: fixed !important;
                 width: 100% !important;
                 height: 100% !important;
+                top: 0 !important;
+                left: 0 !important;
+            }
+            
+            /* Force all content to be below the menu when open */
+            body.mobile-menu-open main,
+            body.mobile-menu-open .hero-section,
+            body.mobile-menu-open .hero-content,
+            body.mobile-menu-open .hero-slide,
+            body.mobile-menu-open .slide-indicators,
+            body.mobile-menu-open .banner,
+            body.mobile-menu-open section,
+            body.mobile-menu-open div[class*="hero"],
+            body.mobile-menu-open div[class*="banner"] {
+                z-index: 1 !important;
+                pointer-events: none !important;
+            }
+            
+            /* But menu itself should be interactive */
+            body.mobile-menu-open .mobile-menu,
+            body.mobile-menu-open .mobile-menu *,
+            body.mobile-menu-open .mobile-menu-overlay,
+            body.mobile-menu-open .mobile-menu-overlay * {
+                pointer-events: auto !important;
+                z-index: 2147483647 !important;
             }
             
             .nav-link:hover {
@@ -990,6 +1047,13 @@ const Navbar = () => {
                 }
                 .mobileNav {
                     display: none !important;
+                }
+            }
+
+            /* Fix for iOS */
+            @supports (-webkit-touch-callout: none) {
+                .mobile-menu {
+                    height: -webkit-fill-available !important;
                 }
             }
         `;
@@ -1209,12 +1273,12 @@ const Navbar = () => {
                     </button>
                 </div>
 
-                {/* Mobile Menu Overlay - Dark background */}
+                {/* Mobile Menu Overlay - Dark background with maximum z-index */}
                 {isMobileMenuOpen && (
                     <div style={styles.mobileMenuOverlay} onClick={() => setIsMobileMenuOpen(false)} />
                 )}
 
-                {/* Mobile Menu - Full screen overlay with highest z-index */}
+                {/* Mobile Menu - Full screen overlay with maximum z-index */}
                 {isMobileMenuOpen && (
                     <div style={styles.mobileMenu}>
                         {/* Close Button */}
