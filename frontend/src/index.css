@@ -95,3 +95,14 @@ table {
   box-sizing: border-box !important;
   margin: 0 !important;
 }
+/* Make sure mobile menu is above fixed body content */
+.mobile-menu-open .mobile-menu {
+  z-index: 2147483647 !important;
+  position: fixed !important;
+}
+
+/* Ensure the overlay is also above */
+.mobile-menu-open .mobile-menu-overlay {
+  z-index: 2147483646 !important;
+  position: fixed !important;
+}
