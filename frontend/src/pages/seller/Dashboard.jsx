@@ -74,6 +74,7 @@ const Dashboard = () => {
         branch: ''
     });
     const [showBankForm, setShowBankForm] = useState(false);
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
     const { user } = useAuth();
 
@@ -84,6 +85,17 @@ const Dashboard = () => {
         fetchSalesData();
         fetchProducts();
     }, [selectedPeriod]);
+
+    // Handle window resize
+    useEffect(() => {
+        const handleResize = () => {
+            if (window.innerWidth > 768) {
+                setIsMobileMenuOpen(false);
+            }
+        };
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
 
     const fetchDashboardData = async () => {
         try {
@@ -425,7 +437,7 @@ const Dashboard = () => {
     if (loading) {
         return (
             <div style={styles.container}>
-                <Sidebar />
+                <Sidebar isMobileMenuOpen={isMobileMenuOpen} setIsMobileMenuOpen={setIsMobileMenuOpen} />
                 <div style={styles.mainContent}>
                     <div style={styles.loadingContainer}>
                         <div style={styles.spinner}></div>
@@ -439,7 +451,7 @@ const Dashboard = () => {
     if (error) {
         return (
             <div style={styles.container}>
-                <Sidebar />
+                <Sidebar isMobileMenuOpen={isMobileMenuOpen} setIsMobileMenuOpen={setIsMobileMenuOpen} />
                 <div style={styles.mainContent}>
                     <div style={styles.errorContainer}>
                         <FaExclamationTriangle size={50} color="#dc3545" />
@@ -456,7 +468,27 @@ const Dashboard = () => {
 
     return (
         <div style={styles.container}>
-            <Sidebar />
+            <Sidebar isMobileMenuOpen={isMobileMenuOpen} setIsMobileMenuOpen={setIsMobileMenuOpen} />
+            
+            {/* Mobile Header */}
+            <div style={styles.mobileHeader}>
+                <button 
+                    style={styles.menuButton}
+                    onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                >
+                    ☰
+                </button>
+                <h2 style={styles.mobileTitle}>Seller Dashboard</h2>
+                <div style={styles.mobileHeaderRight}>
+                    <button 
+                        style={styles.mobileHistoryButton}
+                        onClick={() => setShowWithdrawHistory(true)}
+                    >
+                        <FaHistory />
+                    </button>
+                </div>
+            </div>
+
             <div style={styles.mainContent}>
                 {/* Header */}
                 <div style={styles.header}>
@@ -586,16 +618,16 @@ const Dashboard = () => {
                         <h3>Quick Actions</h3>
                         <div style={styles.quickActions}>
                             <button style={styles.quickAction}>
-                                <FaPlus /> Add New Product
+                                <FaPlus /> Add Product
                             </button>
                             <button style={styles.quickAction}>
-                                <FaClipboardList /> View All Orders
+                                <FaClipboardList /> View Orders
                             </button>
                             <button style={styles.quickAction}>
-                                <FaStore /> Update Store Profile
+                                <FaStore /> Update Store
                             </button>
                             <button style={styles.quickAction}>
-                                <FaFileInvoice /> Generate Invoice
+                                <FaFileInvoice /> Invoice
                             </button>
                         </div>
                     </div>
@@ -627,54 +659,56 @@ const Dashboard = () => {
                             <p>No orders yet</p>
                         </div>
                     ) : (
-                        <table style={styles.table}>
-                            <thead>
-                                <tr>
-                                    <th style={styles.tableHeader}>Order #</th>
-                                    <th style={styles.tableHeader}>Customer</th>
-                                    <th style={styles.tableHeader}>Items</th>
-                                    <th style={styles.tableHeader}>Total</th>
-                                    <th style={styles.tableHeader}>Status</th>
-                                    <th style={styles.tableHeader}>Date</th>
-                                    <th style={styles.tableHeader}>Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {recentOrders.map(order => (
-                                    <tr key={order.id} style={styles.tableRow}>
-                                        <td style={styles.tableCell}>#{order.order_number}</td>
-                                        <td style={styles.tableCell}>{order.customer_name || 'N/A'}</td>
-                                        <td style={styles.tableCell}>{order.item_count || 0}</td>
-                                        <td style={styles.tableCell}>{formatCurrency(order.grand_total)}</td>
-                                        <td style={styles.tableCell}>
-                                            <span style={{
-                                                ...styles.statusBadge,
-                                                backgroundColor: 
-                                                    order.status === 'delivered' ? '#d4edda' :
-                                                    order.status === 'processing' ? '#fff3cd' :
-                                                    order.status === 'shipped' ? '#cce5ff' :
-                                                    order.status === 'pending' ? '#f8d7da' : '#e2e3e5',
-                                                color: 
-                                                    order.status === 'delivered' ? '#155724' :
-                                                    order.status === 'processing' ? '#856404' :
-                                                    order.status === 'shipped' ? '#004085' :
-                                                    order.status === 'pending' ? '#721c24' : '#383d41'
-                                            }}>
-                                                {order.status || 'pending'}
-                                            </span>
-                                        </td>
-                                        <td style={styles.tableCell}>
-                                            {order.created_at ? new Date(order.created_at).toLocaleDateString() : 'N/A'}
-                                        </td>
-                                        <td style={styles.tableCell}>
-                                            <button style={styles.viewButton}>
-                                                <FaEye /> View
-                                            </button>
-                                        </td>
+                        <div style={styles.tableContainer}>
+                            <table style={styles.table}>
+                                <thead>
+                                    <tr>
+                                        <th style={styles.tableHeader}>Order #</th>
+                                        <th style={styles.tableHeader}>Customer</th>
+                                        <th style={styles.tableHeader}>Items</th>
+                                        <th style={styles.tableHeader}>Total</th>
+                                        <th style={styles.tableHeader}>Status</th>
+                                        <th style={styles.tableHeader}>Date</th>
+                                        <th style={styles.tableHeader}>Action</th>
                                     </tr>
-                                ))}
-                            </tbody>
-                        </table>
+                                </thead>
+                                <tbody>
+                                    {recentOrders.map(order => (
+                                        <tr key={order.id} style={styles.tableRow}>
+                                            <td style={styles.tableCell}>#{order.order_number}</td>
+                                            <td style={styles.tableCell}>{order.customer_name || 'N/A'}</td>
+                                            <td style={styles.tableCell}>{order.item_count || 0}</td>
+                                            <td style={styles.tableCell}>{formatCurrency(order.grand_total)}</td>
+                                            <td style={styles.tableCell}>
+                                                <span style={{
+                                                    ...styles.statusBadge,
+                                                    backgroundColor: 
+                                                        order.status === 'delivered' ? '#d4edda' :
+                                                        order.status === 'processing' ? '#fff3cd' :
+                                                        order.status === 'shipped' ? '#cce5ff' :
+                                                        order.status === 'pending' ? '#f8d7da' : '#e2e3e5',
+                                                    color: 
+                                                        order.status === 'delivered' ? '#155724' :
+                                                        order.status === 'processing' ? '#856404' :
+                                                        order.status === 'shipped' ? '#004085' :
+                                                        order.status === 'pending' ? '#721c24' : '#383d41'
+                                                }}>
+                                                    {order.status || 'pending'}
+                                                </span>
+                                            </td>
+                                            <td style={styles.tableCell}>
+                                                {order.created_at ? new Date(order.created_at).toLocaleDateString() : 'N/A'}
+                                            </td>
+                                            <td style={styles.tableCell}>
+                                                <button style={styles.viewButton}>
+                                                    <FaEye /> View
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
                     )}
                 </div>
 
@@ -715,32 +749,125 @@ const styles = {
     container: {
         display: 'flex',
         backgroundColor: '#f8f9fa',
-        minHeight: '100vh'
+        minHeight: '100vh',
+        position: 'relative',
+        '@media (max-width: 768px)': {
+            flexDirection: 'column'
+        }
     },
     mainContent: {
         flex: 1,
         marginLeft: '280px',
-        padding: '2rem'
+        padding: '2rem',
+        transition: 'margin-left 0.3s ease',
+        '@media (max-width: 1024px)': {
+            marginLeft: '250px',
+            padding: '1.5rem'
+        },
+        '@media (max-width: 768px)': {
+            marginLeft: '0',
+            padding: '1rem',
+            paddingTop: '70px'
+        },
+        '@media (max-width: 480px)': {
+            padding: '0.8rem',
+            paddingTop: '60px'
+        }
+    },
+    // Mobile Header
+    mobileHeader: {
+        display: 'none',
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        height: '60px',
+        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+        zIndex: 999,
+        padding: '0 1rem',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        boxShadow: '0 2px 10px rgba(0,0,0,0.1)',
+        '@media (max-width: 768px)': {
+            display: 'flex'
+        }
+    },
+    menuButton: {
+        background: 'rgba(255,255,255,0.2)',
+        border: 'none',
+        color: 'white',
+        width: '40px',
+        height: '40px',
+        borderRadius: '8px',
+        fontSize: '1.5rem',
+        cursor: 'pointer',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center'
+    },
+    mobileTitle: {
+        color: 'white',
+        fontSize: '1.2rem',
+        margin: 0
+    },
+    mobileHeaderRight: {
+        display: 'flex',
+        gap: '0.5rem'
+    },
+    mobileHistoryButton: {
+        background: 'rgba(255,255,255,0.2)',
+        border: 'none',
+        color: 'white',
+        width: '40px',
+        height: '40px',
+        borderRadius: '8px',
+        cursor: 'pointer',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        fontSize: '1.2rem'
     },
     header: {
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'center',
-        marginBottom: '2rem'
+        marginBottom: '2rem',
+        '@media (max-width: 768px)': {
+            flexDirection: 'column',
+            alignItems: 'flex-start',
+            gap: '1rem',
+            marginBottom: '1.5rem'
+        },
+        '@media (max-width: 480px)': {
+            marginBottom: '1rem'
+        }
     },
     welcomeTitle: {
         fontSize: '1.8rem',
         color: '#333',
-        margin: '0 0 0.5rem'
+        margin: '0 0 0.5rem',
+        '@media (max-width: 768px)': {
+            fontSize: '1.5rem'
+        },
+        '@media (max-width: 480px)': {
+            fontSize: '1.3rem'
+        }
     },
     date: {
         color: '#666',
-        margin: 0
+        margin: 0,
+        '@media (max-width: 480px)': {
+            fontSize: '0.9rem'
+        }
     },
     headerActions: {
         display: 'flex',
         alignItems: 'center',
-        gap: '1rem'
+        gap: '1rem',
+        '@media (max-width: 768px)': {
+            width: '100%',
+            justifyContent: 'space-between'
+        }
     },
     storeBadge: {
         display: 'flex',
@@ -749,7 +876,11 @@ const styles = {
         padding: '0.5rem 1rem',
         background: 'white',
         borderRadius: '8px',
-        boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+        boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+        '@media (max-width: 480px)': {
+            padding: '0.4rem 0.8rem',
+            fontSize: '0.9rem'
+        }
     },
     historyButton: {
         display: 'flex',
@@ -761,13 +892,32 @@ const styles = {
         border: 'none',
         borderRadius: '8px',
         cursor: 'pointer',
-        transition: 'all 0.3s'
+        transition: 'all 0.3s',
+        '@media (max-width: 768px)': {
+            padding: '0.5rem 1rem'
+        },
+        '@media (max-width: 480px)': {
+            padding: '0.4rem 0.8rem',
+            fontSize: '0.9rem'
+        }
     },
     statsGrid: {
         display: 'grid',
         gridTemplateColumns: 'repeat(4, 1fr)',
         gap: '1.5rem',
-        marginBottom: '1.5rem'
+        marginBottom: '1.5rem',
+        '@media (max-width: 1024px)': {
+            gridTemplateColumns: 'repeat(2, 1fr)',
+            gap: '1rem'
+        },
+        '@media (max-width: 768px)': {
+            gridTemplateColumns: 'repeat(2, 1fr)',
+            gap: '0.8rem'
+        },
+        '@media (max-width: 480px)': {
+            gridTemplateColumns: '1fr',
+            gap: '0.8rem'
+        }
     },
     statCard: {
         padding: '1.5rem',
@@ -776,7 +926,13 @@ const styles = {
         display: 'flex',
         alignItems: 'center',
         gap: '1rem',
-        boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
+        boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+        '@media (max-width: 768px)': {
+            padding: '1rem'
+        },
+        '@media (max-width: 480px)': {
+            padding: '1rem'
+        }
     },
     statIcon: {
         width: '50px',
@@ -785,7 +941,11 @@ const styles = {
         borderRadius: '10px',
         display: 'flex',
         alignItems: 'center',
-        justifyContent: 'center'
+        justifyContent: 'center',
+        '@media (max-width: 768px)': {
+            width: '40px',
+            height: '40px'
+        }
     },
     statContent: {
         flex: 1
@@ -793,39 +953,67 @@ const styles = {
     statTitle: {
         fontSize: '0.9rem',
         margin: '0 0 0.3rem',
-        opacity: 0.9
+        opacity: 0.9,
+        '@media (max-width: 768px)': {
+            fontSize: '0.8rem'
+        }
     },
     statValue: {
         fontSize: '1.5rem',
         fontWeight: 'bold',
-        margin: '0 0 0.2rem'
+        margin: '0 0 0.2rem',
+        '@media (max-width: 768px)': {
+            fontSize: '1.2rem'
+        },
+        '@media (max-width: 480px)': {
+            fontSize: '1.1rem'
+        }
     },
     statSubtitle: {
         fontSize: '0.8rem',
         margin: 0,
-        opacity: 0.8
+        opacity: 0.8,
+        '@media (max-width: 768px)': {
+            fontSize: '0.7rem'
+        }
     },
     statsRow: {
         display: 'grid',
         gridTemplateColumns: '1fr 1fr',
         gap: '1.5rem',
-        marginBottom: '2rem'
+        marginBottom: '2rem',
+        '@media (max-width: 768px)': {
+            gridTemplateColumns: '1fr',
+            gap: '1rem'
+        }
     },
     statsCard: {
         background: 'white',
         padding: '1.5rem',
         borderRadius: '10px',
-        boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+        boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+        '@media (max-width: 768px)': {
+            padding: '1rem'
+        }
     },
     cardHeader: {
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'center',
-        marginBottom: '1rem'
+        marginBottom: '1rem',
+        '@media (max-width: 480px)': {
+            flexDirection: 'column',
+            alignItems: 'flex-start',
+            gap: '0.5rem'
+        }
     },
     periodSelector: {
         display: 'flex',
-        gap: '0.5rem'
+        gap: '0.5rem',
+        '@media (max-width: 480px)': {
+            width: '100%',
+            justifyContent: 'space-between'
+        }
     },
     periodButton: {
         padding: '0.3rem 0.8rem',
@@ -833,7 +1021,11 @@ const styles = {
         borderRadius: '4px',
         cursor: 'pointer',
         fontSize: '0.8rem',
-        transition: 'all 0.3s'
+        transition: 'all 0.3s',
+        '@media (max-width: 480px)': {
+            flex: 1,
+            padding: '0.4rem'
+        }
     },
     earningStats: {
         margin: '1rem 0'
@@ -842,12 +1034,18 @@ const styles = {
         display: 'flex',
         justifyContent: 'space-between',
         padding: '0.5rem 0',
-        borderBottom: '1px solid #eee'
+        borderBottom: '1px solid #eee',
+        '@media (max-width: 480px)': {
+            fontSize: '0.9rem'
+        }
     },
     withdrawSection: {
         display: 'flex',
         gap: '1rem',
-        marginTop: '1rem'
+        marginTop: '1rem',
+        '@media (max-width: 480px)': {
+            flexDirection: 'column'
+        }
     },
     withdrawButton: {
         flex: 2,
@@ -860,7 +1058,11 @@ const styles = {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        gap: '0.5rem'
+        gap: '0.5rem',
+        '@media (max-width: 480px)': {
+            padding: '0.6rem',
+            fontSize: '0.9rem'
+        }
     },
     downloadButton: {
         flex: 1,
@@ -873,13 +1075,20 @@ const styles = {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        gap: '0.5rem'
+        gap: '0.5rem',
+        '@media (max-width: 480px)': {
+            padding: '0.6rem',
+            fontSize: '0.9rem'
+        }
     },
     quickActions: {
         display: 'grid',
         gridTemplateColumns: 'repeat(2, 1fr)',
         gap: '0.5rem',
-        marginTop: '1rem'
+        marginTop: '1rem',
+        '@media (max-width: 480px)': {
+            gridTemplateColumns: '1fr'
+        }
     },
     quickAction: {
         padding: '0.75rem',
@@ -891,14 +1100,21 @@ const styles = {
         alignItems: 'center',
         justifyContent: 'center',
         gap: '0.5rem',
-        transition: 'background 0.3s'
+        transition: 'background 0.3s',
+        '@media (max-width: 480px)': {
+            padding: '0.6rem',
+            fontSize: '0.9rem'
+        }
     },
     transactionsSection: {
         background: 'white',
         padding: '1.5rem',
         borderRadius: '10px',
         boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
-        marginBottom: '2rem'
+        marginBottom: '2rem',
+        '@media (max-width: 768px)': {
+            padding: '1rem'
+        }
     },
     transactionsList: {
         marginTop: '1rem'
@@ -907,7 +1123,11 @@ const styles = {
         display: 'flex',
         gap: '1rem',
         padding: '1rem 0',
-        borderBottom: '1px solid #f0f0f0'
+        borderBottom: '1px solid #f0f0f0',
+        '@media (max-width: 480px)': {
+            flexDirection: 'column',
+            gap: '0.5rem'
+        }
     },
     transactionIcon: {
         width: '40px',
@@ -916,7 +1136,11 @@ const styles = {
         background: '#f8f9fa',
         display: 'flex',
         alignItems: 'center',
-        justifyContent: 'center'
+        justifyContent: 'center',
+        '@media (max-width: 480px)': {
+            width: '35px',
+            height: '35px'
+        }
     },
     transactionDetails: {
         flex: 1
@@ -925,7 +1149,12 @@ const styles = {
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'center',
-        marginBottom: '0.3rem'
+        marginBottom: '0.3rem',
+        '@media (max-width: 480px)': {
+            flexDirection: 'column',
+            alignItems: 'flex-start',
+            gap: '0.3rem'
+        }
     },
     transactionAmount: {
         fontWeight: 'bold'
@@ -935,7 +1164,12 @@ const styles = {
         justifyContent: 'space-between',
         alignItems: 'center',
         fontSize: '0.8rem',
-        color: '#666'
+        color: '#666',
+        '@media (max-width: 480px)': {
+            flexDirection: 'column',
+            alignItems: 'flex-start',
+            gap: '0.3rem'
+        }
     },
     transactionStatus: {
         padding: '0.2rem 0.5rem',
@@ -947,28 +1181,47 @@ const styles = {
         padding: '1.5rem',
         borderRadius: '10px',
         boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
-        marginBottom: '2rem'
+        marginBottom: '2rem',
+        '@media (max-width: 768px)': {
+            padding: '1rem'
+        }
     },
     sectionHeader: {
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'center',
-        marginBottom: '1rem'
+        marginBottom: '1rem',
+        '@media (max-width: 480px)': {
+            flexDirection: 'column',
+            alignItems: 'flex-start',
+            gap: '0.5rem'
+        }
     },
     viewAllLink: {
         color: '#667eea',
         textDecoration: 'none'
     },
+    tableContainer: {
+        overflowX: 'auto',
+        WebkitOverflowScrolling: 'touch',
+        margin: '0 -1rem',
+        padding: '0 1rem'
+    },
     table: {
         width: '100%',
-        borderCollapse: 'collapse'
+        borderCollapse: 'collapse',
+        minWidth: '600px'
     },
     tableHeader: {
         textAlign: 'left',
         padding: '1rem',
         borderBottom: '2px solid #dee2e6',
         color: '#666',
-        fontWeight: '600'
+        fontWeight: '600',
+        '@media (max-width: 768px)': {
+            padding: '0.8rem',
+            fontSize: '0.9rem'
+        }
     },
     tableRow: {
         borderBottom: '1px solid #eee',
@@ -976,12 +1229,19 @@ const styles = {
     },
     tableCell: {
         padding: '1rem',
-        color: '#333'
+        color: '#333',
+        '@media (max-width: 768px)': {
+            padding: '0.8rem',
+            fontSize: '0.9rem'
+        }
     },
     statusBadge: {
         padding: '0.25rem 0.5rem',
         borderRadius: '4px',
-        fontSize: '0.85rem'
+        fontSize: '0.85rem',
+        '@media (max-width: 768px)': {
+            fontSize: '0.8rem'
+        }
     },
     viewButton: {
         padding: '0.25rem 0.5rem',
@@ -999,7 +1259,10 @@ const styles = {
         background: 'white',
         padding: '1.5rem',
         borderRadius: '10px',
-        boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+        boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+        '@media (max-width: 768px)': {
+            padding: '1rem'
+        }
     },
     productList: {
         marginTop: '1rem'
@@ -1009,28 +1272,44 @@ const styles = {
         alignItems: 'center',
         gap: '1rem',
         padding: '0.75rem 0',
-        borderBottom: '1px solid #f0f0f0'
+        borderBottom: '1px solid #f0f0f0',
+        '@media (max-width: 480px)': {
+            gap: '0.5rem'
+        }
     },
     productImage: {
         width: '50px',
         height: '50px',
         borderRadius: '4px',
-        objectFit: 'cover'
+        objectFit: 'cover',
+        '@media (max-width: 480px)': {
+            width: '40px',
+            height: '40px'
+        }
     },
     productInfo: {
         flex: 1,
         display: 'flex',
         flexDirection: 'column',
-        gap: '0.2rem'
+        gap: '0.2rem',
+        '@media (max-width: 480px)': {
+            fontSize: '0.9rem'
+        }
     },
     productRevenue: {
         fontWeight: 'bold',
-        color: '#28a745'
+        color: '#28a745',
+        '@media (max-width: 480px)': {
+            fontSize: '0.9rem'
+        }
     },
     noOrders: {
         textAlign: 'center',
         padding: '3rem',
-        color: '#666'
+        color: '#666',
+        '@media (max-width: 480px)': {
+            padding: '2rem'
+        }
     },
     noData: {
         textAlign: 'center',
@@ -1060,7 +1339,8 @@ const styles = {
         justifyContent: 'center',
         height: '100vh',
         gap: '1rem',
-        textAlign: 'center'
+        textAlign: 'center',
+        padding: '1rem'
     },
     retryButton: {
         padding: '0.75rem 2rem',
@@ -1082,7 +1362,8 @@ const styles = {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        zIndex: 1000
+        zIndex: 1000,
+        padding: '1rem'
     },
     modal: {
         background: 'white',
@@ -1091,11 +1372,17 @@ const styles = {
         width: '90%',
         maxWidth: '500px',
         maxHeight: '80vh',
-        overflow: 'auto'
+        overflow: 'auto',
+        '@media (max-width: 480px)': {
+            padding: '1.5rem'
+        }
     },
     modalTitle: {
         marginBottom: '1.5rem',
-        color: '#333'
+        color: '#333',
+        '@media (max-width: 480px)': {
+            fontSize: '1.3rem'
+        }
     },
     modalError: {
         backgroundColor: '#f8d7da',
@@ -1105,7 +1392,11 @@ const styles = {
         marginBottom: '1rem',
         display: 'flex',
         alignItems: 'center',
-        gap: '0.5rem'
+        gap: '0.5rem',
+        '@media (max-width: 480px)': {
+            padding: '0.8rem',
+            fontSize: '0.9rem'
+        }
     },
     modalSuccess: {
         backgroundColor: '#d4edda',
@@ -1115,7 +1406,11 @@ const styles = {
         marginBottom: '1rem',
         display: 'flex',
         alignItems: 'center',
-        gap: '0.5rem'
+        gap: '0.5rem',
+        '@media (max-width: 480px)': {
+            padding: '0.8rem',
+            fontSize: '0.9rem'
+        }
     },
     balanceInfo: {
         display: 'flex',
@@ -1124,7 +1419,11 @@ const styles = {
         padding: '1rem',
         background: '#f8f9fa',
         borderRadius: '4px',
-        marginBottom: '1rem'
+        marginBottom: '1rem',
+        '@media (max-width: 480px)': {
+            flexDirection: 'column',
+            gap: '0.5rem'
+        }
     },
     inputGroup: {
         marginBottom: '1rem'
@@ -1135,7 +1434,10 @@ const styles = {
         border: '1px solid #ddd',
         borderRadius: '4px',
         fontSize: '1rem',
-        marginTop: '0.3rem'
+        marginTop: '0.3rem',
+        '@media (max-width: 480px)': {
+            padding: '0.6rem'
+        }
     },
     bankForm: {
         background: '#f8f9fa',
@@ -1151,12 +1453,18 @@ const styles = {
         border: 'none',
         borderRadius: '4px',
         cursor: 'pointer',
-        marginTop: '0.5rem'
+        marginTop: '0.5rem',
+        '@media (max-width: 480px)': {
+            padding: '0.6rem'
+        }
     },
     modalButtons: {
         display: 'flex',
         gap: '1rem',
-        marginTop: '1rem'
+        marginTop: '1rem',
+        '@media (max-width: 480px)': {
+            flexDirection: 'column'
+        }
     },
     modalCancelButton: {
         flex: 1,
@@ -1165,7 +1473,10 @@ const styles = {
         color: 'white',
         border: 'none',
         borderRadius: '4px',
-        cursor: 'pointer'
+        cursor: 'pointer',
+        '@media (max-width: 480px)': {
+            padding: '0.6rem'
+        }
     },
     modalSubmitButton: {
         flex: 1,
@@ -1174,7 +1485,10 @@ const styles = {
         color: 'white',
         border: 'none',
         borderRadius: '4px',
-        cursor: 'pointer'
+        cursor: 'pointer',
+        '@media (max-width: 480px)': {
+            padding: '0.6rem'
+        }
     },
     modalCloseButton: {
         width: '100%',
@@ -1184,7 +1498,10 @@ const styles = {
         border: 'none',
         borderRadius: '4px',
         cursor: 'pointer',
-        marginTop: '1rem'
+        marginTop: '1rem',
+        '@media (max-width: 480px)': {
+            padding: '0.6rem'
+        }
     },
     historyList: {
         maxHeight: '400px',
@@ -1193,18 +1510,29 @@ const styles = {
     },
     historyItem: {
         padding: '1rem',
-        borderBottom: '1px solid #eee'
+        borderBottom: '1px solid #eee',
+        '@media (max-width: 480px)': {
+            padding: '0.8rem'
+        }
     },
     historyHeader: {
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'center',
-        marginBottom: '0.5rem'
+        marginBottom: '0.5rem',
+        '@media (max-width: 480px)': {
+            flexDirection: 'column',
+            alignItems: 'flex-start',
+            gap: '0.3rem'
+        }
     },
     historyAmount: {
         fontSize: '1.1rem',
         fontWeight: 'bold',
-        color: '#333'
+        color: '#333',
+        '@media (max-width: 480px)': {
+            fontSize: '1rem'
+        }
     },
     historyStatus: {
         padding: '0.25rem 0.5rem',
