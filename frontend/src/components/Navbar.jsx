@@ -53,6 +53,17 @@ const Navbar = () => {
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
+    // Close dropdown when clicking outside
+    useEffect(() => {
+        const handleClickOutside = (e) => {
+            if (!e.target.closest('.user-menu')) {
+                setIsDropdownOpen(false);
+            }
+        };
+        document.addEventListener('click', handleClickOutside);
+        return () => document.removeEventListener('click', handleClickOutside);
+    }, []);
+
     // Close mobile menu when route changes
     useEffect(() => {
         setIsMobileMenuOpen(false);
@@ -126,6 +137,7 @@ const Navbar = () => {
                     ...styles.navLink,
                     background: isActive ? 'rgba(255,255,255,0.2)' : 'transparent',
                 }}
+                className="nav-link"
             >
                 <span style={styles.navLinkIcon}>{icon}</span>
                 <span style={styles.navLinkText}>{children}</span>
@@ -134,7 +146,7 @@ const Navbar = () => {
         );
     };
 
-    // Mobile Menu Item - SIDEBAR STYLE (like seller dashboard)
+    // Mobile Menu Item - EXACTLY like the image
     const MobileMenuItem = ({ to, icon, children, badge, count, onClick }) => {
         const isActive = location.pathname === to;
         return (
@@ -164,7 +176,9 @@ const Navbar = () => {
                 ? 'linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)'
                 : 'linear-gradient(135deg, #667eea 0%, #764ba2 30%, #ff6b6b 70%, #ffd93d 100%)',
             padding: isScrolled ? '0.8rem 2rem' : '1.2rem 2rem',
-            boxShadow: isScrolled ? '0 10px 30px rgba(0,0,0,0.3)' : '0 15px 35px rgba(0,0,0,0.2)',
+            boxShadow: isScrolled 
+                ? '0 10px 30px rgba(0,0,0,0.3)'
+                : '0 15px 35px rgba(0,0,0,0.2)',
             transition: 'all 0.4s ease',
             borderBottom: '2px solid rgba(255,255,255,0.2)',
             backdropFilter: 'blur(10px)',
@@ -428,62 +442,35 @@ const Navbar = () => {
             color: '#1a1a2e',
         },
         
-        // ===== SIDEBAR STYLES (Like Seller Dashboard) =====
+        // ===== MOBILE MENU - EXACTLY LIKE THE IMAGE =====
         mobileMenuOverlay: {
             position: 'fixed',
             top: 0,
             left: 0,
             right: 0,
             bottom: 0,
-            backgroundColor: 'rgba(0, 0, 0, 0.7)',
+            backgroundColor: 'rgba(0, 0, 0, 0.5)',
             zIndex: 999998,
-            backdropFilter: 'blur(5px)',
             display: isMobileMenuOpen ? 'block' : 'none',
+            backdropFilter: 'blur(3px)',
         },
         mobileMenu: {
             position: 'fixed',
             top: 0,
             left: 0,
-            width: '85%',
-            maxWidth: '320px',
+            width: '300px',
             height: '100vh',
             background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)',
             zIndex: 999999,
             transform: isMobileMenuOpen ? 'translateX(0)' : 'translateX(-100%)',
             transition: 'transform 0.3s ease-in-out',
-            boxShadow: '2px 0 10px rgba(0,0,0,0.3)',
+            boxShadow: '2px 0 20px rgba(0,0,0,0.5)',
             overflowY: 'auto',
-            padding: '20px 0',
-        },
-        mobileMenuHeader: {
-            padding: '0 20px 20px',
-            borderBottom: '1px solid rgba(255,215,0,0.2)',
             display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
+            flexDirection: 'column',
         },
-        mobileMenuTitle: {
-            fontSize: '1.3rem',
-            fontWeight: 'bold',
-            background: 'linear-gradient(135deg, #FFD700, #FFA500)',
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent',
-        },
-        mobileCloseButton: {
-            background: 'rgba(255,255,255,0.1)',
-            border: '1px solid rgba(255,215,0,0.3)',
-            color: 'white',
-            width: '35px',
-            height: '35px',
-            borderRadius: '50%',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            cursor: 'pointer',
-            fontSize: '1.2rem',
-        },
-        // User info section (like seller dashboard)
-        mobileUserInfo: {
+        // User Info Section - Like in the image
+        mobileUserSection: {
             padding: '20px',
             borderBottom: '1px solid rgba(255,215,0,0.2)',
             display: 'flex',
@@ -508,30 +495,33 @@ const Navbar = () => {
         mobileUserName: {
             color: 'white',
             fontWeight: 'bold',
-            fontSize: '1.1rem',
+            fontSize: '1rem',
             marginBottom: '4px',
         },
         mobileUserEmail: {
-            color: 'rgba(255,255,255,0.7)',
+            color: 'rgba(255,255,255,0.6)',
             fontSize: '0.8rem',
         },
         mobileUserRole: {
             display: 'inline-block',
             background: 'linear-gradient(135deg, #FFD700, #FFA500)',
             color: '#1a1a2e',
-            fontSize: '0.65rem',
+            fontSize: '0.6rem',
             padding: '2px 8px',
             borderRadius: '12px',
             marginTop: '4px',
             fontWeight: 'bold',
             textTransform: 'uppercase',
         },
-        // Search in sidebar
-        mobileSearch: {
-            margin: '20px',
-            padding: '10px 15px',
+        // Search Bar - Like in the image
+        mobileSearchContainer: {
+            padding: '15px 20px',
+            borderBottom: '1px solid rgba(255,215,0,0.2)',
+        },
+        mobileSearchBox: {
             background: 'rgba(255,255,255,0.1)',
             borderRadius: '8px',
+            padding: '10px 15px',
             display: 'flex',
             alignItems: 'center',
             gap: '10px',
@@ -547,17 +537,11 @@ const Navbar = () => {
                 color: 'rgba(255,255,255,0.5)',
             }
         },
-        // Navigation menu items - SIDEBAR STYLE
-        mobileNavSection: {
+        // Menu Items Container
+        mobileMenuItems: {
+            flex: 1,
             padding: '10px 0',
-        },
-        mobileNavSectionTitle: {
-            padding: '10px 20px',
-            color: '#FFD700',
-            fontSize: '0.75rem',
-            fontWeight: '600',
-            textTransform: 'uppercase',
-            letterSpacing: '1px',
+            overflowY: 'auto',
         },
         mobileMenuItem: {
             display: 'flex',
@@ -600,27 +584,45 @@ const Navbar = () => {
             borderRadius: '12px',
             marginLeft: '8px',
         },
+        // Section Divider - Like in the image
         mobileDivider: {
             height: '1px',
             background: 'linear-gradient(90deg, transparent, rgba(255,215,0,0.3), transparent)',
-            margin: '15px 0',
+            margin: '10px 0',
+        },
+        // Logout Button - Like in the image
+        mobileLogoutSection: {
+            padding: '15px 20px',
+            borderTop: '1px solid rgba(255,215,0,0.2)',
         },
         mobileLogoutButton: {
             display: 'flex',
             alignItems: 'center',
-            padding: '12px 20px',
-            margin: '20px 20px 10px',
+            padding: '12px 15px',
             borderRadius: '8px',
             background: 'rgba(255,107,107,0.15)',
             color: '#ff6b6b',
             border: '1px solid rgba(255,107,107,0.3)',
             cursor: 'pointer',
-            width: 'calc(100% - 40px)',
+            width: '100%',
             fontSize: '0.95rem',
             transition: 'all 0.2s ease',
             ':hover': {
                 background: 'rgba(255,107,107,0.25)',
             }
+        },
+        // Open indicator - Like in the image
+        mobileOpenIndicator: {
+            position: 'absolute',
+            bottom: '20px',
+            right: '20px',
+            background: 'rgba(255,215,0,0.2)',
+            color: '#FFD700',
+            padding: '4px 12px',
+            borderRadius: '20px',
+            fontSize: '0.7rem',
+            fontWeight: 'bold',
+            border: '1px solid rgba(255,215,0,0.3)',
         },
     };
 
@@ -702,7 +704,7 @@ const Navbar = () => {
                         style={styles.hamburgerButton}
                         onClick={toggleMobileMenu}
                     >
-                        {isMobileMenuOpen ? <FaTimes /> : <FaBars />}
+                        <FaBars />
                     </button>
                 </div>
 
@@ -711,106 +713,76 @@ const Navbar = () => {
                     <div style={styles.mobileMenuOverlay} onClick={() => setIsMobileMenuOpen(false)} />
                 )}
 
-                {/* Mobile Menu - SIDEBAR STYLE (like seller dashboard) */}
+                {/* Mobile Menu - EXACTLY LIKE THE IMAGE */}
                 <div style={styles.mobileMenu}>
-                    <div style={styles.mobileMenuHeader}>
-                        <span style={styles.mobileMenuTitle}>E-Store Menu</span>
-                        <button style={styles.mobileCloseButton} onClick={() => setIsMobileMenuOpen(false)}>
-                            <FaTimes />
-                        </button>
-                    </div>
-
-                    {/* User Info Section (like seller dashboard) */}
-                    {user ? (
-                        <div style={styles.mobileUserInfo}>
-                            <div style={styles.mobileUserAvatar}>
-                                {user.name?.charAt(0).toUpperCase()}
+                    {/* User Info Section - Like in the image */}
+                    <div style={styles.mobileUserSection}>
+                        <div style={styles.mobileUserAvatar}>
+                            {user ? user.name?.charAt(0).toUpperCase() : <FaUser />}
+                        </div>
+                        <div style={styles.mobileUserDetails}>
+                            <div style={styles.mobileUserName}>
+                                {user ? user.name : 'Guest User'}
                             </div>
-                            <div style={styles.mobileUserDetails}>
-                                <div style={styles.mobileUserName}>{user.name}</div>
-                                <div style={styles.mobileUserEmail}>{user.email}</div>
+                            <div style={styles.mobileUserEmail}>
+                                {user ? user.email : 'Sign in to continue'}
+                            </div>
+                            {user && (
                                 <div style={styles.mobileUserRole}>{user.role}</div>
-                            </div>
+                            )}
                         </div>
-                    ) : (
-                        <div style={styles.mobileUserInfo}>
-                            <div style={styles.mobileUserAvatar}>
-                                <FaUser />
-                            </div>
-                            <div style={styles.mobileUserDetails}>
-                                <div style={styles.mobileUserName}>Guest</div>
-                                <div style={styles.mobileUserEmail}>Sign in to continue</div>
-                            </div>
-                        </div>
-                    )}
-
-                    {/* Search in Sidebar */}
-                    <div style={styles.mobileSearch}>
-                        <FaSearch color="#FFD700" size={14} />
-                        <input 
-                            type="text"
-                            placeholder="Search products..."
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                            onKeyPress={(e) => e.key === 'Enter' && handleSearch(e)}
-                            style={styles.mobileSearchInput}
-                        />
                     </div>
 
-                    {/* Main Navigation - SIDEBAR STYLE */}
-                    <div style={styles.mobileNavSection}>
-                        <div style={styles.mobileNavSectionTitle}>Navigation</div>
+                    {/* Search Bar - Like in the image */}
+                    <div style={styles.mobileSearchContainer}>
+                        <div style={styles.mobileSearchBox}>
+                            <FaSearch color="#FFD700" size={14} />
+                            <input 
+                                type="text"
+                                placeholder="Search products..."
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                                onKeyPress={(e) => e.key === 'Enter' && handleSearch(e)}
+                                style={styles.mobileSearchInput}
+                            />
+                        </div>
+                    </div>
+
+                    {/* Menu Items - Like in the image */}
+                    <div style={styles.mobileMenuItems}>
+                        {/* Main Navigation */}
                         <MobileMenuItem to="/" icon={<FaHome />} onClick={() => setIsMobileMenuOpen(false)}>
                             Home
                         </MobileMenuItem>
                         <MobileMenuItem to="/products" icon={<FaTag />} onClick={() => setIsMobileMenuOpen(false)}>
                             Products
                         </MobileMenuItem>
-                    </div>
 
-                    {/* User Account Section */}
-                    <div style={styles.mobileNavSection}>
-                        <div style={styles.mobileNavSectionTitle}>Account</div>
+                        <div style={styles.mobileDivider} />
+
+                        {/* Account Section */}
                         {user ? (
                             <>
                                 {user.role === 'seller' && (
-                                    <>
-                                        <MobileMenuItem 
-                                            to="/seller/dashboard" 
-                                            icon={<FaTachometerAlt />} 
-                                            badge="SELLER"
-                                            onClick={() => setIsMobileMenuOpen(false)}
-                                        >
-                                            Seller Dashboard
-                                        </MobileMenuItem>
-                                        <MobileMenuItem to="/seller/products" icon={<FaBox />} onClick={() => setIsMobileMenuOpen(false)}>
-                                            My Products
-                                        </MobileMenuItem>
-                                        <MobileMenuItem to="/seller/orders" icon={<FaClipboardList />} onClick={() => setIsMobileMenuOpen(false)}>
-                                            Orders
-                                        </MobileMenuItem>
-                                    </>
+                                    <MobileMenuItem 
+                                        to="/seller/dashboard" 
+                                        icon={<FaTachometerAlt />} 
+                                        badge="SELLER"
+                                        onClick={() => setIsMobileMenuOpen(false)}
+                                    >
+                                        Seller Dashboard
+                                    </MobileMenuItem>
                                 )}
-                                
                                 {user.role === 'admin' && (
-                                    <>
-                                        <MobileMenuItem 
-                                            to="/admin/dashboard" 
-                                            icon={<FaTachometerAlt />} 
-                                            badge="ADMIN"
-                                            onClick={() => setIsMobileMenuOpen(false)}
-                                        >
-                                            Admin Dashboard
-                                        </MobileMenuItem>
-                                        <MobileMenuItem to="/admin/users" icon={<FaUser />} onClick={() => setIsMobileMenuOpen(false)}>
-                                            Users
-                                        </MobileMenuItem>
-                                        <MobileMenuItem to="/admin/products" icon={<FaBox />} onClick={() => setIsMobileMenuOpen(false)}>
-                                            Products
-                                        </MobileMenuItem>
-                                    </>
+                                    <MobileMenuItem 
+                                        to="/admin/dashboard" 
+                                        icon={<FaTachometerAlt />} 
+                                        badge="ADMIN"
+                                        onClick={() => setIsMobileMenuOpen(false)}
+                                    >
+                                        Admin Dashboard
+                                    </MobileMenuItem>
                                 )}
-                                
                                 <MobileMenuItem to="/profile" icon={<FaUser />} onClick={() => setIsMobileMenuOpen(false)}>
                                     My Profile
                                 </MobileMenuItem>
@@ -819,6 +791,12 @@ const Navbar = () => {
                                 </MobileMenuItem>
                                 <MobileMenuItem to="/wishlist" icon={<FaHeart />} count={wishlistCount} onClick={() => setIsMobileMenuOpen(false)}>
                                     Wishlist
+                                </MobileMenuItem>
+                                <MobileMenuItem to="/cart" icon={<FaShoppingCart />} count={cartCount} onClick={() => setIsMobileMenuOpen(false)}>
+                                    Cart
+                                </MobileMenuItem>
+                                <MobileMenuItem to="/notifications" icon={<FaBell />} onClick={() => setIsMobileMenuOpen(false)}>
+                                    Notifications
                                 </MobileMenuItem>
                             </>
                         ) : (
@@ -833,25 +811,21 @@ const Navbar = () => {
                         )}
                     </div>
 
-                    {/* Shopping Section */}
-                    <div style={styles.mobileNavSection}>
-                        <div style={styles.mobileNavSectionTitle}>Shopping</div>
-                        <MobileMenuItem to="/cart" icon={<FaShoppingCart />} count={cartCount} onClick={() => setIsMobileMenuOpen(false)}>
-                            Cart
-                        </MobileMenuItem>
-                        <MobileMenuItem to="/notifications" icon={<FaBell />} onClick={() => setIsMobileMenuOpen(false)}>
-                            Notifications
-                        </MobileMenuItem>
-                    </div>
-
-                    <div style={styles.mobileDivider} />
-
-                    {/* Logout Button */}
+                    {/* Logout Button - Like in the image */}
                     {user && (
-                        <button style={styles.mobileLogoutButton} onClick={handleLogout}>
-                            <FaSignOutAlt style={{ marginRight: '15px' }} />
-                            Logout
-                        </button>
+                        <div style={styles.mobileLogoutSection}>
+                            <button style={styles.mobileLogoutButton} onClick={handleLogout}>
+                                <FaSignOutAlt style={{ marginRight: '15px' }} />
+                                Logout
+                            </button>
+                        </div>
+                    )}
+
+                    {/* Open Indicator - Like in the image */}
+                    {isMobileMenuOpen && (
+                        <div style={styles.mobileOpenIndicator}>
+                            OPEN
+                        </div>
                     )}
                 </div>
             </div>
