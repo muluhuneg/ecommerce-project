@@ -210,9 +210,9 @@ const Navbar = () => {
 
     const styles = {
         navbar: {
-            position: 'sticky',
+            position: 'flex',
             top: 0,
-            zIndex: 1001,
+            zIndex: 100,
             background: isScrolled 
                 ? 'linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)'
                 : 'linear-gradient(135deg, #667eea 0%, #764ba2 30%, #ff6b6b 70%, #ffd93d 100%)',
@@ -358,162 +358,237 @@ const Navbar = () => {
             right: 0,
             bottom: 0,
             backgroundColor: 'rgba(0, 0, 0, 0.8)',
-            zIndex: 999,
+            zIndex: 9999,
             backdropFilter: 'blur(8px)',
             WebkitBackdropFilter: 'blur(8px)',
             display: isMobileMenuOpen ? 'block' : 'none',
             animation: 'fadeIn 0.3s ease'
         },
-        // FIXED: Mobile menu - highest z-index to appear above all
-        mobileMenu: {
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)',
-            zIndex: 9999999,
-            padding: '80px 20px 30px',
-            overflowY: 'auto',
-            WebkitOverflowScrolling: 'touch',
-            display: isMobileMenuOpen ? 'block' : 'none',
-            animation: 'fadeIn 0.3s ease'
-        },
-        mobileMenuContent: {
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '1rem',
-            maxHeight: 'calc(100vh - 100px)',
-            overflowY: 'auto',
-            paddingBottom: '30px',
-            paddingRight: '5px'
-        },
-        mobileCloseButton: {
-            position: 'absolute',
-            top: '20px',
-            right: '20px',
-            background: 'rgba(255,255,255,0.2)',
-            border: '2px solid #FFD700',
-            color: 'white',
-            width: '45px',
-            height: '45px',
-            borderRadius: '50%',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            fontSize: '1.4rem',
-            cursor: 'pointer',
-            zIndex: 10000000,
-            transition: 'all 0.3s ease'
-        },
-        mobileNavLinks: {
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '0.5rem',
-            marginBottom: '2rem'
-        },
-        mobileNavLink: {
-            color: 'white',
-            textDecoration: 'none',
-            fontSize: '1.1rem',
-            fontWeight: '600',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '1rem',
-            padding: '1rem 1.5rem',
-            borderRadius: '12px',
-            transition: 'all 0.3s ease',
-            background: 'rgba(255,255,255,0.05)',
-            border: '1px solid rgba(255,255,255,0.1)'
-        },
-        mobileNavIcon: {
-            fontSize: '1.2rem',
-            color: '#FFD700',
-            width: '24px'
-        },
-        mobileNavText: {
-            flex: 1
-        },
-        mobileNavActive: {
-            width: '4px',
-            height: '100%',
-            background: '#FFD700',
-            borderRadius: '2px'
-        },
-        mobileUserSection: {
-            background: 'rgba(255,255,255,0.05)',
-            borderRadius: '20px',
-            padding: '1.5rem',
-            marginTop: '1rem'
-        },
-        mobileUserInfo: {
-            display: 'flex',
-            alignItems: 'center',
-            gap: '1rem',
-            marginBottom: '1.5rem',
-            paddingBottom: '1.5rem',
-            borderBottom: '1px solid rgba(255,215,0,0.2)'
-        },
-        mobileUserAvatar: {
-            width: '60px',
-            height: '60px',
-            borderRadius: '50%',
-            background: 'linear-gradient(135deg, #FFD700, #FFA500, #FF6B6B)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            fontSize: '1.8rem',
-            fontWeight: 'bold',
-            color: '#1a1a2e'
-        },
-        mobileUserDetails: {
-            flex: 1
-        },
-        mobileUserName: {
-            fontSize: '1.2rem',
-            fontWeight: 'bold',
-            color: 'white',
-            marginBottom: '4px'
-        },
-        mobileUserEmail: {
-            fontSize: '0.9rem',
-            color: 'rgba(255,255,255,0.7)'
-        },
-        mobileRoleBadge: {
-            display: 'inline-block',
-            fontSize: '0.7rem',
-            padding: '2px 8px',
-            borderRadius: '20px',
-            background: 'linear-gradient(135deg, #FFD700, #FFA500)',
-            color: '#1a1a2e',
-            fontWeight: 'bold',
-            textTransform: 'uppercase',
-            marginTop: '4px'
-        },
-        mobileAuthButtons: {
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '0.8rem'
-        },
-        mobileButton: {
-            padding: '1rem',
-            borderRadius: '12px',
-            border: '1px solid rgba(255,255,255,0.2)',
-            background: 'rgba(255,255,255,0.1)',
-            color: 'white',
-            textDecoration: 'none',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: '0.5rem',
-            fontSize: '1rem',
-            fontWeight: '600'
-        },
-        mobileButtonPrimary: {
-            background: 'linear-gradient(135deg, #FFD700, #FFA500)',
-            border: 'none',
-            color: '#1a1a2e'
-        },
+       // FIXED: Mobile menu - SIDEBAR STYLE (not full screen)
+mobileMenu: {
+    position: 'fixed',
+    top: 0,
+    left: 0,
+    width: '300px', // Fixed width sidebar
+    height: '100vh',
+    background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)',
+    zIndex: 999999, // Increased z-index
+    transform: isMobileMenuOpen ? 'translateX(0)' : 'translateX(-100%)', // Slide animation
+    transition: 'transform 0.3s ease-in-out',
+    boxShadow: '2px 0 20px rgba(0,0,0,0.5)',
+    overflowY: 'auto',
+    WebkitOverflowScrolling: 'touch',
+},
+
+// Overlay for when menu is open
+mobileMenuOverlay: {
+    position: 'fixed',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    zIndex: 999998,
+    display: isMobileMenuOpen ? 'block' : 'none',
+    backdropFilter: 'blur(3px)',
+},
+
+// Close button - repositioned
+mobileCloseButton: {
+    position: 'absolute',
+    top: '20px',
+    right: '20px',
+    background: 'rgba(255,255,255,0.15)',
+    border: '1px solid rgba(255,215,0,0.3)',
+    color: 'white',
+    width: '35px',
+    height: '35px',
+    borderRadius: '50%',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    fontSize: '1.2rem',
+    cursor: 'pointer',
+    zIndex: 1000000,
+    transition: 'all 0.3s ease'
+},
+
+// User section at the top (like in your image)
+mobileUserSection: {
+    padding: '20px',
+    borderBottom: '1px solid rgba(255,215,0,0.2)',
+    display: 'flex',
+    alignItems: 'center',
+    gap: '15px',
+},
+
+mobileUserAvatar: {
+    width: '50px',
+    height: '50px',
+    borderRadius: '50%',
+    background: 'linear-gradient(135deg, #FFD700, #FFA500, #FF6B6B)',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    fontSize: '1.5rem',
+    fontWeight: 'bold',
+    color: '#1a1a2e',
+},
+
+mobileUserDetails: {
+    flex: 1,
+},
+
+mobileUserName: {
+    color: 'white',
+    fontWeight: 'bold',
+    fontSize: '1rem',
+    marginBottom: '4px',
+},
+
+mobileUserEmail: {
+    color: 'rgba(255,255,255,0.6)',
+    fontSize: '0.8rem',
+},
+
+mobileRoleBadge: {
+    display: 'inline-block',
+    background: 'linear-gradient(135deg, #FFD700, #FFA500)',
+    color: '#1a1a2e',
+    fontSize: '0.6rem',
+    padding: '2px 8px',
+    borderRadius: '12px',
+    marginTop: '4px',
+    fontWeight: 'bold',
+    textTransform: 'uppercase',
+},
+
+// Search bar in menu
+mobileSearchContainer: {
+    padding: '15px 20px',
+    borderBottom: '1px solid rgba(255,215,0,0.2)',
+},
+
+mobileSearchBox: {
+    background: 'rgba(255,255,255,0.1)',
+    borderRadius: '8px',
+    padding: '10px 15px',
+    display: 'flex',
+    alignItems: 'center',
+    gap: '10px',
+},
+
+mobileSearchInput: {
+    flex: 1,
+    background: 'transparent',
+    border: 'none',
+    color: 'white',
+    outline: 'none',
+    fontSize: '0.9rem',
+    '::placeholder': {
+        color: 'rgba(255,255,255,0.5)',
+    }
+},
+
+// Menu items container
+mobileMenuItems: {
+    flex: 1,
+    padding: '10px 0',
+    overflowY: 'auto',
+},
+
+mobileNavLink: {
+    display: 'flex',
+    alignItems: 'center',
+    padding: '12px 20px',
+    margin: '2px 0',
+    color: 'white',
+    textDecoration: 'none',
+    transition: 'all 0.2s ease',
+    cursor: 'pointer',
+    fontSize: '0.95rem',
+    ':hover': {
+        background: 'rgba(255,215,0,0.1)',
+    }
+},
+
+mobileNavIcon: {
+    width: '24px',
+    marginRight: '15px',
+    color: '#FFD700',
+    fontSize: '1.1rem',
+},
+
+mobileNavText: {
+    flex: 1,
+},
+
+// Badge for roles (SELLER/ADMIN)
+mobileMenuBadge: {
+    background: 'linear-gradient(135deg, #FFD700, #FFA500)',
+    color: '#1a1a2e',
+    fontSize: '0.6rem',
+    padding: '2px 8px',
+    borderRadius: '12px',
+    fontWeight: 'bold',
+    textTransform: 'uppercase',
+    marginLeft: '8px',
+},
+
+// Count badge for cart/wishlist
+mobileCountBadge: {
+    background: 'linear-gradient(135deg, #ff6b6b, #ff4757)',
+    color: 'white',
+    fontSize: '0.65rem',
+    padding: '2px 6px',
+    borderRadius: '12px',
+    marginLeft: '8px',
+},
+
+// Divider
+mobileDivider: {
+    height: '1px',
+    background: 'linear-gradient(90deg, transparent, rgba(255,215,0,0.3), transparent)',
+    margin: '10px 0',
+},
+
+// Logout button at bottom
+mobileLogoutSection: {
+    padding: '15px 20px',
+    borderTop: '1px solid rgba(255,215,0,0.2)',
+},
+
+mobileLogoutButton: {
+    display: 'flex',
+    alignItems: 'center',
+    padding: '12px 15px',
+    borderRadius: '8px',
+    background: 'rgba(255,107,107,0.15)',
+    color: '#ff6b6b',
+    border: '1px solid rgba(255,107,107,0.3)',
+    cursor: 'pointer',
+    width: '100%',
+    fontSize: '0.95rem',
+    transition: 'all 0.2s ease',
+    ':hover': {
+        background: 'rgba(255,107,107,0.25)',
+    }
+},
+
+// Open indicator (like in your image)
+mobileOpenIndicator: {
+    position: 'absolute',
+    bottom: '20px',
+    right: '20px',
+    background: 'rgba(255,215,0,0.15)',
+    color: '#FFD700',
+    padding: '4px 12px',
+    borderRadius: '20px',
+    fontSize: '0.7rem',
+    fontWeight: 'bold',
+    border: '1px solid rgba(255,215,0,0.3)',
+    pointerEvents: 'none',
+},
         // Desktop nav link
         navLink: {
             color: 'white',
