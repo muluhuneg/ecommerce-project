@@ -64,32 +64,50 @@ const Home = () => {
             setShowToast(false);
         }, 3000);
     };
-
-    // Hero slides with beautiful images
-    const heroSlides = [
-        {
-            id: 1,
-            title: "Summer Sale",
-            subtitle: "Up to 50% off on selected items",
-            image: "https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80",
-            cta: "Shop Now"
-        },
-        {
-            id: 2,
-            title: "New Arrivals",
-            subtitle: "Discover the latest trends",
-            image: "https://images.unsplash.com/photo-1441986300917-64674bd600d8?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80",
-            cta: "Explore"
-        },
-        {
-            id: 3,
-            title: "Free Shipping",
-            subtitle: "On orders over 3,000 Br",
-            image: "https://images.unsplash.com/photo-1566576721346-d4a3b4eaeb55?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80",
-            cta: "Learn More"
-        }
-    ];
-
+const heroSlides = [
+    {
+        id: 1,
+        title: "⚡ Flash Sale",
+        subtitle: "Up to 70% off on electronics. Today only!",
+        image: "https://images.unsplash.com/photo-1550009158-9ebf69173e03?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80",
+        cta: "Shop Now"
+    },
+    {
+        id: 2,
+        title: "New Season",
+        subtitle: "Discover the latest trends in fashion",
+        image: "https://images.unsplash.com/photo-1483985988355-763728e1935b?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80",
+        cta: "Explore Collection"
+    },
+    {
+        id: 3,
+        title: "Summer Sale",
+        subtitle: "Up to 50% off on outdoor gear",
+        image: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80",
+        cta: "Shop Sale"
+    },
+    {
+        id: 4,
+        title: "Free Shipping",
+        subtitle: "On all home decor orders over $50",
+        image: "https://images.unsplash.com/photo-1556228453-efd6c1ff04f6?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80",
+        cta: "Shop Now"
+    },
+    {
+        id: 5,
+        title: "Premium Collection",
+        subtitle: "Hand-picked luxury items for you",
+        image: "https://images.unsplash.com/photo-1441986300917-64674bd600d8?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80",
+        cta: "View Collection"
+    },
+    {
+        id: 6,
+        title: "Customer Favorites",
+        subtitle: "See what everyone's buying this week",
+        image: "https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80",
+        cta: "Shop Best Sellers"
+    }
+];
     // Brand logos
     const brandLogos = [
         { id: 1, name: 'Nike', image: 'https://logos-world.net/wp-content/uploads/2020/04/Nike-Logo.png' },
@@ -1286,263 +1304,369 @@ const styles = {
         }
     },
 
-    // PRODUCTS GRID - FIXED: 2 columns on mobile
-    productsGrid: {
-        display: 'grid',
-        gridTemplateColumns: 'repeat(4, 1fr)',
-        gap: '20px',
-        
-        // Tablet
-        '@media (max-width: 1024px)': {
-            gridTemplateColumns: 'repeat(3, 1fr) !important',
-            gap: '15px'
-        },
-        
-        // Mobile landscape / small tablets
-        '@media (max-width: 768px)': {
-            gridTemplateColumns: 'repeat(2, 1fr) !important',
-            gap: '12px'
-        },
-        
-        // Mobile portrait
-        '@media (max-width: 480px)': {
-            gridTemplateColumns: 'repeat(2, 1fr) !important',
-            gap: '8px',
-            padding: '0 5px'
-        },
-        
-        // Very small phones
-        '@media (max-width: 360px)': {
-            gridTemplateColumns: 'repeat(2, 1fr) !important',
-            gap: '5px',
-            padding: '0 3px'
-        }
+    /// Products Grid - Fully responsive with 2 columns on mobile
+productsGrid: {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(4, 1fr)',
+    gap: '20px',
+    padding: '0',
+    '@media (max-width: 1024px)': {
+        gridTemplateColumns: 'repeat(3, 1fr)',
+        gap: '15px'
     },
-
-    // PRODUCT CARD - FIXED: Full width on mobile
-    productCard: {
-        background: 'white',
-        borderRadius: '8px',
-        overflow: 'hidden',
-        position: 'relative',
-        boxShadow: '0 2px 8px rgba(0,0,0,0.05)',
-        width: '100%',
-        maxWidth: '280px',
-        margin: '0 auto',
-        transition: 'all 0.2s ease',
-        
-        // Tablet
-        '@media (max-width: 768px)': {
-            maxWidth: '100% !important',
-            margin: '0 !important'
-        },
-        
-        // Mobile
-        '@media (max-width: 480px)': {
-            maxWidth: '100% !important',
-            borderRadius: '6px',
-            margin: '0 !important'
-        },
-        
-        // Very small phones
-        '@media (max-width: 360px)': {
-            maxWidth: '100% !important',
-            borderRadius: '4px',
-            margin: '0 !important'
-        }
+    '@media (max-width: 768px)': {
+        gridTemplateColumns: 'repeat(2, 1fr)',
+        gap: '12px',
+        padding: '0 5px'
     },
-    
-    productBadge: {
-        position: 'absolute',
-        top: '8px',
-        left: '8px',
-        zIndex: 2,
-        display: 'flex',
-        gap: '4px',
-        '@media (max-width: 480px)': {
-            top: '4px',
-            left: '4px',
-            gap: '2px'
-        }
+    '@media (max-width: 480px)': {
+        gridTemplateColumns: 'repeat(2, 1fr)',
+        gap: '8px',
+        padding: '0 5px'
     },
-    badgeNew: {
-        background: '#2ecc71',
-        color: 'white',
-        padding: '3px 6px',
-        borderRadius: '3px',
-        fontSize: '0.7rem',
-        fontWeight: 'bold',
-        '@media (max-width: 480px)': {
-            padding: '2px 4px',
-            fontSize: '0.5rem'
-        }
-    },
-    badgeSale: {
-        background: '#e74c3c',
-        color: 'white',
-        padding: '3px 6px',
-        borderRadius: '3px',
-        fontSize: '0.7rem',
-        fontWeight: 'bold',
-        '@media (max-width: 480px)': {
-            padding: '2px 4px',
-            fontSize: '0.5rem'
-        }
-    },
-    wishlistButton: {
-        position: 'absolute',
-        top: '8px',
-        right: '8px',
-        background: 'white',
-        border: 'none',
-        borderRadius: '50%',
-        width: '32px',
-        height: '32px',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        cursor: 'pointer',
-        zIndex: 2,
-        boxShadow: '0 2px 5px rgba(0,0,0,0.1)',
-        '@media (max-width: 480px)': {
-            width: '24px',
-            height: '24px',
-            top: '4px',
-            right: '4px'
-        }
-    },
-    productImageContainer: {
-        width: '100%',
-        aspectRatio: '1/1',
-        overflow: 'hidden',
-        backgroundColor: '#f8f9fa'
-    },
-    productImage: {
-        width: '100%',
-        height: '100%',
-        objectFit: 'cover',
-        transition: 'transform 0.3s ease'
-    },
-    productInfo: {
-        padding: '12px',
-        '@media (max-width: 768px)': {
-            padding: '10px'
-        },
-        '@media (max-width: 480px)': {
-            padding: '8px'
-        }
-    },
-    productName: {
-        fontSize: '0.9rem',
-        marginBottom: '6px',
-        color: '#333',
-        fontWeight: '500',
-        lineHeight: '1.3',
-        whiteSpace: 'nowrap',
-        overflow: 'hidden',
-        textOverflow: 'ellipsis',
-        '@media (max-width: 768px)': {
-            fontSize: '0.8rem'
-        },
-        '@media (max-width: 480px)': {
-            fontSize: '0.7rem',
-            marginBottom: '4px'
-        },
-        '@media (max-width: 360px)': {
-            fontSize: '0.65rem'
-        }
-    },
-    productRating: {
-        display: 'flex',
-        alignItems: 'center',
-        gap: '2px',
-        marginBottom: '6px',
-        '@media (max-width: 480px)': {
-            marginBottom: '3px'
-        }
-    },
-    reviewCount: {
-        fontSize: '0.7rem',
-        color: '#999',
-        marginLeft: '4px',
-        '@media (max-width: 480px)': {
-            fontSize: '0.55rem',
-            marginLeft: '2px'
-        }
-    },
-    productPriceRow: {
-        display: 'flex',
-        alignItems: 'center',
-        gap: '6px',
-        marginBottom: '8px',
-        flexWrap: 'wrap',
-        '@media (max-width: 480px)': {
-            gap: '3px',
-            marginBottom: '4px'
-        }
-    },
-    productPrice: {
-        fontSize: '1rem',
-        fontWeight: '600',
-        color: '#333',
-        '@media (max-width: 768px)': {
-            fontSize: '0.9rem'
-        },
-        '@media (max-width: 480px)': {
-            fontSize: '0.8rem'
-        },
-        '@media (max-width: 360px)': {
-            fontSize: '0.75rem'
-        }
-    },
-    discountPrice: {
-        fontSize: '1rem',
-        fontWeight: '600',
-        color: '#e74c3c',
-        '@media (max-width: 768px)': {
-            fontSize: '0.9rem'
-        },
-        '@media (max-width: 480px)': {
-            fontSize: '0.8rem'
-        },
-        '@media (max-width: 360px)': {
-            fontSize: '0.75rem'
-        }
-    },
-    originalPrice: {
-        fontSize: '0.8rem',
-        color: '#999',
-        textDecoration: 'line-through',
-        '@media (max-width: 480px)': {
-            fontSize: '0.6rem'
-        }
-    },
-    addToCartBtn: {
-        width: '100%',
-        padding: '8px',
-        background: '#3498db',
-        color: 'white',
-        border: 'none',
-        borderRadius: '4px',
-        cursor: 'pointer',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
+    '@media (max-width: 360px)': {
         gap: '5px',
-        fontSize: '0.8rem',
-        fontWeight: '500',
-        transition: 'all 0.2s ease',
-        '@media (max-width: 768px)': {
-            padding: '6px',
-            fontSize: '0.7rem'
-        },
-        '@media (max-width: 480px)': {
-            padding: '4px',
-            fontSize: '0.65rem',
-            gap: '3px',
-            borderRadius: '3px'
-        }
+        padding: '0 3px'
+    }
+},
+
+// Product card - Perfect for 2-column layout
+productCard: {
+    background: 'white',
+    borderRadius: '8px',
+    overflow: 'hidden',
+    position: 'relative',
+    boxShadow: '0 2px 8px rgba(0,0,0,0.05)',
+    width: '100%',
+    maxWidth: '280px',
+    margin: '0 auto',
+    transition: 'transform 0.2s ease, box-shadow 0.2s ease',
+    '@media (max-width: 768px)': {
+        maxWidth: '100%',
+        margin: 0,
+        boxShadow: '0 2px 4px rgba(0,0,0,0.05)'
     },
+    '@media (max-width: 480px)': {
+        maxWidth: '100%',
+        borderRadius: '6px',
+        margin: 0,
+        boxShadow: '0 1px 3px rgba(0,0,0,0.05)'
+    },
+    '@media (max-width: 360px)': {
+        borderRadius: '4px'
+    }
+},
+
+// Product badge - Positioned absolutely
+productBadge: {
+    position: 'absolute',
+    top: '8px',
+    left: '8px',
+    zIndex: 2,
+    display: 'flex',
+    gap: '4px',
+    '@media (max-width: 768px)': {
+        top: '6px',
+        left: '6px',
+        gap: '3px'
+    },
+    '@media (max-width: 480px)': {
+        top: '4px',
+        left: '4px',
+        gap: '2px'
+    },
+    '@media (max-width: 360px)': {
+        top: '3px',
+        left: '3px',
+        gap: '2px'
+    }
+},
+
+badgeNew: {
+    background: '#2ecc71',
+    color: 'white',
+    padding: '3px 6px',
+    borderRadius: '3px',
+    fontSize: '0.7rem',
+    fontWeight: 'bold',
+    boxShadow: '0 2px 4px rgba(46,204,113,0.2)',
+    '@media (max-width: 768px)': {
+        padding: '2px 5px',
+        fontSize: '0.6rem'
+    },
+    '@media (max-width: 480px)': {
+        padding: '2px 4px',
+        fontSize: '0.5rem',
+        borderRadius: '2px'
+    },
+    '@media (max-width: 360px)': {
+        padding: '1px 3px',
+        fontSize: '0.45rem'
+    }
+},
+
+badgeSale: {
+    background: '#e74c3c',
+    color: 'white',
+    padding: '3px 6px',
+    borderRadius: '3px',
+    fontSize: '0.7rem',
+    fontWeight: 'bold',
+    boxShadow: '0 2px 4px rgba(231,76,60,0.2)',
+    '@media (max-width: 768px)': {
+        padding: '2px 5px',
+        fontSize: '0.6rem'
+    },
+    '@media (max-width: 480px)': {
+        padding: '2px 4px',
+        fontSize: '0.5rem',
+        borderRadius: '2px'
+    },
+    '@media (max-width: 360px)': {
+        padding: '1px 3px',
+        fontSize: '0.45rem'
+    }
+},
+
+// Wishlist button
+wishlistButton: {
+    position: 'absolute',
+    top: '8px',
+    right: '8px',
+    background: 'white',
+    border: 'none',
+    borderRadius: '50%',
+    width: '32px',
+    height: '32px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    cursor: 'pointer',
+    zIndex: 2,
+    boxShadow: '0 2px 5px rgba(0,0,0,0.1)',
+    transition: 'all 0.2s ease',
+    color: '#999',
+    '@media (max-width: 768px)': {
+        width: '28px',
+        height: '28px',
+        top: '6px',
+        right: '6px'
+    },
+    '@media (max-width: 480px)': {
+        width: '24px',
+        height: '24px',
+        top: '4px',
+        right: '4px',
+        fontSize: '0.7rem'
+    },
+    '@media (max-width: 360px)': {
+        width: '20px',
+        height: '20px',
+        top: '3px',
+        right: '3px'
+    },
+    ':hover': {
+        transform: 'scale(1.1)',
+        color: '#ff4757'
+    }
+},
+
+// Product image container - Perfect square
+productImageContainer: {
+    width: '100%',
+    aspectRatio: '1/1',
+    overflow: 'hidden',
+    backgroundColor: '#f8f9fa',
+    position: 'relative'
+},
+
+productImage: {
+    width: '100%',
+    height: '100%',
+    objectFit: 'cover',
+    transition: 'transform 0.3s ease'
+},
+
+// Product info section
+productInfo: {
+    padding: '12px',
+    '@media (max-width: 768px)': {
+        padding: '10px'
+    },
+    '@media (max-width: 480px)': {
+        padding: '8px 6px'
+    },
+    '@media (max-width: 360px)': {
+        padding: '5px 4px'
+    }
+},
+
+// Product name
+productName: {
+    fontSize: '0.9rem',
+    marginBottom: '6px',
+    color: '#333',
+    fontWeight: '500',
+    lineHeight: '1.3',
+    whiteSpace: 'nowrap',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    '@media (max-width: 768px)': {
+        fontSize: '0.8rem',
+        marginBottom: '4px'
+    },
+    '@media (max-width: 480px)': {
+        fontSize: '0.7rem',
+        marginBottom: '3px'
+    },
+    '@media (max-width: 360px)': {
+        fontSize: '0.6rem',
+        marginBottom: '2px'
+    }
+},
+
+// Rating stars
+productRating: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '2px',
+    marginBottom: '6px',
+    '@media (max-width: 768px)': {
+        marginBottom: '4px'
+    },
+    '@media (max-width: 480px)': {
+        marginBottom: '3px',
+        gap: '1px'
+    }
+},
+
+reviewCount: {
+    fontSize: '0.7rem',
+    color: '#999',
+    marginLeft: '4px',
+    '@media (max-width: 768px)': {
+        fontSize: '0.6rem',
+        marginLeft: '3px'
+    },
+    '@media (max-width: 480px)': {
+        fontSize: '0.55rem',
+        marginLeft: '2px'
+    },
+    '@media (max-width: 360px)': {
+        fontSize: '0.5rem',
+        marginLeft: '1px'
+    }
+},
+
+// Price row
+productPriceRow: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '6px',
+    marginBottom: '8px',
+    flexWrap: 'wrap',
+    '@media (max-width: 768px)': {
+        gap: '4px',
+        marginBottom: '6px'
+    },
+    '@media (max-width: 480px)': {
+        gap: '3px',
+        marginBottom: '4px'
+    },
+    '@media (max-width: 360px)': {
+        gap: '2px',
+        marginBottom: '3px'
+    }
+},
+
+// Current price
+productPrice: {
+    fontSize: '1rem',
+    fontWeight: '600',
+    color: '#333',
+    '@media (max-width: 768px)': {
+        fontSize: '0.9rem'
+    },
+    '@media (max-width: 480px)': {
+        fontSize: '0.8rem'
+    },
+    '@media (max-width: 360px)': {
+        fontSize: '0.7rem'
+    }
+},
+
+// Discount price
+discountPrice: {
+    fontSize: '1rem',
+    fontWeight: '600',
+    color: '#e74c3c',
+    '@media (max-width: 768px)': {
+        fontSize: '0.9rem'
+    },
+    '@media (max-width: 480px)': {
+        fontSize: '0.8rem'
+    },
+    '@media (max-width: 360px)': {
+        fontSize: '0.7rem'
+    }
+},
+
+// Original price (strikethrough)
+originalPrice: {
+    fontSize: '0.8rem',
+    color: '#999',
+    textDecoration: 'line-through',
+    '@media (max-width: 768px)': {
+        fontSize: '0.7rem'
+    },
+    '@media (max-width: 480px)': {
+        fontSize: '0.6rem'
+    },
+    '@media (max-width: 360px)': {
+        fontSize: '0.55rem'
+    }
+},
+
+// Add to cart button
+addToCartBtn: {
+    width: '100%',
+    padding: '8px',
+    background: '#3498db',
+    color: 'white',
+    border: 'none',
+    borderRadius: '4px',
+    cursor: 'pointer',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: '5px',
+    fontSize: '0.8rem',
+    fontWeight: '500',
+    transition: 'all 0.2s ease',
+    '@media (max-width: 768px)': {
+        padding: '6px',
+        fontSize: '0.7rem',
+        gap: '4px'
+    },
+    '@media (max-width: 480px)': {
+        padding: '4px',
+        fontSize: '0.65rem',
+        gap: '3px',
+        borderRadius: '3px'
+    },
+    '@media (max-width: 360px)': {
+        padding: '3px',
+        fontSize: '0.6rem',
+        gap: '2px',
+        borderRadius: '2px'
+    },
+    ':hover': {
+        background: '#2980b9'
+    },
+    ':active': {
+        transform: 'scale(0.98)'
+    }
+},
 
     // Promo Banner
     promoBanner: {

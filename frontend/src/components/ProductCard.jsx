@@ -34,11 +34,11 @@ const ProductCard = ({ product }) => {
         
         for (let i = 0; i < 5; i++) {
             if (i < fullStars) {
-                stars.push(<FaStar key={i} color="#FFD700" size={window.innerWidth <= 480 ? 8 : 12} />);
+                stars.push(<FaStar key={i} color="#FFD700" size={window.innerWidth <= 480 ? 10 : 12} />);
             } else if (i === fullStars && hasHalfStar) {
-                stars.push(<FaStarHalfAlt key={i} color="#FFD700" size={window.innerWidth <= 480 ? 8 : 12} />);
+                stars.push(<FaStarHalfAlt key={i} color="#FFD700" size={window.innerWidth <= 480 ? 10 : 12} />);
             } else {
-                stars.push(<FaStar key={i} color="#e4e5e9" size={window.innerWidth <= 480 ? 8 : 12} />);
+                stars.push(<FaStar key={i} color="#e4e5e9" size={window.innerWidth <= 480 ? 10 : 12} />);
             }
         }
         
@@ -93,14 +93,14 @@ const ProductCard = ({ product }) => {
     const styles = {
         card: {
             border: 'none',
-            borderRadius: '8px',
+            borderRadius: '10px',
             padding: '0',
             textAlign: 'center',
             background: 'white',
             position: 'relative',
             transition: 'all 0.2s ease',
             overflow: 'hidden',
-            boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
+            boxShadow: '0 3px 10px rgba(0,0,0,0.08)',
             height: '100%',
             display: 'flex',
             flexDirection: 'column',
@@ -118,8 +118,8 @@ const ProductCard = ({ product }) => {
             aspectRatio: '1/1',
             overflow: 'hidden',
             backgroundColor: '#f8f9fa',
-            borderTopLeftRadius: '8px',
-            borderTopRightRadius: '8px',
+            borderTopLeftRadius: '10px',
+            borderTopRightRadius: '10px',
             '@media (min-width: 481px)': {
                 borderTopLeftRadius: '12px',
                 borderTopRightRadius: '12px',
@@ -176,24 +176,24 @@ const ProductCard = ({ product }) => {
             background: 'white',
             border: 'none',
             borderRadius: '50%',
-            width: '28px',
-            height: '28px',
+            width: '30px',
+            height: '30px',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             cursor: 'pointer',
-            boxShadow: '0 2px 5px rgba(0,0,0,0.1)',
+            boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
             zIndex: 10,
-            fontSize: '12px',
+            fontSize: '14px',
             transition: 'all 0.2s ease',
             color: isInWishlistFlag ? '#ff4757' : '#747d8c',
             backgroundColor: 'white',
             '@media (min-width: 481px)': {
                 top: '12px',
                 right: '12px',
-                width: '35px',
-                height: '35px',
-                fontSize: '14px',
+                width: '36px',
+                height: '36px',
+                fontSize: '16px',
             }
         },
         badgeContainer: {
@@ -215,9 +215,9 @@ const ProductCard = ({ product }) => {
         badgeNew: {
             background: 'linear-gradient(135deg, #2ecc71, #27ae60)',
             color: 'white',
-            padding: '2px 6px',
+            padding: '3px 8px',
             borderRadius: '12px',
-            fontSize: '0.5rem',
+            fontSize: '0.55rem',
             fontWeight: 'bold',
             textTransform: 'uppercase',
             letterSpacing: '0.5px',
@@ -232,9 +232,9 @@ const ProductCard = ({ product }) => {
         badgeSale: {
             background: 'linear-gradient(135deg, #ff4757, #ee5a24)',
             color: 'white',
-            padding: '2px 6px',
+            padding: '3px 8px',
             borderRadius: '12px',
-            fontSize: '0.5rem',
+            fontSize: '0.55rem',
             fontWeight: 'bold',
             textTransform: 'uppercase',
             letterSpacing: '0.5px',
@@ -247,71 +247,71 @@ const ProductCard = ({ product }) => {
             }
         },
         content: {
-            padding: '8px',
+            padding: '12px 10px',
             flex: 1,
             display: 'flex',
             flexDirection: 'column',
             background: 'white',
             '@media (min-width: 481px)': {
-                padding: '12px',
+                padding: '15px',
             }
         },
         category: {
-            fontSize: '0.6rem',
+            fontSize: '0.65rem',
             color: '#747d8c',
             textTransform: 'uppercase',
             letterSpacing: '0.5px',
-            marginBottom: '3px',
+            marginBottom: '4px',
             textAlign: 'left',
             whiteSpace: 'nowrap',
             overflow: 'hidden',
             textOverflow: 'ellipsis',
             '@media (min-width: 481px)': {
                 fontSize: '0.7rem',
-                marginBottom: '5px',
+                marginBottom: '6px',
             }
         },
         name: {
-            fontSize: '0.7rem',
-            margin: '0 0 4px 0',
+            fontSize: '0.8rem',
+            margin: '0 0 6px 0',
             color: '#2c3e50',
             fontWeight: '600',
             lineHeight: '1.3',
             textAlign: 'left',
-            whiteSpace: 'nowrap',
+            display: '-webkit-box',
+            WebkitLineClamp: 1,
+            WebkitBoxOrient: 'vertical',
             overflow: 'hidden',
             textOverflow: 'ellipsis',
+            minHeight: '1rem',
             '@media (min-width: 481px)': {
-                fontSize: '0.9rem',
-                margin: '0 0 6px 0',
-                whiteSpace: 'normal',
-                display: '-webkit-box',
+                fontSize: '0.95rem',
+                margin: '0 0 8px 0',
                 WebkitLineClamp: 2,
-                WebkitBoxOrient: 'vertical',
                 minHeight: '2.4rem',
             }
         },
         ratingContainer: {
             display: 'flex',
             alignItems: 'center',
-            gap: '3px',
-            marginBottom: '4px',
+            gap: '4px',
+            marginBottom: '6px',
             textAlign: 'left',
             flexWrap: 'wrap',
             '@media (min-width: 481px)': {
-                gap: '5px',
-                marginBottom: '8px',
+                gap: '6px',
+                marginBottom: '10px',
             }
         },
         ratingStars: {
             display: 'flex',
-            gap: '1px',
+            gap: '2px',
             '@media (min-width: 481px)': {
                 gap: '2px',
             }
         },
         reviewCount: {
-            fontSize: '0.55rem',
+            fontSize: '0.6rem',
             color: '#a4b0be',
             marginLeft: '2px',
             '@media (min-width: 481px)': {
@@ -322,25 +322,25 @@ const ProductCard = ({ product }) => {
         priceContainer: {
             display: 'flex',
             alignItems: 'baseline',
-            gap: '4px',
-            marginBottom: '6px',
+            gap: '6px',
+            marginBottom: '8px',
             textAlign: 'left',
             flexWrap: 'wrap',
             '@media (min-width: 481px)': {
-                gap: '8px',
+                gap: '10px',
                 marginBottom: '12px',
             }
         },
         currentPrice: {
-            fontSize: '0.8rem',
+            fontSize: '0.9rem',
             fontWeight: '700',
             color: '#2c3e50',
             '@media (min-width: 481px)': {
-                fontSize: '1rem',
+                fontSize: '1.1rem',
             }
         },
         originalPrice: {
-            fontSize: '0.6rem',
+            fontSize: '0.65rem',
             color: '#a4b0be',
             textDecoration: 'line-through',
             '@media (min-width: 481px)': {
@@ -348,17 +348,17 @@ const ProductCard = ({ product }) => {
             }
         },
         stockStatus: {
-            fontSize: '0.55rem',
+            fontSize: '0.6rem',
             color: '#27ae60',
-            marginBottom: '4px',
+            marginBottom: '6px',
             textAlign: 'left',
             display: 'flex',
             alignItems: 'center',
-            gap: '3px',
+            gap: '4px',
             '@media (min-width: 481px)': {
                 fontSize: '0.7rem',
-                marginBottom: '6px',
-                gap: '5px',
+                marginBottom: '8px',
+                gap: '6px',
             }
         },
         outOfStock: {
@@ -368,26 +368,26 @@ const ProductCard = ({ product }) => {
             background: product.stock === 0 ? '#95a5a6' : isAddingToCart ? '#27ae60' : '#3498db',
             color: 'white',
             border: 'none',
-            padding: '6px 8px',
-            borderRadius: '4px',
+            padding: '8px 10px',
+            borderRadius: '6px',
             cursor: product.stock === 0 ? 'not-allowed' : 'pointer',
             width: '100%',
-            fontSize: '0.65rem',
+            fontSize: '0.7rem',
             fontWeight: '600',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            gap: '4px',
+            gap: '5px',
             transition: 'all 0.2s ease',
             marginTop: 'auto',
             opacity: product.stock === 0 ? 0.6 : 1,
             boxShadow: product.stock > 0 ? '0 3px 8px rgba(52, 152, 219, 0.3)' : 'none',
             zIndex: 10,
             '@media (min-width: 481px)': {
-                padding: '8px 12px',
-                fontSize: '0.8rem',
-                gap: '6px',
-                borderRadius: '6px',
+                padding: '10px 15px',
+                fontSize: '0.85rem',
+                gap: '8px',
+                borderRadius: '8px',
                 background: product.stock === 0 ? '#95a5a6' : isAddingToCart ? '#27ae60' : 'linear-gradient(135deg, #3498db, #2980b9)',
             }
         }
@@ -469,8 +469,8 @@ const ProductCard = ({ product }) => {
                 {product.stock > 0 ? (
                     <div style={styles.stockStatus}>
                         <span style={{ 
-                            width: '6px', 
-                            height: '6px', 
+                            width: '8px', 
+                            height: '8px', 
                             background: '#27ae60', 
                             borderRadius: '50%', 
                             display: 'inline-block' 
@@ -480,8 +480,8 @@ const ProductCard = ({ product }) => {
                 ) : (
                     <div style={{...styles.stockStatus, ...styles.outOfStock}}>
                         <span style={{ 
-                            width: '6px', 
-                            height: '6px', 
+                            width: '8px', 
+                            height: '8px', 
                             background: '#ff4757', 
                             borderRadius: '50%', 
                             display: 'inline-block' 
@@ -507,7 +507,7 @@ const ProductCard = ({ product }) => {
                     disabled={product.stock === 0 || isAddingToCart}
                     aria-label={product.stock > 0 ? 'Add to cart' : 'Out of stock'}
                 >
-                    <FaShoppingCart size={window.innerWidth <= 480 ? 10 : 12} /> 
+                    <FaShoppingCart size={window.innerWidth <= 480 ? 12 : 14} /> 
                     {isAddingToCart ? 'Added!' : (product.stock > 0 ? 'Add' : 'Out')}
                 </button>
             </div>
