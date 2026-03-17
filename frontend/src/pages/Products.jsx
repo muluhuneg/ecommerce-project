@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import API from '../services/api';
+import { useCart } from '../context/CartContext';
+import { useWishlist } from '../context/WishlistContext';
 import { 
     FaSearch, 
     FaFilter, 
@@ -9,7 +11,8 @@ import {
     FaHeart,
     FaTimes,
     FaChevronDown,
-    FaChevronUp
+    FaChevronUp,
+    FaCheckCircle
 } from 'react-icons/fa';
 
 const Products = () => {
@@ -28,13 +31,27 @@ const Products = () => {
     const [sortBy, setSortBy] = useState('newest');
     const [currentPage, setCurrentPage] = useState(1);
     const [productsPerPage] = useState(12);
+    const [addingToCart, setAddingToCart] = useState({});
+    const [showToast, setShowToast] = useState(false);
+    const [toastMessage, setToastMessage] = useState('');
 
     const location = useLocation();
     const navigate = useNavigate();
+    const { addToCart } = useCart();
+    const { isInWishlist, addToWishlist, removeFromWishlist } = useWishlist();
 
     // Format Birr price with commas
     const formatBirr = (price) => {
         return Math.round(price).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    };
+
+    // Show toast message
+    const showToastMessage = (message) => {
+        setToastMessage(message);
+        setShowToast(true);
+        setTimeout(() => {
+            setShowToast(false);
+        }, 3000);
     };
 
     useEffect(() => {
@@ -156,77 +173,128 @@ const Products = () => {
         setSortBy('newest');
     };
 
+    const handleAddToCart = async (e, product) => {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        if (product.stock <= 0) {
+            showToastMessage(`${product.name} is out of stock`);
+            return;
+        }
+        
+        setAddingToCart(prev => ({ ...prev, [product.id]: true }));
+        
+        try {
+            await addToCart(product, 1);
+            showToastMessage(`${product.name} added to cart!`);
+            setTimeout(() => {
+                setAddingToCart(prev => ({ ...prev, [product.id]: false }));
+            }, 500);
+        } catch (error) {
+            console.error('Error adding to cart:', error);
+            showToastMessage('Failed to add to cart');
+            setAddingToCart(prev => ({ ...prev, [product.id]: false }));
+        }
+    };
+
+    const handleWishlistToggle = (e, product) => {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        if (isInWishlist(product.id)) {
+            removeFromWishlist(product.id);
+            showToastMessage(`${product.name} removed from wishlist`);
+        } else {
+            addToWishlist(product);
+            showToastMessage(`${product.name} added to wishlist!`);
+        }
+    };
+
     // Get current products for pagination
     const indexOfLastProduct = currentPage * productsPerPage;
     const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
     const currentProducts = filteredProducts.slice(indexOfFirstProduct, indexOfLastProduct);
     const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
 
-    const ProductCard = ({ product }) => (
-        <div 
-            style={styles.productCard}
-            onClick={() => navigate(`/product/${product.id}`)}
-        >
-            <div style={styles.productImageContainer}>
-                <img 
-                    src={product.image_url || 'https://via.placeholder.com/300x200?text=Product'} 
-                    alt={product.name}
-                    style={styles.productImage}
-                    onError={(e) => {
-                        e.target.src = 'https://via.placeholder.com/300x200?text=Product';
-                    }}
-                />
-                {product.discount_price && (
-                    <span style={styles.discountBadge}>
-                        {Math.round((1 - product.discount_price/product.price) * 100)}% OFF
-                    </span>
-                )}
-                <button style={styles.wishlistButton} onClick={(e) => e.stopPropagation()}>
-                    <FaHeart />
-                </button>
-            </div>
-            <div style={styles.productInfo}>
-                <h3 style={styles.productName}>{product.name}</h3>
-                <div style={styles.productRating}>
-                    {[1,2,3,4,5].map(star => (
-                        <FaStar 
-                            key={star} 
-                            color={star <= (product.rating || 4) ? '#ffc107' : '#e4e5e9'} 
-                            size={14} 
-                        />
-                    ))}
-                    <span style={styles.reviewCount}>({product.review_count || 24})</span>
-                </div>
-                <div style={styles.productPriceRow}>
-                    {product.discount_price ? (
-                        <>
-                            <span style={styles.discountPrice}>{formatBirr(product.discount_price)} ብር</span>
-                            <span style={styles.originalPrice}>{formatBirr(product.price)} ብር</span>
-                        </>
-                    ) : (
-                        <span style={styles.productPrice}>{formatBirr(product.price)} ብር</span>
+    const ProductCard = ({ product }) => {
+        const inWishlist = isInWishlist(product.id);
+        const isAdding = addingToCart[product.id];
+
+        return (
+            <div 
+                style={styles.productCard}
+                onClick={() => navigate(`/product/${product.id}`)}
+            >
+                <div style={styles.productImageContainer}>
+                    <img 
+                        src={product.image_url || 'https://via.placeholder.com/300x200?text=Product'} 
+                        alt={product.name}
+                        style={styles.productImage}
+                        onError={(e) => {
+                            e.target.src = 'https://via.placeholder.com/300x200?text=Product';
+                        }}
+                    />
+                    {product.discount_price && (
+                        <span style={styles.discountBadge}>
+                            {Math.round((1 - product.discount_price/product.price) * 100)}% OFF
+                        </span>
                     )}
+                    <button 
+                        style={{
+                            ...styles.wishlistButton,
+                            color: inWishlist ? '#ff4757' : '#747d8c'
+                        }}
+                        onClick={(e) => handleWishlistToggle(e, product)}
+                    >
+                        <FaHeart />
+                    </button>
                 </div>
-                <p style={styles.stockStatus}>
-                    {product.stock > 0 ? (
-                        <span style={{color: '#28a745'}}>In Stock ({product.stock})</span>
-                    ) : (
-                        <span style={{color: '#dc3545'}}>Out of Stock</span>
-                    )}
-                </p>
-                <button 
-                    style={styles.addToCartBtn}
-                    onClick={(e) => {
-                        e.stopPropagation();
-                        // Add to cart logic
-                    }}
-                    disabled={product.stock === 0}
-                >
-                    <FaShoppingCart /> Add to Cart
-                </button>
+                <div style={styles.productInfo}>
+                    <h3 style={styles.productName}>{product.name}</h3>
+                    <div style={styles.productRating}>
+                        {[1,2,3,4,5].map(star => (
+                            <FaStar 
+                                key={star} 
+                                color={star <= (product.rating || 4) ? '#ffc107' : '#e4e5e9'} 
+                                size={14} 
+                            />
+                        ))}
+                        <span style={styles.reviewCount}>({product.review_count || 24})</span>
+                    </div>
+                    <div style={styles.productPriceRow}>
+                        {product.discount_price ? (
+                            <>
+                                <span style={styles.discountPrice}>{formatBirr(product.discount_price)} Br</span>
+                                <span style={styles.originalPrice}>{formatBirr(product.price)} Br</span>
+                            </>
+                        ) : (
+                            <span style={styles.productPrice}>{formatBirr(product.price)} Br</span>
+                        )}
+                    </div>
+                    <p style={styles.stockStatus}>
+                        {product.stock > 0 ? (
+                            <span style={{color: '#28a745'}}>In Stock ({product.stock})</span>
+                        ) : (
+                            <span style={{color: '#dc3545'}}>Out of Stock</span>
+                        )}
+                    </p>
+                    <button 
+                        style={{
+                            ...styles.addToCartBtn,
+                            backgroundColor: isAdding ? '#27ae60' : (product.stock === 0 ? '#95a5a6' : '#3498db'),
+                            cursor: product.stock === 0 ? 'not-allowed' : 'pointer',
+                            opacity: product.stock === 0 ? 0.6 : 1
+                        }}
+                        onClick={(e) => handleAddToCart(e, product)}
+                        disabled={product.stock === 0 || isAdding}
+                    >
+                        <FaShoppingCart /> 
+                        {isAdding ? 'Adding...' : (product.stock > 0 ? 'Add to Cart' : 'Out of Stock')}
+                    </button>
+                </div>
             </div>
-        </div>
-    );
+        );
+    };
 
     if (loading) {
         return (
@@ -238,6 +306,14 @@ const Products = () => {
 
     return (
         <div style={styles.container}>
+            {/* Toast Notification */}
+            {showToast && (
+                <div style={styles.toast}>
+                    <FaCheckCircle style={{ color: '#27ae60', marginRight: '8px' }} />
+                    <span>{toastMessage}</span>
+                </div>
+            )}
+
             {/* Header with Search and Filter Toggle */}
             <div style={styles.header}>
                 <h1 style={styles.title}>All Products</h1>
@@ -306,7 +382,7 @@ const Products = () => {
 
                         {/* Price Range Filter */}
                         <div style={styles.filterSection}>
-                            <h4>Price Range (ብር)</h4>
+                            <h4>Price Range (Br)</h4>
                             <div style={styles.priceRange}>
                                 <input
                                     type="number"
@@ -459,6 +535,25 @@ const Products = () => {
                     )}
                 </div>
             </div>
+
+            <style>
+                {`
+                    @keyframes spin {
+                        0% { transform: rotate(0deg); }
+                        100% { transform: rotate(360deg); }
+                    }
+                    @keyframes slideIn {
+                        from {
+                            transform: translateX(100%);
+                            opacity: 0;
+                        }
+                        to {
+                            transform: translateX(0);
+                            opacity: 1;
+                        }
+                    }
+                `}
+            </style>
         </div>
     );
 };
@@ -467,24 +562,58 @@ const styles = {
     container: {
         maxWidth: '1400px',
         margin: '0 auto',
-        padding: '20px'
+        padding: '20px',
+        position: 'relative'
+    },
+    // Toast Notification
+    toast: {
+        position: 'fixed',
+        top: '80px',
+        right: '20px',
+        backgroundColor: 'white',
+        color: '#333',
+        padding: '12px 20px',
+        borderRadius: '8px',
+        boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+        zIndex: 9999,
+        display: 'flex',
+        alignItems: 'center',
+        animation: 'slideIn 0.3s ease',
+        fontSize: '0.9rem',
+        '@media (max-width: 480px)': {
+            top: '70px',
+            right: '10px',
+            left: '10px',
+            width: 'calc(100% - 20px)',
+            fontSize: '0.8rem'
+        }
     },
     header: {
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'center',
         marginBottom: '30px',
-        gap: '20px'
+        gap: '20px',
+        '@media (max-width: 768px)': {
+            flexDirection: 'column',
+            alignItems: 'stretch'
+        }
     },
     title: {
         fontSize: '2rem',
         color: '#333',
-        margin: 0
+        margin: 0,
+        '@media (max-width: 768px)': {
+            fontSize: '1.5rem'
+        }
     },
     searchBar: {
         flex: 1,
         maxWidth: '400px',
-        position: 'relative'
+        position: 'relative',
+        '@media (max-width: 768px)': {
+            maxWidth: '100%'
+        }
     },
     searchIcon: {
         position: 'absolute',
@@ -498,7 +627,10 @@ const styles = {
         padding: '12px 12px 12px 40px',
         border: '1px solid #ddd',
         borderRadius: '25px',
-        fontSize: '1rem'
+        fontSize: '1rem',
+        '@media (max-width: 768px)': {
+            padding: '10px 10px 10px 35px'
+        }
     },
     filterToggle: {
         padding: '10px 20px',
@@ -508,12 +640,19 @@ const styles = {
         cursor: 'pointer',
         display: 'flex',
         alignItems: 'center',
-        gap: '8px'
+        gap: '8px',
+        '@media (max-width: 768px)': {
+            width: '100%',
+            justifyContent: 'center'
+        }
     },
     mainContent: {
         display: 'flex',
         gap: '20px',
-        position: 'relative'
+        position: 'relative',
+        '@media (max-width: 768px)': {
+            flexDirection: 'column'
+        }
     },
     filtersSidebar: {
         width: '260px',
@@ -523,7 +662,12 @@ const styles = {
         boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
         height: 'fit-content',
         position: 'sticky',
-        top: '20px'
+        top: '20px',
+        '@media (max-width: 768px)': {
+            width: '100%',
+            position: 'static',
+            marginBottom: '20px'
+        }
     },
     filtersHeader: {
         display: 'flex',
@@ -593,27 +737,45 @@ const styles = {
         cursor: 'pointer'
     },
     productsContainer: {
-        transition: 'width 0.3s'
+        transition: 'width 0.3s',
+        '@media (max-width: 768px)': {
+            width: '100% !important'
+        }
     },
     toolbar: {
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'center',
-        marginBottom: '20px'
+        marginBottom: '20px',
+        '@media (max-width: 480px)': {
+            flexDirection: 'column',
+            gap: '10px',
+            alignItems: 'flex-start'
+        }
     },
     resultsCount: {
-        color: '#666'
+        color: '#666',
+        '@media (max-width: 480px)': {
+            fontSize: '0.9rem'
+        }
     },
     sortSelect: {
         padding: '8px',
         border: '1px solid #ddd',
-        borderRadius: '4px'
+        borderRadius: '4px',
+        '@media (max-width: 480px)': {
+            width: '100%'
+        }
     },
     productsGrid: {
         display: 'grid',
         gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))',
         gap: '20px',
-        marginBottom: '30px'
+        marginBottom: '30px',
+        '@media (max-width: 480px)': {
+            gridTemplateColumns: 'repeat(2, 1fr)',
+            gap: '10px'
+        }
     },
     productCard: {
         background: 'white',
@@ -622,12 +784,18 @@ const styles = {
         boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
         transition: 'transform 0.3s',
         cursor: 'pointer',
-        position: 'relative'
+        position: 'relative',
+        '@media (max-width: 480px)': {
+            borderRadius: '8px'
+        }
     },
     productImageContainer: {
         position: 'relative',
         height: '200px',
-        overflow: 'hidden'
+        overflow: 'hidden',
+        '@media (max-width: 480px)': {
+            height: '130px'
+        }
     },
     productImage: {
         width: '100%',
@@ -643,7 +811,13 @@ const styles = {
         padding: '4px 8px',
         borderRadius: '4px',
         fontSize: '0.8rem',
-        fontWeight: 'bold'
+        fontWeight: 'bold',
+        '@media (max-width: 480px)': {
+            padding: '2px 6px',
+            fontSize: '0.7rem',
+            top: '5px',
+            left: '5px'
+        }
     },
     wishlistButton: {
         position: 'absolute',
@@ -658,59 +832,97 @@ const styles = {
         alignItems: 'center',
         justifyContent: 'center',
         cursor: 'pointer',
-        color: '#ff6b6b',
-        boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+        boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+        transition: 'all 0.2s',
+        '@media (max-width: 480px)': {
+            width: '28px',
+            height: '28px',
+            top: '5px',
+            right: '5px'
+        }
     },
     productInfo: {
-        padding: '15px'
+        padding: '15px',
+        '@media (max-width: 480px)': {
+            padding: '8px'
+        }
     },
     productName: {
         fontSize: '1rem',
         margin: '0 0 10px',
         color: '#333',
         height: '40px',
-        overflow: 'hidden'
+        overflow: 'hidden',
+        '@media (max-width: 480px)': {
+            fontSize: '0.8rem',
+            height: 'auto',
+            margin: '0 0 5px',
+            whiteSpace: 'nowrap',
+            textOverflow: 'ellipsis'
+        }
     },
     productRating: {
         display: 'flex',
         alignItems: 'center',
         gap: '2px',
-        marginBottom: '10px'
+        marginBottom: '10px',
+        '@media (max-width: 480px)': {
+            marginBottom: '5px'
+        }
     },
     reviewCount: {
         fontSize: '0.8rem',
         color: '#666',
-        marginLeft: '5px'
+        marginLeft: '5px',
+        '@media (max-width: 480px)': {
+            fontSize: '0.7rem'
+        }
     },
     productPriceRow: {
         display: 'flex',
         alignItems: 'center',
         gap: '10px',
-        marginBottom: '5px'
+        marginBottom: '5px',
+        '@media (max-width: 480px)': {
+            gap: '5px',
+            flexWrap: 'wrap'
+        }
     },
     productPrice: {
         fontSize: '1.2rem',
         fontWeight: 'bold',
-        color: '#333'
+        color: '#333',
+        '@media (max-width: 480px)': {
+            fontSize: '1rem'
+        }
     },
     discountPrice: {
         fontSize: '1.2rem',
         fontWeight: 'bold',
-        color: '#e44d26'
+        color: '#e44d26',
+        '@media (max-width: 480px)': {
+            fontSize: '1rem'
+        }
     },
     originalPrice: {
         fontSize: '0.9rem',
         color: '#999',
-        textDecoration: 'line-through'
+        textDecoration: 'line-through',
+        '@media (max-width: 480px)': {
+            fontSize: '0.75rem'
+        }
     },
     stockStatus: {
         fontSize: '0.9rem',
-        marginBottom: '10px'
+        marginBottom: '10px',
+        '@media (max-width: 480px)': {
+            fontSize: '0.7rem',
+            marginBottom: '5px'
+        }
     },
     addToCartBtn: {
         width: '100%',
         padding: '8px',
-        background: '#3498db',
         color: 'white',
         border: 'none',
         borderRadius: '5px',
@@ -718,14 +930,22 @@ const styles = {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        gap: '5px'
+        gap: '5px',
+        transition: 'all 0.2s',
+        '@media (max-width: 480px)': {
+            padding: '5px',
+            fontSize: '0.7rem'
+        }
     },
     noProducts: {
         textAlign: 'center',
         padding: '60px',
         background: 'white',
         borderRadius: '10px',
-        boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+        boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+        '@media (max-width: 480px)': {
+            padding: '30px'
+        }
     },
     clearFiltersBtn: {
         padding: '10px 20px',
@@ -740,17 +960,25 @@ const styles = {
         display: 'flex',
         justifyContent: 'center',
         gap: '5px',
-        marginTop: '30px'
+        marginTop: '30px',
+        flexWrap: 'wrap'
     },
     pageButton: {
         padding: '8px 12px',
         border: '1px solid #ddd',
         background: 'white',
         cursor: 'pointer',
-        borderRadius: '4px'
+        borderRadius: '4px',
+        '@media (max-width: 480px)': {
+            padding: '6px 10px',
+            fontSize: '0.9rem'
+        }
     },
     pageNumber: {
-        minWidth: '40px'
+        minWidth: '40px',
+        '@media (max-width: 480px)': {
+            minWidth: '35px'
+        }
     },
     loadingContainer: {
         display: 'flex',
