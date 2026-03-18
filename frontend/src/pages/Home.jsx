@@ -526,7 +526,7 @@ const Home = () => {
                             View All <FaArrowRight />
                         </Link>
                     </div>
-                    <div style={styles.productsGrid}>
+                    <div style={styles.productsGrid} className="new-arrivals-grid">
                         {newArrivals.map((product, index) => (
                             <ProductCard key={product.id} product={product} index={index + 4} />
                         ))}
@@ -747,6 +747,38 @@ const Home = () => {
                             max-width: 150px !important;
                             height: 115px !important;
                             scroll-snap-align: start !important;
+                        }
+
+                        .new-arrivals-grid {
+                            display: flex !important;
+                            flex-wrap: nowrap !important;
+                            overflow-x: auto !important;
+                            gap: 10px !important;
+                            padding: 0 8px !important;
+                            -webkit-overflow-scrolling: touch !important;
+                            scroll-snap-type: x mandatory !important;
+                        }
+                        .new-arrivals-grid .product-card {
+                            flex: 0 0 140px !important;
+                            max-width: 140px !important;
+                            width: 140px !important;
+                            height: auto !important;
+                            overflow: hidden !important;
+                            scroll-snap-align: start !important;
+                        }
+                        .new-arrivals-grid .product-image-container {
+                            width: 100% !important;
+                            aspect-ratio: 1/1 !important;
+                        }
+                        .new-arrivals-grid .product-info {
+                            padding: 8px !important;
+                        }
+                        .new-arrivals-grid .product-name {
+                            font-size: 0.75rem !important;
+                            overflow: hidden !important;
+                            white-space: normal !important;
+                            text-overflow: ellipsis !important;
+                            height: 2.4rem !important;
                         }
                         .brands-grid {
                             grid-template-columns: repeat(2, 1fr) !important;
