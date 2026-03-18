@@ -1,23 +1,9 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { 
-    FaFacebook, 
-    FaTwitter, 
-    FaInstagram, 
-    FaLinkedin, 
-    FaYoutube,
+import {
     FaMapMarkerAlt,
     FaPhone,
     FaEnvelope,
-    FaCreditCard,
-    FaPaypal,
-    FaApple,
-    FaGooglePay,
-    FaCcVisa,
-    FaCcMastercard,
-    FaCcAmex,
-    FaTelegram,
-    FaTiktok
 } from 'react-icons/fa';
 
 const Footer = () => {
@@ -28,132 +14,85 @@ const Footer = () => {
             background: 'linear-gradient(135deg, #1e3c72 0%, #2a5298 100%)',
             color: 'white',
             marginTop: 'auto',
-            padding: '60px 0 20px',
-            fontFamily: 'Arial, sans-serif'
+            padding: '50px 0 20px',
+            fontFamily: 'Arial, sans-serif',
         },
         container: {
             maxWidth: '1200px',
             margin: '0 auto',
-            padding: '0 20px'
+            padding: '0 20px',
         },
         grid: {
             display: 'grid',
             gridTemplateColumns: 'repeat(4, 1fr)',
             gap: '30px',
-            marginBottom: '40px'
+            marginBottom: '30px',
         },
         section: {
-            marginBottom: '20px'
+            marginBottom: '20px',
         },
         sectionTitle: {
-            fontSize: '1.2rem',
-            fontWeight: 'bold',
-            marginBottom: '20px',
-            position: 'relative',
-            paddingBottom: '10px',
-            borderBottom: '2px solid rgba(255,255,255,0.1)'
+            fontSize: '1.1rem',
+            fontWeight: '700',
+            marginBottom: '16px',
+            borderBottom: '2px solid rgba(255,255,255,0.15)',
+            paddingBottom: '8px',
         },
         logo: {
-            fontSize: '2rem',
+            fontSize: '1.8rem',
             fontWeight: 'bold',
-            marginBottom: '15px',
+            marginBottom: '12px',
             color: 'white',
             textDecoration: 'none',
-            display: 'block'
+            display: 'block',
         },
         description: {
-            color: 'rgba(255,255,255,0.8)',
-            lineHeight: '1.6',
-            marginBottom: '20px',
-            fontSize: '0.95rem'
-        },
-        socialLinks: {
-            display: 'flex',
-            gap: '12px'
-        },
-        socialIcon: {
-            width: '36px',
-            height: '36px',
-            borderRadius: '50%',
-            background: 'rgba(255,255,255,0.1)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            color: 'white',
-            fontSize: '1.1rem',
-            transition: 'all 0.3s',
-            cursor: 'pointer'
+            color: 'rgba(255,255,255,0.9)',
+            lineHeight: '1.5',
+            fontSize: '0.95rem',
         },
         linkList: {
             listStyle: 'none',
             padding: 0,
-            margin: 0
+            margin: 0,
         },
         linkItem: {
-            marginBottom: '12px'
+            marginBottom: '10px',
         },
         link: {
-            color: 'rgba(255,255,255,0.8)',
+            color: 'rgba(255,255,255,0.85)',
             textDecoration: 'none',
             fontSize: '0.95rem',
-            transition: 'color 0.3s',
-            display: 'inline-block'
+            transition: 'color 0.2s',
         },
         contactInfo: {
-            marginBottom: '15px',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '10px',
-            color: 'rgba(255,255,255,0.8)',
-            fontSize: '0.95rem'
-        },
-        contactIcon: {
-            fontSize: '1.1rem',
-            color: '#4facfe'
-        },
-        paymentMethods: {
-            display: 'flex',
-            gap: '10px',
-            flexWrap: 'wrap',
-            marginTop: '15px'
-        },
-        paymentIcon: {
-            fontSize: '2rem',
-            color: 'rgba(255,255,255,0.8)',
-            transition: 'color 0.3s'
-        },
-        appButtons: {
-            display: 'flex',
-            gap: '10px',
-            marginTop: '15px',
-            flexWrap: 'wrap'
-        },
-        appButton: {
-            background: 'rgba(255,255,255,0.1)',
-            padding: '8px 15px',
-            borderRadius: '5px',
+            marginBottom: '12px',
             display: 'flex',
             alignItems: 'center',
             gap: '8px',
-            color: 'white',
-            textDecoration: 'none',
-            fontSize: '0.9rem',
-            transition: 'background 0.3s'
+            color: 'rgba(255,255,255,0.85)',
+            fontSize: '0.95rem',
+        },
+        contactIcon: {
+            fontSize: '1.05rem',
+            color: '#4facfe',
         },
         newsletter: {
-            marginTop: '20px'
+            marginTop: '25px',
         },
         newsletterInput: {
             width: '100%',
-            padding: '12px',
-            border: 'none',
+            padding: '10px',
+            border: '1px solid rgba(255,255,255,0.2)',
             borderRadius: '5px',
             marginBottom: '10px',
-            fontSize: '0.95rem'
+            fontSize: '0.95rem',
+            background: 'rgba(255,255,255,0.08)',
+            color: 'white',
         },
         newsletterButton: {
             width: '100%',
-            padding: '12px',
+            padding: '10px',
             background: '#4facfe',
             color: 'white',
             border: 'none',
@@ -161,73 +100,46 @@ const Footer = () => {
             cursor: 'pointer',
             fontSize: '0.95rem',
             fontWeight: '600',
-            transition: 'background 0.3s'
         },
         bottomBar: {
-            borderTop: '1px solid rgba(255,255,255,0.1)',
-            paddingTop: '20px',
-            marginTop: '40px',
+            borderTop: '1px solid rgba(255,255,255,0.15)',
+            paddingTop: '18px',
+            marginTop: '25px',
             display: 'flex',
             justifyContent: 'space-between',
-            alignItems: 'center',
             flexWrap: 'wrap',
-            gap: '15px'
+            gap: '12px',
         },
         copyright: {
-            color: 'rgba(255,255,255,0.6)',
-            fontSize: '0.9rem'
+            color: 'rgba(255,255,255,0.7)',
+            fontSize: '0.85rem',
         },
         bottomLinks: {
             display: 'flex',
-            gap: '20px',
-            flexWrap: 'wrap'
+            gap: '15px',
+            flexWrap: 'wrap',
         },
         bottomLink: {
-            color: 'rgba(255,255,255,0.6)',
+            color: 'rgba(255,255,255,0.7)',
             textDecoration: 'none',
-            fontSize: '0.9rem',
-            transition: 'color 0.3s'
-        }
+            fontSize: '0.85rem',
+        },
     };
 
     return (
         <footer style={styles.footer}>
             <div style={styles.container}>
-                {/* Main Footer Grid */}
                 <div style={styles.grid}>
-                    {/* Company Info */}
                     <div style={styles.section}>
                         <Link to="/" style={styles.logo}>
                             E-Store
                         </Link>
                         <p style={styles.description}>
-                            Your premier online shopping destination in Ethiopia. 
-                            Discover amazing products at the best prices with fast 
-                            delivery and secure payments.
+                            Your premier online shopping destination in Ethiopia.
+                            Find top products at great prices with fast, secure service.
                         </p>
-                        <div style={styles.socialLinks}>
-                            <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" style={styles.socialIcon}>
-                                <FaFacebook />
-                            </a>
-                            <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" style={styles.socialIcon}>
-                                <FaTwitter />
-                            </a>
-                            <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" style={styles.socialIcon}>
-                                <FaInstagram />
-                            </a>
-                            <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" style={styles.socialIcon}>
-                                <FaLinkedin />
-                            </a>
-                            <a href="https://t.me" target="_blank" rel="noopener noreferrer" style={styles.socialIcon}>
-                                <FaTelegram />
-                            </a>
-                            <a href="https://tiktok.com" target="_blank" rel="noopener noreferrer" style={styles.socialIcon}>
-                                <FaTiktok />
-                            </a>
-                        </div>
                     </div>
 
-                    {/* Quick Links */}
                     <div style={styles.section}>
                         <h3 style={styles.sectionTitle}>Quick Links</h3>
                         <ul style={styles.linkList}>
@@ -243,16 +155,9 @@ const Footer = () => {
                             <li style={styles.linkItem}>
                                 <Link to="/contact" style={styles.link}>Contact Us</Link>
                             </li>
-                            <li style={styles.linkItem}>
-                                <Link to="/faq" style={styles.link}>FAQ</Link>
-                            </li>
-                            <li style={styles.linkItem}>
-                                <Link to="/blog" style={styles.link}>Blog</Link>
-                            </li>
                         </ul>
                     </div>
 
-                    {/* Customer Service */}
                     <div style={styles.section}>
                         <h3 style={styles.sectionTitle}>Customer Service</h3>
                         <ul style={styles.linkList}>
@@ -268,21 +173,14 @@ const Footer = () => {
                             <li style={styles.linkItem}>
                                 <Link to="/privacy" style={styles.link}>Privacy Policy</Link>
                             </li>
-                            <li style={styles.linkItem}>
-                                <Link to="/terms" style={styles.link}>Terms of Service</Link>
-                            </li>
-                            <li style={styles.linkItem}>
-                                <Link to="/sitemap" style={styles.link}>Sitemap</Link>
-                            </li>
                         </ul>
                     </div>
 
-                    {/* Contact & Newsletter */}
                     <div style={styles.section}>
                         <h3 style={styles.sectionTitle}>Contact Us</h3>
                         <div style={styles.contactInfo}>
                             <FaMapMarkerAlt style={styles.contactIcon} />
-                            <span>Addis Ababa, Ethiopia</span>
+                            <span>Bahir Dar, Ethiopia</span>
                         </div>
                         <div style={styles.contactInfo}>
                             <FaPhone style={styles.contactIcon} />
@@ -292,50 +190,24 @@ const Footer = () => {
                             <FaEnvelope style={styles.contactIcon} />
                             <span>support@estore.com</span>
                         </div>
-
-                        {/* Payment Methods */}
-                        <h3 style={{...styles.sectionTitle, marginTop: '20px'}}>Payment Methods</h3>
-                        <div style={styles.paymentMethods}>
-                            <FaCcVisa style={styles.paymentIcon} />
-                            <FaCcMastercard style={styles.paymentIcon} />
-                            <FaCcAmex style={styles.paymentIcon} />
-                            <FaPaypal style={styles.paymentIcon} />
-                            <FaApple style={styles.paymentIcon} />
-                            <FaGooglePay style={styles.paymentIcon} />
-                        </div>
-
-                        {/* Mobile App */}
-                        <h3 style={{...styles.sectionTitle, marginTop: '20px'}}>Download Our App</h3>
-                        <div style={styles.appButtons}>
-                            <a href="#" style={styles.appButton}>
-                                <FaApple /> App Store
-                            </a>
-                            <a href="#" style={styles.appButton}>
-                                <FaGooglePay /> Play Store
-                            </a>
-                        </div>
                     </div>
                 </div>
 
-                {/* Newsletter Subscription */}
                 <div style={styles.newsletter}>
                     <h3 style={styles.sectionTitle}>Subscribe to Our Newsletter</h3>
-                    <p style={{color: 'rgba(255,255,255,0.8)', marginBottom: '15px'}}>
-                        Get the latest updates on new products and upcoming sales
+                    <p style={{ color: 'rgba(255,255,255,0.85)', marginBottom: '12px' }}>
+                        Get updates about new arrivals and exclusive offers.
                     </p>
-                    <div style={{display: 'flex', gap: '10px', maxWidth: '500px'}}>
-                        <input 
-                            type="email" 
-                            placeholder="Your email address" 
+                    <div style={{ display: 'flex', gap: '10px', maxWidth: '500px' }}>
+                        <input
+                            type="email"
+                            placeholder="Your email address"
                             style={styles.newsletterInput}
                         />
-                        <button style={styles.newsletterButton}>
-                            Subscribe
-                        </button>
+                        <button style={styles.newsletterButton}>Subscribe</button>
                     </div>
                 </div>
 
-                {/* Bottom Bar */}
                 <div style={styles.bottomBar}>
                     <div style={styles.copyright}>
                         © {currentYear} E-Store. All rights reserved.
@@ -343,8 +215,6 @@ const Footer = () => {
                     <div style={styles.bottomLinks}>
                         <Link to="/privacy" style={styles.bottomLink}>Privacy Policy</Link>
                         <Link to="/terms" style={styles.bottomLink}>Terms of Service</Link>
-                        <Link to="/cookies" style={styles.bottomLink}>Cookie Policy</Link>
-                        <Link to="/accessibility" style={styles.bottomLink}>Accessibility</Link>
                     </div>
                 </div>
             </div>
