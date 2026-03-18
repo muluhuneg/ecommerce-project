@@ -101,12 +101,18 @@ html, body, #root, .App, .app, .seller-page, .seller-main-content {
   .seller-main-content,
   .main-content,
   .page-container,
-  .page-content {
+  .page-content,
+  .App,
+  #root,
+  body {
     width: 100% !important;
     max-width: 100% !important;
+    min-width: 100% !important;
     min-height: 100vh !important;
     margin: 0 !important;
     padding: 0 !important;
+    overflow-x: hidden !important;
+    box-sizing: border-box !important;
   }
 
   .contentWrapper > *,

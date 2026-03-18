@@ -1027,12 +1027,12 @@ const styles = {
         width: '100%',
         maxWidth: '1200px',
         margin: '0 auto',
-        padding: '0 20px',
+        padding: '0',
         '@media (max-width: 768px)': {
-            padding: '0 15px'
+            padding: '0'
         },
         '@media (max-width: 480px)': {
-            padding: '0 10px'
+            padding: '0'
         }
     },
     
