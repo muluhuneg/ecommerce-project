@@ -53,8 +53,8 @@ const Earnings = () => {
                     <p>Loading...</p>
                 ) : (
                     <>
-                        <div style={styles.statsGrid}>
-                            <div style={styles.statCard}>
+                        <div className="earnings-stats-grid" style={styles.statsGrid}>
+                            <div className="earnings-stat-card" style={styles.statCard}>
                                 <h3>Wallet Balance</h3>
                                 <p style={styles.statValue}>${earnings?.wallet_balance || 0}</p>
                             </div>
@@ -68,9 +68,9 @@ const Earnings = () => {
                             </div>
                         </div>
 
-                        <div style={styles.withdrawSection}>
+                        <div className="earnings-withdraw-section" style={styles.withdrawSection}>
                             <h2>Request Withdrawal</h2>
-                            <div style={styles.withdrawForm}>
+                            <div className="earnings-withdraw-form" style={styles.withdrawForm}>
                                 <input
                                     type="number"
                                     value={withdrawAmount}
@@ -99,10 +99,10 @@ const Earnings = () => {
                                 <tbody>
                                     {transactions.map(t => (
                                         <tr key={t.id}>
-                                            <td>{new Date(t.created_at).toLocaleDateString()}</td>
-                                            <td>{t.type}</td>
-                                            <td>${t.amount}</td>
-                                            <td>
+                                            <td data-label="Date">{new Date(t.created_at).toLocaleDateString()}</td>
+                                            <td data-label="Type">{t.type}</td>
+                                            <td data-label="Amount">${t.amount}</td>
+                                            <td data-label="Status">
                                                 <span style={{
                                                     ...styles.statusBadge,
                                                     backgroundColor: 
@@ -112,7 +112,7 @@ const Earnings = () => {
                                                     {t.status}
                                                 </span>
                                             </td>
-                                            <td>{t.description}</td>
+                                            <td data-label="Description">{t.description}</td>
                                         </tr>
                                     ))}
                                 </tbody>
