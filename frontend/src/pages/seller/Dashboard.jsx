@@ -64,6 +64,15 @@ const Dashboard = () => {
     const [selectedPeriod, setSelectedPeriod] = useState('week');
     const [salesData, setSalesData] = useState(null);
     const [products, setProducts] = useState([]);
+    const [discounts, setDiscounts] = useState([
+        { id: 1, code: 'SAVE10', description: '10% off on orders over 100 Br', expires: 'In 5 days' },
+        { id: 2, code: 'FREESHIP', description: 'Free shipping on next 3 orders', expires: 'In 7 days' }
+    ]);
+    const [reviews, setReviews] = useState([
+        { id: 1, name: 'Amina', rating: 4.8, text: 'Great service, fast shipping.', date: '2026-03-15' },
+        { id: 2, name: 'Bekele', rating: 4.4, text: 'Good quality product.', date: '2026-03-14' },
+        { id: 3, name: 'Sara', rating: 4.9, text: 'Excellent communication and delivery', date: '2026-03-13' }
+    ]);
     const [loadingMore, setLoadingMore] = useState(false);
     const [withdrawError, setWithdrawError] = useState('');
     const [withdrawSuccess, setWithdrawSuccess] = useState('');
@@ -633,6 +642,58 @@ const Dashboard = () => {
                     </div>
                 </div>
 
+                {/* Analytics Snapshot */}
+                <div style={styles.section}>
+                    <h3 style={styles.sectionTitle}>Analytics Snapshot</h3>
+                    <div style={styles.analyticsGrid}>
+                        <div style={styles.analyticsCard}>
+                            <h4>Weekly Sales</h4>
+                            <p style={styles.analyticsValue}>{formatCurrency(salesData?.total_sales || stats?.total_sales)}</p>
+                        </div>
+                        <div style={styles.analyticsCard}>
+                            <h4>Orders This Week</h4>
+                            <p style={styles.analyticsValue}>{salesData?.orders_count || stats?.total_orders}</p>
+                        </div>
+                        <div style={styles.analyticsCard}>
+                            <h4>Returns</h4>
+                            <p style={styles.analyticsValue}>{salesData?.return_count || '0'}</p>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Discounts & Promotions */}
+                <div style={styles.section}>
+                    <h3 style={styles.sectionTitle}>Discounts & Promotions</h3>
+                    <div style={styles.discountList}>
+                        {discounts.map(d => (
+                            <div key={d.id} style={styles.discountCard}>
+                                <div>
+                                    <strong>{d.code}</strong>
+                                    <p>{d.description}</p>
+                                </div>
+                                <span style={styles.discountExpiry}>{d.expires}</span>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+
+                {/* Reviews */}
+                <div style={styles.section}>
+                    <h3 style={styles.sectionTitle}>Latest Reviews</h3>
+                    <div style={styles.reviewList}>
+                        {reviews.map(r => (
+                            <div key={r.id} style={styles.reviewCard}>
+                                <div style={styles.reviewHeader}>
+                                    <strong>{r.name}</strong>
+                                    <span>{r.rating} ★</span>
+                                </div>
+                                <p>{r.text}</p>
+                                <small>{new Date(r.date).toLocaleDateString()}</small>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+
                 {/* Recent Transactions */}
                 <div className="transactionsSection" style={styles.transactionsSection}>
                     <h3>Recent Transactions</h3>
@@ -1197,6 +1258,77 @@ const styles = {
         justifyContent: 'space-between',
         alignItems: 'center',
         marginBottom: '1rem',
+        '@media (max-width: 480px)': {
+            flexDirection: 'column',
+            alignItems: 'flex-start',
+            gap: '0.5rem'
+        }
+    },
+    section: {
+        background: 'white',
+        borderRadius: '10px',
+        boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
+        padding: '1rem',
+        marginBottom: '1.5rem'
+    },
+    sectionTitle: {
+        margin: '0 0 1rem',
+        fontSize: '1.2rem',
+        color: '#333'
+    },
+    analyticsGrid: {
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(170px, 1fr))',
+        gap: '1rem'
+    },
+    analyticsCard: {
+        background: '#f8f9ff',
+        borderRadius: '8px',
+        padding: '1rem',
+        minHeight: '100px',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        boxShadow: '0 1px 3px rgba(0,0,0,0.08)'
+    },
+    analyticsValue: {
+        marginTop: '0.5rem',
+        fontSize: '1.25rem',
+        fontWeight: '700'
+    },
+    discountList: {
+        display: 'grid',
+        gap: '0.75rem'
+    },
+    discountCard: {
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        border: '1px solid #e4e7ec',
+        borderRadius: '8px',
+        padding: '0.75rem',
+        background: '#fbfcff'
+    },
+    discountExpiry: {
+        color: '#666',
+        fontSize: '0.8rem'
+    },
+    reviewList: {
+        display: 'grid',
+        gap: '0.75rem'
+    },
+    reviewCard: {
+        border: '1px solid #e4e7ec',
+        borderRadius: '8px',
+        padding: '0.75rem',
+        background: '#fff'
+    },
+    reviewHeader: {
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginBottom: '0.35rem'
+    }
         '@media (max-width: 480px)': {
             flexDirection: 'column',
             alignItems: 'flex-start',
