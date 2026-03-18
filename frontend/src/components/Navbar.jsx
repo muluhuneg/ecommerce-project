@@ -40,7 +40,7 @@ const Navbar = () => {
     const [isScrolled, setIsScrolled] = useState(false);
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-    const [isDarkMode, setIsDarkMode] = useState(false);
+    const [isDarkMode, setIsDarkMode] = useState(true);
     const [activeLink, setActiveLink] = useState('/');
     const navigate = useNavigate();
     const location = useLocation();
@@ -72,6 +72,14 @@ const Navbar = () => {
 
     // Prevent body scroll when mobile menu is open
     useEffect(() => {
+        if (isDarkMode) {
+            document.body.style.backgroundColor = '#1a1a2e';
+            document.body.style.color = '#f5f5f5';
+        } else {
+            document.body.style.backgroundColor = '#f5f5f5';
+            document.body.style.color = '#1a1a1a';
+        }
+
         if (isMobileMenuOpen) {
             document.body.style.overflow = 'hidden';
             document.body.style.position = 'fixed';
@@ -98,7 +106,7 @@ const Navbar = () => {
             document.body.style.left = 'auto';
             document.body.classList.remove('mobile-menu-open');
         };
-    }, [isMobileMenuOpen]);
+    }, [isMobileMenuOpen, isDarkMode]);
 
     const handleLogout = () => {
         logout();

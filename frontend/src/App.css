@@ -47,21 +47,178 @@ html, body, #root, .App, .app, .seller-page, .seller-main-content {
   padding: 0 !important;
   width: 100vw !important;
   max-width: 100vw !important;
+  min-width: 100vw !important;
   min-height: 100vh !important;
   overflow-x: hidden !important;
+  box-sizing: border-box !important;
 }
 
+.container,
 .contentWrapper,
 .content-wrapper,
 .main-content,
 .page-container,
 .page-content,
+.section,
+.section-header,
 .seller-main-content {
   width: 100% !important;
   max-width: 100% !important;
-  margin: 0 !important;
-  padding: 0 !important;
+  min-width: 100% !important;
+  margin: 0 auto !important;
+  padding: 0 12px !important;
   box-sizing: border-box !important;
+}
+
+/* Universal responsive helper for tables, grids and cards */
+* {
+  box-sizing: border-box !important;
+}
+
+img, video, iframe, svg {
+  max-width: 100% !important;
+  height: auto !important;
+}
+
+table, .table, .ui-table {
+  width: 100% !important;
+  max-width: 100% !important;
+  overflow-x: auto !important;
+  display: block !important;
+  -webkit-overflow-scrolling: touch !important;
+}
+
+@media (max-width: 1024px) {
+  .container,
+  .contentWrapper,
+  .content-wrapper,
+  .main-content,
+  .page-container,
+  .page-content,
+  .section,
+  .section-header,
+  .seller-main-content {
+    padding: 0 10px !important;
+  }
+
+  .hero-section,
+  .features-section,
+  .products-grid,
+  .categories-grid,
+  .brands-grid,
+  .stats-grid,
+  .dashboard-grid,
+  .admin-grid {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 auto !important;
+    overflow-x: hidden !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .container,
+  .contentWrapper,
+  .content-wrapper,
+  .main-content,
+  .page-container,
+  .page-content,
+  .section,
+  .section-header,
+  .seller-main-content {
+    padding: 0 8px !important;
+  }
+
+  .navbar,
+  .App-header,
+  .mobile-menu,
+  .seller-page,
+  .main-content,
+  .page-container {
+    width: 100vw !important;
+    min-width: 100vw !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .desktopNav {
+    display: none !important;
+  }
+
+  .mobileNav {
+    display: flex !important;
+  }
+
+  .products-grid,
+  .categories-grid,
+  .brands-grid,
+  .stats-grid,
+  .dashboard-grid {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    scroll-snap-type: x mandatory !important;
+    gap: 10px !important;
+    padding: 0 8px !important;
+  }
+
+  .products-grid > *,
+  .categories-grid > *,
+  .brands-grid > *,
+  .stats-grid > *,
+  .dashboard-grid > * {
+    flex: 0 0 auto !important;
+    min-width: 180px !important;
+    max-width: 220px !important;
+    scroll-snap-align: start !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .container,
+  .contentWrapper,
+  .content-wrapper,
+  .page-container,
+  .main-content,
+  .page-content,
+  .section,
+  .section-header,
+  .seller-main-content,
+  .navbar,
+  .App-header,
+  .mobile-menu {
+    padding: 0 5px !important;
+    width: 100vw !important;
+    min-width: 100vw !important;
+  }
+
+  .desktopNav,
+  .nav-link,
+  .authButtons,
+  .searchContainer {
+    display: none !important;
+  }
+
+  .mobileNav,
+  .mobileMenu,
+  .mobileMenuOverlay {
+    display: block !important;
+  }
+
+  .mobileNavLink,
+  .mobileAuthButton,
+  .mobileLogoutButton {
+    width: 100% !important;
+    font-size: 0.95rem !important;
+    padding: 0.75rem 1rem !important;
+  }
+
+  .product-card,
+  .category-card,
+  .stat-card {
+    min-width: 140px !important;
+    max-width: 160px !important;
+  }
 }
 
 /* Seller dashboard responsive helpers */
