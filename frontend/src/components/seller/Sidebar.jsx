@@ -27,24 +27,28 @@ const Sidebar = ({ isMobileMenuOpen, setIsMobileMenuOpen }) => {
     const navigate = useNavigate();
     const { user, logout } = useAuth();
     const [isCollapsed, setIsCollapsed] = useState(false);
+    const [internalMobileMenuOpen, setInternalMobileMenuOpen] = useState(false);
+
+    const isMobileOpenEffective = typeof isMobileMenuOpen === 'boolean' ? isMobileMenuOpen : internalMobileMenuOpen;
+    const setMobileMenuOpen = typeof setIsMobileMenuOpen === 'function' ? setIsMobileMenuOpen : setInternalMobileMenuOpen;
 
     // Close sidebar on route change for mobile
     useEffect(() => {
         if (window.innerWidth <= 768) {
-            setIsMobileMenuOpen(false);
+            setMobileMenuOpen(false);
         }
-    }, [location, setIsMobileMenuOpen]);
+    }, [location, setMobileMenuOpen]);
 
     // Handle window resize
     useEffect(() => {
         const handleResize = () => {
             if (window.innerWidth > 768) {
-                setIsMobileMenuOpen(false);
+                setMobileMenuOpen(false);
             }
         };
         window.addEventListener('resize', handleResize);
         return () => window.removeEventListener('resize', handleResize);
-    }, [setIsMobileMenuOpen]);
+    }, [setMobileMenuOpen]);
 
     const handleLogout = () => {
         logout();
@@ -97,7 +101,7 @@ const Sidebar = ({ isMobileMenuOpen, setIsMobileMenuOpen }) => {
             bottom: 0,
             backgroundColor: 'rgba(0, 0, 0, 0.5)',
             zIndex: 999,
-            display: isMobileMenuOpen ? 'block' : 'none',
+            display: isMobileOpenEffective ? 'block' : 'none',
             backdropFilter: 'blur(3px)',
             '@media (min-width: 769px)': {
                 display: 'none'
@@ -119,7 +123,7 @@ const Sidebar = ({ isMobileMenuOpen, setIsMobileMenuOpen }) => {
             boxShadow: '2px 0 10px rgba(0,0,0,0.3)',
             // Mobile styles
             '@media (max-width: 768px)': {
-                transform: isMobileMenuOpen ? 'translateX(0)' : 'translateX(-100%)',
+                transform: isMobileOpenEffective ? 'translateX(0)' : 'translateX(-100%)',
                 width: '280px',
                 boxShadow: '2px 0 20px rgba(0,0,0,0.5)',
             }
@@ -345,13 +349,13 @@ const Sidebar = ({ isMobileMenuOpen, setIsMobileMenuOpen }) => {
             {/* Mobile Menu Button */}
             <button 
                 style={styles.menuButton}
-                onClick={() => setIsMobileMenuOpen(true)}
+                onClick={() => setMobileMenuOpen(true)}
             >
                 <FaBars />
             </button>
 
             {/* Overlay */}
-            <div style={styles.overlay} onClick={() => setIsMobileMenuOpen(false)} />
+            <div style={styles.overlay} onClick={() => setMobileMenuOpen(false)} />
 
             {/* Sidebar */}
             <div style={styles.sidebar}>
@@ -370,7 +374,7 @@ const Sidebar = ({ isMobileMenuOpen, setIsMobileMenuOpen }) => {
                         </button>
                         <button 
                             style={styles.closeBtn}
-                            onClick={() => setIsMobileMenuOpen(false)}
+                            onClick={() => setMobileMenuOpen(false)}
                         >
                             <FaTimes />
                         </button>
@@ -404,7 +408,7 @@ const Sidebar = ({ isMobileMenuOpen, setIsMobileMenuOpen }) => {
                                 }}
                                 onClick={() => {
                                     if (window.innerWidth <= 768) {
-                                        setIsMobileMenuOpen(false);
+                                        setMobileMenuOpen(false);
                                     }
                                 }}
                             >

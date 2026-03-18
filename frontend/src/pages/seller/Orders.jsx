@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import Sidebar from '../../components/seller/Sidebar';
 import sellerApi from '../../services/sellerApi';
 import { 
@@ -28,9 +28,29 @@ const Orders = () => {
         fetchOrders();
     }, []);
 
+    const filterOrders = useCallback(() => {
+        let filtered = [...orders];
+
+        // Filter by status
+        if (statusFilter !== 'all') {
+            filtered = filtered.filter(order => order.status === statusFilter);
+        }
+
+        // Filter by search term
+        if (searchTerm) {
+            filtered = filtered.filter(order => 
+                order.order_number.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                order.customer_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                order.customer_email?.toLowerCase().includes(searchTerm.toLowerCase())
+            );
+        }
+
+        setFilteredOrders(filtered);
+    }, [orders, statusFilter, searchTerm]);
+
     useEffect(() => {
         filterOrders();
-    }, [orders, statusFilter, searchTerm]);
+    }, [filterOrders]);
 
     const fetchOrders = async () => {
         try {
@@ -45,25 +65,7 @@ const Orders = () => {
         }
     };
 
-    const filterOrders = () => {
-        let filtered = [...orders];
-        
-        // Filter by status
-        if (statusFilter !== 'all') {
-            filtered = filtered.filter(order => order.status === statusFilter);
-        }
-        
-        // Filter by search term
-        if (searchTerm) {
-            filtered = filtered.filter(order => 
-                order.order_number.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                order.customer_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                order.customer_email?.toLowerCase().includes(searchTerm.toLowerCase())
-            );
-        }
-        
-        setFilteredOrders(filtered);
-    };
+
 
     const updateStatus = async (orderId, newStatus) => {
         setUpdatingOrderId(orderId);
