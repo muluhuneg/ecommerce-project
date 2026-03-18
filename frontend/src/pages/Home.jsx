@@ -471,7 +471,7 @@ const Home = () => {
                             <p>No categories available yet.</p>
                         </div>
                     ) : (
-                        <div style={styles.categoriesGrid}>
+                        <div style={styles.categoriesGrid} className="categories-grid">
                             {categories.map((category, index) => (
                                 <CategoryCard key={category.id} category={category} index={index} />
                             ))}
@@ -1273,13 +1273,20 @@ const styles = {
             gap: '15px'
         },
         '@media (max-width: 768px)': {
-            gridTemplateColumns: 'repeat(2, 1fr)',
-            gap: '12px'
+            display: 'flex',
+            gridTemplateColumns: 'unset',
+            flexWrap: 'nowrap',
+            overflowX: 'auto',
+            gap: '10px',
+            padding: '0 8px'
         },
         '@media (max-width: 480px)': {
-            gridTemplateColumns: 'repeat(2, 1fr)',
+            display: 'flex',
+            gridTemplateColumns: 'unset',
+            flexWrap: 'nowrap',
+            overflowX: 'auto',
             gap: '8px',
-            padding: '0 5px'
+            padding: '0 7px'
         }
     },
     categoryCard: {
@@ -1298,7 +1305,9 @@ const styles = {
         },
         '@media (max-width: 480px)': {
             height: '130px',
-            maxWidth: '100%',
+            maxWidth: '140px',
+            width: '140px',
+            minWidth: '140px',
             margin: '0'
         },
         '@media (max-width: 360px)': {
