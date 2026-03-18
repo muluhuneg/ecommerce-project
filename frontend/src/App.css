@@ -41,6 +41,28 @@ html, body {
   color: #61dafb;
 }
 
+/* Global edge-gap reset (mobile-first and all pages) */
+html, body, #root, .App, .app, .seller-page, .seller-main-content {
+  margin: 0 !important;
+  padding: 0 !important;
+  width: 100vw !important;
+  max-width: 100vw !important;
+  overflow-x: hidden !important;
+}
+
+.contentWrapper,
+.content-wrapper,
+.main-content,
+.page-container,
+.page-content,
+.seller-main-content {
+  width: 100% !important;
+  max-width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  box-sizing: border-box !important;
+}
+
 /* Seller dashboard responsive helpers */
 .seller-page {
   min-height: 100vh;
@@ -68,6 +90,29 @@ html, body {
 }
 
 @media (max-width: 768px) {
+  /* enforce edge-to-edge layout within mobile viewport, no left/right gap */
+  .contentWrapper,
+  .content-wrapper,
+  .products-grid,
+  .categories-grid,
+  .brands-grid,
+  .features-section,
+  .seller-main-content,
+  .main-content,
+  .page-container,
+  .page-content {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .contentWrapper > *,
+  .content-wrapper > * {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
   .seller-page {
     display: block;
   }
