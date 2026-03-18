@@ -1327,8 +1327,7 @@ const styles = {
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'center',
-        marginBottom: '0.35rem'
-    }
+        marginBottom: '0.35rem',
         '@media (max-width: 480px)': {
             flexDirection: 'column',
             alignItems: 'flex-start',
