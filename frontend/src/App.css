@@ -243,6 +243,27 @@ table, .table, .ui-table {
 /* Admin dashboard responsive helpers */
 .admin-page {
   min-height: 100vh;
+  color: #000 !important;
+}
+
+.admin-page, 
+.admin-page h1,
+.admin-page h2,
+.admin-page h3,
+.admin-page h4,
+.admin-page h5,
+.admin-page h6,
+.admin-page p,
+.admin-page span,
+.admin-page label,
+.admin-page a,
+.admin-page th,
+.admin-page td,
+.admin-page button,
+.admin-page input,
+.admin-page textarea,
+.admin-page select {
+  color: #000 !important;
 }
 
 .admin-page .admin-main-content {

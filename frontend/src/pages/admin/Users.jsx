@@ -53,7 +53,7 @@ const Users = () => {
         mainContent: {
             flex: 1,
             marginLeft: '0',
-            padding: '2rem',
+            padding: '0',
             transition: 'margin-left 0.3s ease'
         },
         header: {

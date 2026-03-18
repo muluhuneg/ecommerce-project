@@ -178,7 +178,7 @@ const Categories = () => {
         mainContent: {
             flex: 1,
             marginLeft: '0',
-            padding: '2rem'
+            padding: '0'
         },
         header: {
             display: 'flex',

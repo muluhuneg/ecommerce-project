@@ -46,7 +46,7 @@ const Sellers = () => {
         mainContent: {
             flex: 1,
             marginLeft: '0',
-            padding: '2rem'
+            padding: '0'
         },
         header: {
             marginBottom: '2rem'

@@ -330,7 +330,7 @@ const styles = {
     mainContent: {
         flex: 1,
         marginLeft: '0',
-        padding: '2rem',
+        padding: '0',
         transition: 'all 0.3s ease'
     },
     title: {
