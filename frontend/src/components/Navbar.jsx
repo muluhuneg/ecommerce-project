@@ -212,7 +212,11 @@ const Navbar = () => {
         navbar: {
             position: 'sticky',
             top: 0,
+            left: 0,
+            right: 0,
+            width: '100%',
             zIndex: 1000,
+            minHeight: '60px',
             background: isScrolled 
                 ? 'linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)'
                 : 'linear-gradient(135deg, #667eea 0%, #764ba2 30%, #ff6b6b 70%, #ffd93d 100%)',
@@ -223,8 +227,10 @@ const Navbar = () => {
             transition: 'all 0.4s ease',
             borderBottom: '2px solid rgba(255,255,255,0.2)',
             backdropFilter: 'blur(10px)',
-            '@media (max-width: 768px)': {
-                padding: isScrolled ? '0.6rem 1rem' : '1rem 1rem',
+            display: 'block',
+            '@media (max-width: 1023px)': {
+                padding: isScrolled ? '0.6rem 0.8rem' : '0.9rem 0.8rem',
+                minHeight: '70px',
             }
         },
         container: {
@@ -395,7 +401,8 @@ const Navbar = () => {
             position: 'fixed',
             top: 0,
             left: 0,
-            width: '300px',
+            width: '100vw',
+            maxWidth: '100vw',
             height: '100vh',
             background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)',
             zIndex: 999999,
@@ -404,6 +411,7 @@ const Navbar = () => {
             boxShadow: '2px 0 20px rgba(0,0,0,0.5)',
             overflowY: 'auto',
             WebkitOverflowScrolling: 'touch',
+            paddingBottom: '20px',
         },
         mobileMenuContent: {
             display: 'flex',
