@@ -17,6 +17,7 @@ import {
 import { Link } from 'react-router-dom';
 
 const AdminDashboard = () => {
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [stats, setStats] = useState({
         total_orders: 0,
         pending_orders: 0,
@@ -134,7 +135,10 @@ const AdminDashboard = () => {
 
     return (
         <div style={styles.container}>
-            <AdminSidebar />
+            <AdminSidebar isMobileMenuOpen={isMobileMenuOpen} setIsMobileMenuOpen={setIsMobileMenuOpen} />
+            <button style={styles.menuButton} onClick={() => setIsMobileMenuOpen(true)}>
+                ☰
+            </button>
             <div style={styles.mainContent}>
                 <h1 style={styles.title}>Admin Dashboard</h1>
 
@@ -302,13 +306,32 @@ const AdminDashboard = () => {
 const styles = {
     container: {
         display: 'flex',
+        position: 'relative',
         backgroundColor: '#f5f5f5',
-        minHeight: '100vh'
+        minHeight: '100vh',
+        overflowX: 'hidden'
+    },
+    menuButton: {
+        position: 'fixed',
+        top: '15px',
+        left: '15px',
+        zIndex: 1170,
+        background: 'linear-gradient(135deg, #3498db 0%, #2980b9 100%)',
+        border: 'none',
+        color: 'white',
+        width: '45px',
+        height: '45px',
+        borderRadius: '8px',
+        cursor: 'pointer',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center'
     },
     mainContent: {
         flex: 1,
-        marginLeft: '280px',
-        padding: '2rem'
+        marginLeft: '0',
+        padding: '2rem',
+        transition: 'all 0.3s ease'
     },
     title: {
         fontSize: '2rem',

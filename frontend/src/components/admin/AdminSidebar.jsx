@@ -13,9 +13,11 @@ import {
 } from 'react-icons/fa';
 import { useAuth } from '../../context/AuthContext';
 
-const AdminSidebar = () => {
+const AdminSidebar = ({ isMobileMenuOpen, setIsMobileMenuOpen }) => {
     const { user, logout } = useAuth();
     const navigate = useNavigate();
+    const menuOpen = typeof isMobileMenuOpen === 'boolean' ? isMobileMenuOpen : true;
+    const canToggleMenu = typeof setIsMobileMenuOpen === 'function';
 
     const handleLogout = () => {
         logout();
@@ -34,6 +36,17 @@ const AdminSidebar = () => {
     ];
 
     const styles = {
+        overlay: {
+            display: menuOpen ? 'block' : 'none',
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: 'rgba(0,0,0,0.5)',
+            zIndex: 1150,
+            transition: 'opacity 0.3s ease'
+        },
         sidebar: {
             width: '280px',
             height: '100vh',
@@ -42,9 +55,12 @@ const AdminSidebar = () => {
             position: 'fixed',
             left: 0,
             top: 0,
+            transform: menuOpen ? 'translateX(0)' : 'translateX(-100%)',
+            transition: 'transform 0.3s ease',
             display: 'flex',
             flexDirection: 'column',
-            overflowY: 'auto'
+            overflowY: 'auto',
+            zIndex: 1160
         },
         logo: {
             padding: '1.5rem',
@@ -122,8 +138,26 @@ const AdminSidebar = () => {
 
     return (
         <div style={styles.sidebar}>
+            {canToggleMenu && <div style={styles.overlay} onClick={() => setIsMobileMenuOpen(false)} />}
             <div style={styles.logo}>
-                <h2 style={styles.logoText}>Admin Panel</h2>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <h2 style={styles.logoText}>Admin Panel</h2>
+                    {canToggleMenu && (
+                        <button
+                            onClick={() => setIsMobileMenuOpen(false)}
+                            style={{
+                                background: 'transparent',
+                                border: 'none',
+                                color: 'white',
+                                fontSize: '1.2rem',
+                                cursor: 'pointer'
+                            }}
+                            aria-label="Close menu"
+                        >
+                            ✕
+                        </button>
+                    )}
+                </div>
             </div>
             
             <div style={styles.adminInfo}>
