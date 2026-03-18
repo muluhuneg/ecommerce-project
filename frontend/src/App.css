@@ -173,12 +173,33 @@ html, body, #root, .App, .app, .seller-page, .seller-main-content {
   .seller-page .statsRow {
     grid-template-columns: 1fr !important;
     gap: 0.75rem !important;
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    width: 100% !important;
+    min-width: 100% !important;
+    -webkit-overflow-scrolling: touch !important;
+    scroll-snap-type: x mandatory !important;
+  }
+
+  .seller-page .statsGrid > div,
+  .seller-page .statsRow > div {
+    min-width: 220px !important;
+    flex: 0 0 auto !important;
+    scroll-snap-align: start !important;
   }
 
   .seller-page .header,
   .seller-page .storeBadge,
   .seller-page .historyButton {
     width: 100% !important;
+  }
+
+  .seller-page .tableContainer {
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    width: 100% !important;
+    min-width: 100% !important;
   }
 
   /* Earnings page specific */

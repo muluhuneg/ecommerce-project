@@ -519,7 +519,7 @@ const Dashboard = () => {
                 </div>
 
                 {/* Stats Grid */}
-                <div style={styles.statsGrid}>
+                <div className="statsGrid" style={styles.statsGrid}>
                     <StatCard
                         icon={<FaBox size={24} />}
                         title="Total Products"
@@ -551,7 +551,7 @@ const Dashboard = () => {
                 </div>
 
                 {/* Earnings & Quick Actions */}
-                <div style={styles.statsRow}>
+                <div className="statsRow" style={styles.statsRow}>
                     <div style={styles.statsCard}>
                         <div style={styles.cardHeader}>
                             <h3>Earnings Overview</h3>
@@ -634,7 +634,7 @@ const Dashboard = () => {
                 </div>
 
                 {/* Recent Transactions */}
-                <div style={styles.transactionsSection}>
+                <div className="transactionsSection" style={styles.transactionsSection}>
                     <h3>Recent Transactions</h3>
                     <div style={styles.transactionsList}>
                         {transactionHistory.length === 0 ? (
@@ -648,7 +648,7 @@ const Dashboard = () => {
                 </div>
 
                 {/* Recent Orders */}
-                <div style={styles.recentOrders}>
+                <div className="recentOrders" style={styles.recentOrders}>
                     <div style={styles.sectionHeader}>
                         <h2>Recent Orders</h2>
                         <a href="/seller/orders" style={styles.viewAllLink}>View All →</a>
@@ -659,7 +659,7 @@ const Dashboard = () => {
                             <p>No orders yet</p>
                         </div>
                     ) : (
-                        <div style={styles.tableContainer}>
+                        <div className="tableContainer" style={styles.tableContainer}>
                             <table style={styles.table}>
                                 <thead>
                                     <tr>
@@ -915,8 +915,13 @@ const styles = {
             gap: '0.8rem'
         },
         '@media (max-width: 480px)': {
-            gridTemplateColumns: '1fr',
-            gap: '0.8rem'
+            display: 'flex',
+            flexWrap: 'nowrap',
+            overflowX: 'auto',
+            padding: '0.3rem 0',
+            gap: '0.8rem',
+            minWidth: '100vw',
+            width: '100%'
         }
     },
     statCard: {
