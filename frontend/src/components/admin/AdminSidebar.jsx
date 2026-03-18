@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { 
     FaTachometerAlt, 
@@ -13,11 +13,23 @@ import {
 } from 'react-icons/fa';
 import { useAuth } from '../../context/AuthContext';
 
-const AdminSidebar = ({ isMobileMenuOpen, setIsMobileMenuOpen }) => {
+const AdminSidebar = () => {
     const { user, logout } = useAuth();
     const navigate = useNavigate();
-    const menuOpen = typeof isMobileMenuOpen === 'boolean' ? isMobileMenuOpen : true;
-    const canToggleMenu = typeof setIsMobileMenuOpen === 'function';
+    const [isOpen, setIsOpen] = useState(window.innerWidth > 768);
+
+    useEffect(() => {
+        const handleResize = () => {
+            if (window.innerWidth > 768) {
+                setIsOpen(true);
+            }
+        };
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
+
+    const menuOpen = isOpen;
+    const toggleMenu = () => setIsOpen(prev => !prev);
 
     const handleLogout = () => {
         logout();
@@ -37,7 +49,7 @@ const AdminSidebar = ({ isMobileMenuOpen, setIsMobileMenuOpen }) => {
 
     const styles = {
         overlay: {
-            display: menuOpen ? 'block' : 'none',
+            display: menuOpen && window.innerWidth <= 768 ? 'block' : 'none',
             position: 'fixed',
             top: 0,
             left: 0,
@@ -60,7 +72,12 @@ const AdminSidebar = ({ isMobileMenuOpen, setIsMobileMenuOpen }) => {
             display: 'flex',
             flexDirection: 'column',
             overflowY: 'auto',
-            zIndex: 1160
+            zIndex: 1160,
+            '@media (min-width: 769px)': {
+                transform: 'translateX(0)',
+                position: 'relative',
+                width: '280px'
+            }
         },
         logo: {
             padding: '1.5rem',
@@ -90,6 +107,27 @@ const AdminSidebar = ({ isMobileMenuOpen, setIsMobileMenuOpen }) => {
             justifyContent: 'center',
             fontSize: '1.5rem',
             fontWeight: 'bold'
+        },
+        menuBtnWrapper: {
+            position: 'fixed',
+            top: '15px',
+            left: '15px',
+            zIndex: 1170,
+            '@media (min-width: 769px)': {
+                display: 'none'
+            }
+        },
+        menuToggleButton: {
+            background: 'linear-gradient(135deg, #3498db 0%, #2980b9 100%)',
+            border: 'none',
+            color: 'white',
+            width: '45px',
+            height: '45px',
+            borderRadius: '8px',
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center'
         },
         adminDetails: {
             flex: 1
@@ -135,16 +173,19 @@ const AdminSidebar = ({ isMobileMenuOpen, setIsMobileMenuOpen }) => {
             transition: 'all 0.3s'
         }
     };
-
     return (
-        <div style={styles.sidebar}>
-            {canToggleMenu && <div style={styles.overlay} onClick={() => setIsMobileMenuOpen(false)} />}
-            <div style={styles.logo}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <h2 style={styles.logoText}>Admin Panel</h2>
-                    {canToggleMenu && (
+        <div>
+            <div style={styles.menuBtnWrapper}>
+                <button style={styles.menuToggleButton} onClick={toggleMenu}>☰</button>
+            </div>
+            <div style={styles.overlay} onClick={() => setIsOpen(false)} />
+
+            <div style={styles.sidebar}>
+                <div style={styles.logo}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <h2 style={styles.logoText}>Admin Panel</h2>
                         <button
-                            onClick={() => setIsMobileMenuOpen(false)}
+                            onClick={() => setIsOpen(false)}
                             style={{
                                 background: 'transparent',
                                 border: 'none',
@@ -156,40 +197,40 @@ const AdminSidebar = ({ isMobileMenuOpen, setIsMobileMenuOpen }) => {
                         >
                             ✕
                         </button>
-                    )}
+                    </div>
                 </div>
-            </div>
-            
-            <div style={styles.adminInfo}>
-                <div style={styles.avatar}>
-                    {user?.name?.charAt(0).toUpperCase()}
-                </div>
-                <div style={styles.adminDetails}>
-                    <h4 style={styles.adminName}>{user?.name}</h4>
-                    <p style={styles.adminRole}>Administrator</p>
-                </div>
-            </div>
 
-            <nav style={styles.nav}>
-                {menuItems.map((item, index) => (
-                    <NavLink
-                        key={index}
-                        to={item.path}
-                        style={({ isActive }) => ({
-                            ...styles.navLink,
-                            backgroundColor: isActive ? '#3498db' : 'transparent',
-                        })}
-                    >
-                        <span style={styles.icon}>{item.icon}</span>
-                        {item.label}
-                    </NavLink>
-                ))}
-            </nav>
+                <div style={styles.adminInfo}>
+                    <div style={styles.avatar}>
+                        {user?.name?.charAt(0).toUpperCase()}
+                    </div>
+                    <div style={styles.adminDetails}>
+                        <h4 style={styles.adminName}>{user?.name}</h4>
+                        <p style={styles.adminRole}>Administrator</p>
+                    </div>
+                </div>
 
-            <button onClick={handleLogout} style={styles.logoutButton}>
-                <FaSignOutAlt style={styles.icon} />
-                Logout
-            </button>
+                <nav style={styles.nav}>
+                    {menuItems.map((item, index) => (
+                        <NavLink
+                            key={index}
+                            to={item.path}
+                            style={({ isActive }) => ({
+                                ...styles.navLink,
+                                backgroundColor: isActive ? '#3498db' : 'transparent'
+                            })}
+                        >
+                            <span style={styles.icon}>{item.icon}</span>
+                            {item.label}
+                        </NavLink>
+                    ))}
+                </nav>
+
+                <button onClick={handleLogout} style={styles.logoutButton}>
+                    <FaSignOutAlt style={styles.icon} />
+                    Logout
+                </button>
+            </div>
         </div>
     );
 };
