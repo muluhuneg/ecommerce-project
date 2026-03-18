@@ -57,8 +57,8 @@ const AdminReports = () => {
         },
         mainContent: {
             flex: 1,
-            marginLeft: '280px',
-            padding: '2rem'
+            marginLeft: '0',
+            padding: '1rem'
         },
         header: {
             display: 'flex',

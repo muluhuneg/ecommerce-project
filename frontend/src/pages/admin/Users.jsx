@@ -52,7 +52,7 @@ const Users = () => {
         },
         mainContent: {
             flex: 1,
-            marginLeft: isDesktop ? '280px' : '0',
+            marginLeft: '0',
             padding: '2rem',
             transition: 'margin-left 0.3s ease'
         },
