@@ -55,9 +55,9 @@ const EditProduct = () => {
     };
 
     return (
-        <div className="seller-page" style={{ display: 'flex' }}>
+        <div className="seller-page" style={{ display: 'flex', flexWrap: 'wrap', overflowX: 'hidden' }}>
             <Sidebar />
-            <div className="seller-main-content" style={{ marginLeft: '280px', padding: '2rem', flex: 1 }}>
+            <div className="seller-main-content" style={{ marginLeft: '0', padding: '2rem', flex: 1, minWidth: 0 }}>
                 <h1>Edit Product</h1>
                 <form onSubmit={handleSubmit} style={styles.form}>
                     {/* Same form as AddProduct */}

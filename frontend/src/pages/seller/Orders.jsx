@@ -367,7 +367,7 @@ const Orders = () => {
 
 const styles = {
     mainContent: {
-        marginLeft: '280px',
+        marginLeft: '0',
         padding: '2rem',
         flex: 1,
         minHeight: '100vh',

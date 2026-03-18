@@ -238,16 +238,18 @@ const Products = () => {
 const styles = {
     container: {
         display: 'flex',
+        flexWrap: 'wrap',
         backgroundColor: '#f8f9fa',
-        minHeight: '100vh'
+        minHeight: '100vh',
+        overflowX: 'hidden'
     },
     mainContent: {
-        marginLeft: '280px',
+        marginLeft: '0',
         padding: '2rem',
         flex: 1,
         minHeight: '100vh',
         backgroundColor: '#f8f9fa',
-        transition: 'margin-left 0.3s ease',
+        transition: 'all 0.3s ease',
         '@media (max-width: 1024px)': {
             marginLeft: '250px',
             padding: '1.5rem'

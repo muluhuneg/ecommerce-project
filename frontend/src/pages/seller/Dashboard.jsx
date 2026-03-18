@@ -748,20 +748,21 @@ const Dashboard = () => {
 const styles = {
     container: {
         display: 'flex',
+        flexWrap: 'wrap',
         backgroundColor: '#f8f9fa',
         minHeight: '100vh',
         position: 'relative',
+        overflowX: 'hidden',
         '@media (max-width: 768px)': {
             flexDirection: 'column'
         }
     },
     mainContent: {
         flex: 1,
-        marginLeft: '280px',
+        marginLeft: '0',
         padding: '2rem',
-        transition: 'margin-left 0.3s ease',
+        transition: 'all 0.3s ease',
         '@media (max-width: 1024px)': {
-            marginLeft: '250px',
             padding: '1.5rem'
         },
         '@media (max-width: 768px)': {

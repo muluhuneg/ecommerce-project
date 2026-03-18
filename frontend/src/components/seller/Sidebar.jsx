@@ -110,10 +110,10 @@ const Sidebar = ({ isMobileMenuOpen, setIsMobileMenuOpen }) => {
         // Sidebar Container
         sidebar: {
             width: isCollapsed ? '80px' : '280px',
-            height: '100vh',
+            minHeight: '100vh',
             background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)',
             color: 'white',
-            position: 'fixed',
+            position: 'relative',
             left: 0,
             top: 0,
             transition: 'width 0.3s ease, transform 0.3s ease',
@@ -123,6 +123,7 @@ const Sidebar = ({ isMobileMenuOpen, setIsMobileMenuOpen }) => {
             boxShadow: '2px 0 10px rgba(0,0,0,0.3)',
             // Mobile styles
             '@media (max-width: 768px)': {
+                position: 'fixed',
                 transform: isMobileOpenEffective ? 'translateX(0)' : 'translateX(-100%)',
                 width: '280px',
                 boxShadow: '2px 0 20px rgba(0,0,0,0.5)',

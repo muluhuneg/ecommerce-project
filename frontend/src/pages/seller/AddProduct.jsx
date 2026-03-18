@@ -314,12 +314,14 @@ const AddProduct = () => {
     const styles = {
         container: {
             display: 'flex',
+            flexWrap: 'wrap',
             backgroundColor: '#f8f9fa',
-            minHeight: '100vh'
+            minHeight: '100vh',
+            overflowX: 'hidden'
         },
         mainContent: {
             flex: 1,
-            marginLeft: '280px',
+            marginLeft: '0',
             padding: '2rem'
         },
         header: {
