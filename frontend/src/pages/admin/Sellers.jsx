@@ -170,9 +170,9 @@ const Sellers = () => {
 
     if (loading) {
         return (
-            <div style={styles.container}>
+            <div className="admin-page" style={styles.container}>
                 <AdminSidebar />
-                <div style={styles.mainContent}>
+                <div className="admin-main-content" style={styles.mainContent}>
                     <div style={styles.loadingContainer}>
                         <div style={styles.spinner}></div>
                     </div>
@@ -182,9 +182,9 @@ const Sellers = () => {
     }
 
     return (
-        <div style={styles.container}>
+        <div className="admin-page" style={styles.container}>
             <AdminSidebar />
-            <div style={styles.mainContent}>
+            <div className="admin-main-content" style={styles.mainContent}>
                 <div style={styles.header}>
                     <h1>Seller Management</h1>
                 </div>

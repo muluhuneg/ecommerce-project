@@ -134,12 +134,12 @@ const AdminDashboard = () => {
     }
 
     return (
-        <div style={styles.container}>
+        <div className="admin-page" style={styles.container}>
             <AdminSidebar isMobileMenuOpen={isMobileMenuOpen} setIsMobileMenuOpen={setIsMobileMenuOpen} />
             <button style={styles.menuButton} onClick={() => setIsMobileMenuOpen(true)}>
                 ☰
             </button>
-            <div style={styles.mainContent}>
+            <div className="admin-main-content" style={styles.mainContent}>
                 <h1 style={styles.title}>Admin Dashboard</h1>
 
                 {/* Stats Grid */}

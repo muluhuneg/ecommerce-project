@@ -240,6 +240,25 @@ table, .table, .ui-table {
   background: #f5f6fa;
 }
 
+/* Admin dashboard responsive helpers */
+.admin-page {
+  min-height: 100vh;
+}
+
+.admin-page .admin-main-content {
+  margin-left: 280px !important;
+  transition: margin-left 0.3s ease, padding 0.3s ease;
+}
+
+.admin-page table {
+  width: 100% !important;
+  border-collapse: collapse;
+}
+
+.admin-page thead {
+  background: #f5f6fa;
+}
+
 @media (max-width: 1024px) {
   .seller-page .seller-main-content {
     margin-left: 250px !important;
@@ -278,16 +297,19 @@ table, .table, .ui-table {
     max-width: 100% !important;
   }
 
-  .seller-page {
+  .seller-page,
+  .admin-page {
     display: block;
   }
 
-  .seller-page .seller-main-content {
+  .seller-page .seller-main-content,
+  .admin-page .admin-main-content {
     margin-left: 0 !important;
     padding: 1rem !important;
   }
 
-  .seller-page table {
+  .seller-page table,
+  .admin-page table {
     display: block !important;
     min-width: 100% !important;
     overflow-x: auto !important;
@@ -297,7 +319,8 @@ table, .table, .ui-table {
     display: none !important;
   }
 
-  .seller-page tbody tr {
+  .seller-page tbody tr,
+  .admin-page tbody tr {
     display: block !important;
     margin-bottom: 1rem;
     border: 1px solid #e5e7eb;
@@ -305,14 +328,16 @@ table, .table, .ui-table {
     padding: 0.75rem;
   }
 
-  .seller-page td {
+  .seller-page td,
+  .admin-page td {
     display: flex !important;
     justify-content: space-between !important;
     padding: 0.5rem 0 !important;
     border: 0 !important;
   }
 
-  .seller-page td::before {
+  .seller-page td::before,
+  .admin-page td::before {
     content: attr(data-label);
     flex: 1;
     font-weight: 600;
@@ -322,12 +347,15 @@ table, .table, .ui-table {
 }
 
 @media (max-width: 480px) {
-  .seller-page .seller-main-content {
+  .seller-page .seller-main-content,
+  .admin-page .admin-main-content {
     padding: 0.8rem !important;
   }
 
   .seller-page .statsGrid,
-  .seller-page .statsRow {
+  .seller-page .statsRow,
+  .admin-page .statsGrid,
+  .admin-page .statsRow {
     grid-template-columns: 1fr !important;
     gap: 0.75rem !important;
     display: flex !important;

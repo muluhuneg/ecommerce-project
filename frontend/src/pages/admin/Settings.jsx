@@ -179,9 +179,9 @@ const AdminSettings = () => {
 
     if (loading) {
         return (
-            <div style={styles.container}>
+            <div className="admin-page" style={styles.container}>
                 <AdminSidebar />
-                <div style={styles.mainContent}>
+                <div className="admin-main-content" style={styles.mainContent}>
                     <div style={styles.loadingContainer}>
                         <div style={styles.spinner}></div>
                     </div>
@@ -191,9 +191,9 @@ const AdminSettings = () => {
     }
 
     return (
-        <div style={styles.container}>
+        <div className="admin-page" style={styles.container}>
             <AdminSidebar />
-            <div style={styles.mainContent}>
+            <div className="admin-main-content" style={styles.mainContent}>
                 <div style={styles.header}>
                     <h1 style={styles.title}>Settings</h1>
                     <button style={styles.saveButton} onClick={handleSave}>

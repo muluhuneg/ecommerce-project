@@ -199,9 +199,9 @@ const Users = () => {
 
     if (loading) {
         return (
-            <div style={styles.container}>
+            <div className="admin-page" style={styles.container}>
                 <AdminSidebar />
-                <div style={styles.mainContent}>
+                <div className="admin-main-content" style={styles.mainContent}>
                     <div style={styles.loadingContainer}>
                         <div style={styles.spinner}></div>
                     </div>
@@ -211,14 +211,14 @@ const Users = () => {
     }
 
     return (
-        <div style={styles.container}>
+        <div className="admin-page" style={styles.container}>
             <AdminSidebar isMobileMenuOpen={isMobileMenuOpen} setIsMobileMenuOpen={setIsMobileMenuOpen} />
             {!isDesktop && (
                 <button style={styles.menuButton} onClick={() => setIsMobileMenuOpen(true)}>
                     ☰
                 </button>
             )}
-            <div style={styles.mainContent}>
+            <div className="admin-main-content" style={styles.mainContent}>
                 <div style={styles.header}>
                     <h1 style={styles.title}>User Management</h1>
                     <p>Total Users: {users.length}</p>
