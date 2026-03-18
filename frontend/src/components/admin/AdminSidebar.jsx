@@ -13,7 +13,7 @@ import {
 } from 'react-icons/fa';
 import { useAuth } from '../../context/AuthContext';
 
-const AdminSidebar = () => {
+const AdminSidebar = ({ isMobileMenuOpen, setIsMobileMenuOpen }) => {
     const { user, logout } = useAuth();
     const navigate = useNavigate();
     const [isOpen, setIsOpen] = useState(window.innerWidth > 768);
@@ -22,14 +22,34 @@ const AdminSidebar = () => {
         const handleResize = () => {
             if (window.innerWidth > 768) {
                 setIsOpen(true);
+                if (setIsMobileMenuOpen) setIsMobileMenuOpen(true);
+            } else {
+                setIsOpen(false);
+                if (setIsMobileMenuOpen) setIsMobileMenuOpen(false);
             }
         };
         window.addEventListener('resize', handleResize);
+        handleResize();
         return () => window.removeEventListener('resize', handleResize);
-    }, []);
+    }, [setIsMobileMenuOpen]);
 
-    const menuOpen = isOpen;
-    const toggleMenu = () => setIsOpen(prev => !prev);
+    const menuOpen = typeof isMobileMenuOpen === 'boolean' ? isMobileMenuOpen : isOpen;
+
+    const toggleMenu = () => {
+        if (typeof setIsMobileMenuOpen === 'function') {
+            setIsMobileMenuOpen(!menuOpen);
+        } else {
+            setIsOpen(prev => !prev);
+        }
+    };
+
+    const closeMenu = () => {
+        if (typeof setIsMobileMenuOpen === 'function') {
+            setIsMobileMenuOpen(false);
+        } else {
+            setIsOpen(false);
+        }
+    };
 
     const handleLogout = () => {
         logout();
@@ -178,14 +198,14 @@ const AdminSidebar = () => {
             <div style={styles.menuBtnWrapper}>
                 <button style={styles.menuToggleButton} onClick={toggleMenu}>☰</button>
             </div>
-            <div style={styles.overlay} onClick={() => setIsOpen(false)} />
+            <div style={styles.overlay} onClick={closeMenu} />
 
             <div style={styles.sidebar}>
                 <div style={styles.logo}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                         <h2 style={styles.logoText}>Admin Panel</h2>
                         <button
-                            onClick={() => setIsOpen(false)}
+                            onClick={closeMenu}
                             style={{
                                 background: 'transparent',
                                 border: 'none',

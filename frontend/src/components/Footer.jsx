@@ -135,7 +135,7 @@ const Footer = () => {
                             E-Store
                         </Link>
                         <p style={styles.description}>
-                            Your premier online shopping destination in Ethiopia.
+                             online shopping destination in Ethiopia.
                             Find top products at great prices with fast, secure service.
                         </p>
                     </div>
@@ -149,33 +149,12 @@ const Footer = () => {
                             <li style={styles.linkItem}>
                                 <Link to="/products" style={styles.link}>Products</Link>
                             </li>
-                            <li style={styles.linkItem}>
-                                <Link to="/about" style={styles.link}>About Us</Link>
-                            </li>
-                            <li style={styles.linkItem}>
-                                <Link to="/contact" style={styles.link}>Contact Us</Link>
-                            </li>
+                           
+                            
                         </ul>
                     </div>
 
-                    <div style={styles.section}>
-                        <h3 style={styles.sectionTitle}>Customer Service</h3>
-                        <ul style={styles.linkList}>
-                            <li style={styles.linkItem}>
-                                <Link to="/track-order" style={styles.link}>Track Order</Link>
-                            </li>
-                            <li style={styles.linkItem}>
-                                <Link to="/returns" style={styles.link}>Returns & Exchanges</Link>
-                            </li>
-                            <li style={styles.linkItem}>
-                                <Link to="/shipping" style={styles.link}>Shipping Info</Link>
-                            </li>
-                            <li style={styles.linkItem}>
-                                <Link to="/privacy" style={styles.link}>Privacy Policy</Link>
-                            </li>
-                        </ul>
-                    </div>
-
+                    
                     <div style={styles.section}>
                         <h3 style={styles.sectionTitle}>Contact Us</h3>
                         <div style={styles.contactInfo}>
@@ -184,7 +163,7 @@ const Footer = () => {
                         </div>
                         <div style={styles.contactInfo}>
                             <FaPhone style={styles.contactIcon} />
-                            <span>+251 912 345 678</span>
+                            <span>+251 924 473 940</span>
                         </div>
                         <div style={styles.contactInfo}>
                             <FaEnvelope style={styles.contactIcon} />
@@ -211,10 +190,6 @@ const Footer = () => {
                 <div style={styles.bottomBar}>
                     <div style={styles.copyright}>
                         © {currentYear} E-Store. All rights reserved.
-                    </div>
-                    <div style={styles.bottomLinks}>
-                        <Link to="/privacy" style={styles.bottomLink}>Privacy Policy</Link>
-                        <Link to="/terms" style={styles.bottomLink}>Terms of Service</Link>
                     </div>
                 </div>
             </div>
