@@ -16,38 +16,41 @@ import { useAuth } from '../../context/AuthContext';
 const AdminSidebar = ({ isMobileMenuOpen, setIsMobileMenuOpen }) => {
     const { user, logout } = useAuth();
     const navigate = useNavigate();
-    const [isOpen, setIsOpen] = useState(window.innerWidth > 768);
+    const [localSidebarOpen, setLocalSidebarOpen] = useState(window.innerWidth > 768);
+    const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 
     useEffect(() => {
         const handleResize = () => {
+            setWindowWidth(window.innerWidth);
             if (window.innerWidth > 768) {
-                setIsOpen(true);
-                if (setIsMobileMenuOpen) setIsMobileMenuOpen(true);
+                setLocalSidebarOpen(true);
+                setIsMobileMenuOpen?.(true);
             } else {
-                setIsOpen(false);
-                if (setIsMobileMenuOpen) setIsMobileMenuOpen(false);
+                setLocalSidebarOpen(false);
+                setIsMobileMenuOpen?.(false);
             }
         };
+
         window.addEventListener('resize', handleResize);
         handleResize();
+
         return () => window.removeEventListener('resize', handleResize);
     }, [setIsMobileMenuOpen]);
 
-    const menuOpen = typeof isMobileMenuOpen === 'boolean' ? isMobileMenuOpen : isOpen;
+    const isDesktop = windowWidth > 768;
+    const menuOpen = isDesktop || isMobileMenuOpen || localSidebarOpen;
 
     const toggleMenu = () => {
-        if (typeof setIsMobileMenuOpen === 'function') {
-            setIsMobileMenuOpen(!menuOpen);
-        } else {
-            setIsOpen(prev => !prev);
+        if (!isDesktop) {
+            setIsMobileMenuOpen?.(!menuOpen);
+            setLocalSidebarOpen(prev => !prev);
         }
     };
 
     const closeMenu = () => {
-        if (typeof setIsMobileMenuOpen === 'function') {
-            setIsMobileMenuOpen(false);
-        } else {
-            setIsOpen(false);
+        if (!isDesktop) {
+            setIsMobileMenuOpen?.(false);
+            setLocalSidebarOpen(false);
         }
     };
 
@@ -69,7 +72,7 @@ const AdminSidebar = ({ isMobileMenuOpen, setIsMobileMenuOpen }) => {
 
     const styles = {
         overlay: {
-            display: menuOpen && window.innerWidth <= 768 ? 'block' : 'none',
+            display: menuOpen && !isDesktop ? 'block' : 'none',
             position: 'fixed',
             top: 0,
             left: 0,
@@ -84,7 +87,7 @@ const AdminSidebar = ({ isMobileMenuOpen, setIsMobileMenuOpen }) => {
             height: '100vh',
             backgroundColor: '#2c3e50',
             color: 'white',
-            position: 'fixed',
+            position: isDesktop ? 'relative' : 'fixed',
             left: 0,
             top: 0,
             transform: menuOpen ? 'translateX(0)' : 'translateX(-100%)',
@@ -93,11 +96,6 @@ const AdminSidebar = ({ isMobileMenuOpen, setIsMobileMenuOpen }) => {
             flexDirection: 'column',
             overflowY: 'auto',
             zIndex: 1160,
-            '@media (min-width: 769px)': {
-                transform: 'translateX(0)',
-                position: 'relative',
-                width: '280px'
-            }
         },
         logo: {
             padding: '1.5rem',
@@ -133,9 +131,7 @@ const AdminSidebar = ({ isMobileMenuOpen, setIsMobileMenuOpen }) => {
             top: '15px',
             left: '15px',
             zIndex: 1170,
-            '@media (min-width: 769px)': {
-                display: 'none'
-            }
+            display: isDesktop ? 'none' : 'block'
         },
         menuToggleButton: {
             background: 'linear-gradient(135deg, #3498db 0%, #2980b9 100%)',

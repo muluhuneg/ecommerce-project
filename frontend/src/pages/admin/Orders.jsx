@@ -7,6 +7,16 @@ const AdminOrders = () => {
     const [orders, setOrders] = useState([]);
     const [loading, setLoading] = useState(true);
     const [statusFilter, setStatusFilter] = useState('all');
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+
+    useEffect(() => {
+        const handleResize = () => setWindowWidth(window.innerWidth);
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
+
+    const isDesktop = windowWidth > 768;
 
     useEffect(() => {
         fetchOrders();
@@ -40,8 +50,9 @@ const AdminOrders = () => {
         },
         mainContent: {
             flex: 1,
-            marginLeft: '280px',
-            padding: '2rem'
+            marginLeft: isDesktop ? '280px' : '0',
+            padding: '2rem',
+            transition: 'margin-left 0.3s ease'
         },
         header: {
             display: 'flex',
@@ -100,6 +111,23 @@ const AdminOrders = () => {
             alignItems: 'center',
             height: '400px'
         },
+        menuButton: {
+            position: 'fixed',
+            top: '15px',
+            left: '15px',
+            zIndex: 1170,
+            width: '40px',
+            height: '40px',
+            border: 'none',
+            borderRadius: '8px',
+            background: 'linear-gradient(135deg, #3498db 0%, #2980b9 100%)',
+            color: 'white',
+            cursor: 'pointer',
+            fontSize: '1.2rem',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center'
+        },
         spinner: {
             border: '4px solid #f3f3f3',
             borderTop: '4px solid #3498db',
@@ -135,7 +163,12 @@ const AdminOrders = () => {
 
     return (
         <div style={styles.container}>
-            <AdminSidebar />
+            <AdminSidebar isMobileMenuOpen={isMobileMenuOpen} setIsMobileMenuOpen={setIsMobileMenuOpen} />
+            {!isDesktop && (
+                <button style={styles.menuButton} onClick={() => setIsMobileMenuOpen(true)}>
+                    ☰
+                </button>
+            )}
             <div style={styles.mainContent}>
                 <div style={styles.header}>
                     <h1 style={styles.title}>Order Management</h1>
