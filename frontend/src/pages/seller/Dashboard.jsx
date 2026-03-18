@@ -467,7 +467,7 @@ const Dashboard = () => {
     }
 
     return (
-        <div style={styles.container}>
+        <div className="seller-page" style={styles.container}>
             <Sidebar isMobileMenuOpen={isMobileMenuOpen} setIsMobileMenuOpen={setIsMobileMenuOpen} />
             
             {/* Mobile Header */}
@@ -489,7 +489,7 @@ const Dashboard = () => {
                 </div>
             </div>
 
-            <div style={styles.mainContent}>
+            <div className="seller-main-content" style={styles.mainContent}>
                 {/* Header */}
                 <div style={styles.header}>
                     <div>

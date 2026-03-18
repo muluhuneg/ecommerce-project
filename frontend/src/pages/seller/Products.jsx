@@ -106,7 +106,7 @@ const Products = () => {
     }
 
     return (
-        <div style={styles.container}>
+        <div className="seller-page" style={styles.container}>
             <Sidebar isMobileMenuOpen={isMobileMenuOpen} setIsMobileMenuOpen={setIsMobileMenuOpen} />
             
             {/* Mobile Header */}
@@ -123,7 +123,7 @@ const Products = () => {
                 </Link>
             </div>
 
-            <div style={styles.mainContent}>
+            <div className="seller-main-content" style={styles.mainContent}>
                 {/* Desktop Header */}
                 <div style={styles.header}>
                     <h1 style={styles.title}>My Products</h1>

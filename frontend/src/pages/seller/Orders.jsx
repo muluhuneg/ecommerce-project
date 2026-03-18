@@ -143,9 +143,9 @@ const Orders = () => {
     }
 
     return (
-        <div style={{ display: 'flex' }}>
+        <div className="seller-page" style={{ display: 'flex' }}>
             <Sidebar />
-            <div style={styles.mainContent}>
+            <div className="seller-main-content" style={styles.mainContent}>
                 <div style={styles.header}>
                     <h1 style={styles.title}>Orders Management</h1>
                     <div style={styles.statsContainer}>

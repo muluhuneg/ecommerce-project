@@ -563,9 +563,9 @@ const AddProduct = () => {
     };
 
     return (
-        <div style={styles.container}>
+        <div className="seller-page" style={styles.container}>
             <Sidebar />
-            <div style={styles.mainContent}>
+            <div className="seller-main-content" style={styles.mainContent}>
                 <div style={styles.header}>
                     <h1 style={styles.title}>Add New Product</h1>
                     <button 
