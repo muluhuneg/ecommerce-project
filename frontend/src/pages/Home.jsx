@@ -957,8 +957,13 @@ const Home = () => {
 const styles = {
     container: {
         width: '100%',
+        minWidth: '100vw',
+        maxWidth: '100vw',
+        minHeight: '100vh',
         overflow: 'hidden',
-        position: 'relative'
+        position: 'relative',
+        margin: 0,
+        padding: 0
     },
     
     // Toast Notification
