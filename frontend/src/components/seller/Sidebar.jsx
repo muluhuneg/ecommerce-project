@@ -70,29 +70,26 @@ const Sidebar = ({ isMobileMenuOpen, setIsMobileMenuOpen }) => {
     ];
 
     const styles = {
-        // Mobile Menu Button
+        // Menu Button (always visible to toggle overlay sidebar)
         menuButton: {
             position: 'fixed',
             top: '15px',
             left: '15px',
-            zIndex: 1001,
+            zIndex: 1101,
             background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
             border: 'none',
             color: 'white',
             width: '45px',
             height: '45px',
             borderRadius: '50%',
-            display: 'none',
+            display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             fontSize: '1.4rem',
             cursor: 'pointer',
             boxShadow: '0 4px 10px rgba(0,0,0,0.2)',
-            '@media (max-width: 768px)': {
-                display: 'flex'
-            }
         },
-        // Overlay
+        // Overlay (click to close when menu is expanded)
         overlay: {
             position: 'fixed',
             top: 0,
@@ -100,34 +97,25 @@ const Sidebar = ({ isMobileMenuOpen, setIsMobileMenuOpen }) => {
             right: 0,
             bottom: 0,
             backgroundColor: 'rgba(0, 0, 0, 0.5)',
-            zIndex: 999,
+            zIndex: 1090,
             display: isMobileOpenEffective ? 'block' : 'none',
             backdropFilter: 'blur(3px)',
-            '@media (min-width: 769px)': {
-                display: 'none'
-            }
         },
-        // Sidebar Container
+        // Sidebar Container (overlay sidebar)
         sidebar: {
             width: isCollapsed ? '80px' : '280px',
             minHeight: '100vh',
             background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)',
             color: 'white',
-            position: 'relative',
+            position: 'fixed',
             left: 0,
             top: 0,
+            transform: isMobileOpenEffective ? 'translateX(0)' : 'translateX(-100%)',
             transition: 'width 0.3s ease, transform 0.3s ease',
             overflowY: 'auto',
             overflowX: 'hidden',
-            zIndex: 1000,
+            zIndex: 1100,
             boxShadow: '2px 0 10px rgba(0,0,0,0.3)',
-            // Mobile styles
-            '@media (max-width: 768px)': {
-                position: 'fixed',
-                transform: isMobileOpenEffective ? 'translateX(0)' : 'translateX(-100%)',
-                width: '280px',
-                boxShadow: '2px 0 20px rgba(0,0,0,0.5)',
-            }
         },
         // Header
         header: {
