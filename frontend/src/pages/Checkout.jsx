@@ -1066,8 +1066,8 @@ const Checkout = () => {
 
     return (
         <div style={styles.container}>
-            <div style={styles.checkoutContainer}>
-                <div style={styles.leftColumn}>
+            <div style={styles.checkoutContainer} className="checkoutContainer">
+                <div style={styles.leftColumn} className="leftColumn">
                     <button style={styles.backButton} onClick={() => navigate('/cart')}>
                         <FaArrowLeft /> Back to Cart
                     </button>
@@ -1104,6 +1104,7 @@ const Checkout = () => {
                         ) : (
                             <button 
                                 style={styles.placeOrderButton}
+                                className="placeOrderButton"
                                 onClick={handlePlaceOrder}
                                 disabled={loading}
                             >
@@ -1124,7 +1125,7 @@ const Checkout = () => {
                     </div>
                 </div>
                 
-                <div style={styles.rightColumn}>
+                <div style={styles.rightColumn} className="rightColumn">
                     <OrderSummary />
                 </div>
             </div>
@@ -1137,6 +1138,59 @@ const Checkout = () => {
                     }
                     .spinner {
                         animation: spin 1s linear infinite;
+                    }
+
+                    @media (max-width: 768px) {
+                        .checkoutContainer {
+                            display: block !important;
+                            padding: 0 !important;
+                        }
+
+                        .leftColumn,
+                        .rightColumn {
+                            width: 100% !important;
+                            max-width: 100% !important;
+                            margin-bottom: 20px !important;
+                            position: static !important;
+                            top: auto !important;
+                            right: auto !important;
+                            left: auto !important;
+                            box-shadow: none !important;
+                            border-radius: 0 !important;
+                        }
+
+                        .leftColumn {
+                            padding: 16px !important;
+                        }
+
+                        .rightColumn {
+                            padding: 16px !important;
+                        }
+
+                        .navigationButtons {
+                            flex-direction: column !important;
+                            gap: 12px !important;
+                        }
+
+                        .navigationButtons button,
+                        .placeOrderButton {
+                            width: 100% !important;
+                            padding: 14px !important;
+                            font-size: 1rem !important;
+                        }
+
+                        .summaryCard {
+                            width: 100% !important;
+                            box-shadow: 0 1px 6px rgba(0,0,0,0.08) !important;
+                        }
+
+                        .securityBadge {
+                            display: none !important;
+                        }
+
+                        .rightColumn {
+                            position: relative !important;
+                        }
                     }
                 `}
             </style>
