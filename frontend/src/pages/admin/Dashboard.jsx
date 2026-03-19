@@ -234,10 +234,10 @@ const AdminDashboard = () => {
                                 <tbody>
                                     {recentOrders.slice(0, 10).map(order => (
                                         <tr key={order.id}>
-                                            <td>{order.order_number}</td>
-                                            <td>{order.customer_name || 'N/A'}</td>
-                                            <td>{formatCurrency(order.grand_total)}</td>
-                                            <td>
+                                            <td style={styles.tableCell}>{order.order_number}</td>
+                                            <td style={styles.tableCell}>{order.customer_name || 'N/A'}</td>
+                                            <td style={styles.tableCell}>{formatCurrency(order.grand_total)}</td>
+                                            <td style={styles.tableCell}>
                                                 <span style={{
                                                     ...styles.statusBadge,
                                                     backgroundColor: 
@@ -460,6 +460,9 @@ const styles = {
     table: {
         width: '100%',
         borderCollapse: 'collapse'
+    },
+    tableCell: {
+        color: '#000'
     },
     statusBadge: {
         padding: '3px 8px',
