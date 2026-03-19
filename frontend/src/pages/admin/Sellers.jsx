@@ -49,7 +49,8 @@ const Sellers = () => {
             padding: '0'
         },
         header: {
-            marginBottom: '2rem'
+            marginBottom: '2rem',
+            color: '#000'
         },
         tabs: {
             display: 'flex',
@@ -124,7 +125,8 @@ const Sellers = () => {
             borderBottom: '1px solid #dee2e6'
         },
         tableCell: {
-            padding: '1rem'
+            padding: '1rem',
+            color: '#000'
         },
         sellerInfo: {
             display: 'flex',

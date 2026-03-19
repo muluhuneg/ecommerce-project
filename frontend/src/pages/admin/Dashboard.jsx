@@ -335,7 +335,7 @@ const styles = {
     },
     title: {
         fontSize: '2rem',
-        color: '#333',
+        color: '#000',
         marginBottom: '2rem'
     },
     loadingContainer: {
@@ -391,13 +391,13 @@ const styles = {
     },
     statTitle: {
         fontSize: '0.9rem',
-        color: '#666',
+        color: '#000',
         marginBottom: '5px'
     },
     statValue: {
         fontSize: '1.5rem',
         fontWeight: 'bold',
-        color: '#333',
+        color: '#000',
         margin: 0
     },
     section: {
@@ -409,7 +409,7 @@ const styles = {
     },
     sectionTitle: {
         fontSize: '1.3rem',
-        color: '#333',
+        color: '#000',
         margin: '0 0 20px',
         paddingBottom: '10px',
         borderBottom: '2px solid #f0f0f0'
@@ -435,7 +435,8 @@ const styles = {
         objectFit: 'cover'
     },
     pendingInfo: {
-        flex: 1
+        flex: 1,
+        color: '#000'
     },
     pendingActions: {
         display: 'flex',

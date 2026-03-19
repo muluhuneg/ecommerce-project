@@ -115,7 +115,8 @@ const Users = () => {
             transition: 'background-color 0.3s'
         },
         tableCell: {
-            padding: '1rem'
+            padding: '1rem',
+            color: '#000'
         },
         userInfo: {
             display: 'flex',
