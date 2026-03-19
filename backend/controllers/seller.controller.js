@@ -1,6 +1,7 @@
 const db = require('../config/db');
 const fs = require('fs');
 const path = require('path');
+const notificationController = require('./notification.controller');
 
 // Get seller dashboard stats
 exports.getDashboardStats = async (req, res) => {
@@ -109,6 +110,23 @@ exports.addProduct = async (req, res) => {
              discount_price || null, brand || null, weight || null, 
              dimensions || null, tags || null, imageUrl, false]
         );
+
+        // Notify admins about a product waiting for approval
+        try {
+            // Get seller name for context
+            const [user] = await db.query(
+                'SELECT u.name FROM users u JOIN sellers s ON u.id = s.user_id WHERE s.id = ?',
+                [sellerId]
+            );
+
+            await notificationController.createAdminNotificationForAll({
+                type: 'product_needs_approval',
+                product_name: name,
+                seller_name: user.length ? user[0].name : 'Seller'
+            });
+        } catch (notifyError) {
+            console.error('Failed to create admin notification for new product:', notifyError);
+        }
 
         res.status(201).json({
             message: 'Product added successfully. Awaiting admin approval.',

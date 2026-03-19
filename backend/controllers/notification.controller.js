@@ -438,9 +438,28 @@ exports.createAdminNotification = async (adminUserId, data) => {
         message = `New product "${product_name}" submitted by ${seller_name} needs approval.`;
         priority = 'high';
         actionUrl = '/admin/products/pending';
+    } else {
+        title = data.title || 'Admin Notification';
+        message = data.message || 'There is an important update.';
+        priority = data.priority || 'medium';
+        actionUrl = data.actionUrl || '/admin/notifications';
     }
     
     return await createNotification(adminUserId, 'admin', title, message, data, priority, actionUrl);
+};
+
+// Helper function to create admin notification for all admins
+exports.createAdminNotificationForAll = async (data) => {
+    try {
+        const [admins] = await db.query('SELECT id FROM users WHERE role = ?', ['admin']);
+        for (const admin of admins) {
+            await exports.createAdminNotification(admin.id, data);
+        }
+        return true;
+    } catch (error) {
+        console.error('Error creating admin notifications for all admins:', error);
+        return false;
+    }
 };
 
 // Helper function to create system notifications

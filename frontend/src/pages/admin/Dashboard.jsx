@@ -175,6 +175,18 @@ const AdminDashboard = () => {
                         color="#6f42c1"
                     />
                     <StatCard 
+                        icon={<FaExclamationTriangle />}
+                        title="Pending Sellers"
+                        value={formatNumber(stats.pending_sellers)}
+                        color="#dc3545"
+                    />
+                    <StatCard 
+                        icon={<FaExclamationTriangle />}
+                        title="Pending Products"
+                        value={formatNumber(stats.pending_products)}
+                        color="#fd7e14"
+                    />
+                    <StatCard 
                         icon={<FaChartLine />}
                         title="Avg Order Value"
                         value={formatCurrency(stats.average_order_value)}

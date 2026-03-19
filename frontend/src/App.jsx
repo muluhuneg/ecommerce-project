@@ -43,6 +43,7 @@ import SellerProfile from './pages/seller/Profile';
 
 // Admin pages
 import AdminDashboard from './pages/admin/Dashboard';
+import AdminNotifications from './pages/admin/Notifications';
 import AdminUsers from './pages/admin/Users';
 import AdminSellers from './pages/admin/Sellers';
 import AdminCategories from './pages/admin/Categories';
@@ -107,6 +108,7 @@ function App() {
                                             <Route path="/admin/orders" element={<AdminOrders />} />
                                             <Route path="/admin/reports" element={<AdminReports />} />
                                             <Route path="/admin/settings" element={<AdminSettings />} />
+                                            <Route path="/admin/notifications" element={<AdminNotifications />} />
                                         </Route>
 
                                         {/* ========== 404 NOT FOUND ========== */}

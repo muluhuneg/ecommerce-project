@@ -9,13 +9,16 @@ import {
     FaTags,
     FaCog,
     FaSignOutAlt,
-    FaUserShield
+    FaUserShield,
+    FaBell
 } from 'react-icons/fa';
 import { useAuth } from '../../context/AuthContext';
+import adminApi from '../../services/adminApi';
 
 const AdminSidebar = ({ isMobileMenuOpen, setIsMobileMenuOpen }) => {
     const { user, logout } = useAuth();
     const navigate = useNavigate();
+    const [pendingCount, setPendingCount] = useState(0);
     const [localSidebarOpen, setLocalSidebarOpen] = useState(window.innerWidth > 768);
     const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 
@@ -36,6 +39,18 @@ const AdminSidebar = ({ isMobileMenuOpen, setIsMobileMenuOpen }) => {
 
         return () => window.removeEventListener('resize', handleResize);
     }, [setIsMobileMenuOpen]);
+
+    useEffect(() => {
+        const fetchPending = async () => {
+            try {
+                const stats = await adminApi.getDashboardStats();
+                setPendingCount((stats.pending_sellers || 0) + (stats.pending_products || 0));
+            } catch (error) {
+                console.error('Error fetching pending counts for notifications:', error);
+            }
+        };
+        fetchPending();
+    }, []);
 
     const isDesktop = windowWidth > 768;
     const menuOpen = isDesktop || isMobileMenuOpen || localSidebarOpen;
@@ -61,6 +76,7 @@ const AdminSidebar = ({ isMobileMenuOpen, setIsMobileMenuOpen }) => {
 
     const menuItems = [
         { path: '/admin/dashboard', icon: <FaTachometerAlt />, label: 'Dashboard' },
+        { path: '/admin/notifications', icon: <FaBell />, label: 'Notifications', badge: pendingCount },
         { path: '/admin/users', icon: <FaUsers />, label: 'Users' },
         { path: '/admin/sellers', icon: <FaUserShield />, label: 'Sellers' },
         { path: '/admin/categories', icon: <FaTags />, label: 'Categories' },
@@ -161,6 +177,18 @@ const AdminSidebar = ({ isMobileMenuOpen, setIsMobileMenuOpen }) => {
             flex: 1,
             padding: '1rem 0'
         },
+        badge: {
+            marginLeft: 'auto',
+            backgroundColor: '#d93025',
+            borderRadius: '999px',
+            color: 'white',
+            fontSize: '0.7rem',
+            fontWeight: '600',
+            padding: '2px 8px',
+            display: 'inline-flex',
+            alignItems: 'center',
+            justifyContent: 'center'
+        },
         navLink: {
             display: 'flex',
             alignItems: 'center',
@@ -238,6 +266,9 @@ const AdminSidebar = ({ isMobileMenuOpen, setIsMobileMenuOpen }) => {
                         >
                             <span style={styles.icon}>{item.icon}</span>
                             {item.label}
+                            {item.badge > 0 && (
+                                <span style={styles.badge}>{item.badge}</span>
+                            )}
                         </NavLink>
                     ))}
                 </nav>

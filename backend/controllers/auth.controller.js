@@ -4,6 +4,7 @@ const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
 const emailService = require('../services/emailService');
 const smsService = require('../services/smsService');
+const notificationController = require('./notification.controller');
 
 // ========== REGISTRATION FUNCTIONS ==========
 
@@ -151,6 +152,16 @@ exports.registerSeller = async (req, res) => {
                 } catch (smsError) {
                     console.error('Failed to send welcome SMS:', smsError);
                 }
+            }
+
+            // Notify admins about the pending new seller
+            try {
+                await notificationController.createAdminNotificationForAll({
+                    type: 'new_seller',
+                    business_name
+                });
+            } catch (notifyError) {
+                console.error('Failed to create admin notification for new seller:', notifyError);
             }
 
             res.status(201).json({
