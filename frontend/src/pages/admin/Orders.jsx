@@ -88,7 +88,8 @@ const AdminOrders = () => {
             borderBottom: '1px solid #dee2e6'
         },
         tableCell: {
-            padding: '1rem'
+            padding: '1rem',
+            color: '#000'
         },
         statusBadge: {
             padding: '0.25rem 0.5rem',
