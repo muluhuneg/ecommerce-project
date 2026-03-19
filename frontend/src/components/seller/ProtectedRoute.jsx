@@ -29,9 +29,9 @@ const ProtectedRoute = ({ allowedRoles = ['seller', 'admin'], requireApproved = 
     if (requireApproved && user.role === 'seller' && !isSellerApproved()) {
         return (
             <div style={styles.pendingContainer}>
-                <h2>Account Pending Approval</h2>
-                <p>Your seller account is waiting for admin approval.</p>
-                <p>You'll be able to access the dashboard once approved.</p>
+                <h2 style={styles.pendingTitle}>Account Pending Approval</h2>
+                <p style={styles.pendingText}>Your seller account is waiting for admin approval.</p>
+                <p style={styles.pendingText}>You'll be able to access the dashboard once approved.</p>
             </div>
         );
     }
@@ -64,6 +64,15 @@ const styles = {
         height: '100vh',
         textAlign: 'center',
         padding: '2rem'
+    },
+    pendingTitle: {
+        color: '#000',
+        marginBottom: '10px'
+    },
+    pendingText: {
+        color: '#000',
+        maxWidth: '420px',
+        lineHeight: '1.5'
     }
 };
 

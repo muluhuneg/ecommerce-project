@@ -176,20 +176,7 @@ const Footer = () => {
                     </div>
                 </div>
 
-                <div style={styles.newsletter}>
-                    <h3 style={styles.sectionTitle}>Subscribe to Our Newsletter</h3>
-                    <p style={{ color: 'rgba(255,255,255,0.85)', marginBottom: '12px' }}>
-                        Get updates about new arrivals and exclusive offers.
-                    </p>
-                    <div style={{ display: 'flex', gap: '10px', maxWidth: '500px' }}>
-                        <input
-                            type="email"
-                            placeholder="Your email address"
-                            style={styles.newsletterInput}
-                        />
-                        <button style={styles.newsletterButton}>Subscribe</button>
-                    </div>
-                </div>
+                
 
                 <div style={styles.bottomBar}>
                     <div style={styles.copyright}>
