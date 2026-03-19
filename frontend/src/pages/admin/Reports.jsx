@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import AdminSidebar from '../../components/admin/AdminSidebar';
 import adminApi from '../../services/adminApi';
 import { FaDownload, FaChartLine, FaBox, FaStore } from 'react-icons/fa';
@@ -13,11 +13,8 @@ const AdminReports = () => {
         endDate: new Date().toISOString().split('T')[0]
     });
 
-    useEffect(() => {
-        fetchReports();
-    }, [dateRange]);
-
-    const fetchReports = async () => {
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    const fetchReports = useCallback(async () => {
         setLoading(true);
         try {
             const [sales, products, sellers] = await Promise.all([
@@ -33,7 +30,11 @@ const AdminReports = () => {
         } finally {
             setLoading(false);
         }
-    };
+    }, [dateRange]);
+
+    useEffect(() => {
+        fetchReports();
+    }, [fetchReports]);
 
     const handleExport = async (type) => {
         try {
@@ -58,7 +59,8 @@ const AdminReports = () => {
         mainContent: {
             flex: 1,
             marginLeft: '0',
-            padding: '0'
+            padding: '0',
+            color: '#000'
         },
         header: {
             display: 'flex',
@@ -68,7 +70,7 @@ const AdminReports = () => {
         },
         title: {
             fontSize: '2rem',
-            color: '#333'
+            color: '#000'
         },
         exportButtons: {
             display: 'flex',
@@ -133,7 +135,7 @@ const AdminReports = () => {
             margin: 0
         },
         statLabel: {
-            color: '#666',
+            color: '#000',
             margin: '0.2rem 0 0'
         },
         chartContainer: {
@@ -146,7 +148,7 @@ const AdminReports = () => {
         chartTitle: {
             fontSize: '1.2rem',
             marginBottom: '1rem',
-            color: '#333'
+            color: '#000'
         },
         table: {
             width: '100%',
@@ -157,13 +159,15 @@ const AdminReports = () => {
             backgroundColor: '#f8f9fa',
             padding: '1rem',
             textAlign: 'left',
-            borderBottom: '2px solid #dee2e6'
+            borderBottom: '2px solid #dee2e6',
+            color: '#000'
         },
         tableRow: {
             borderBottom: '1px solid #dee2e6'
         },
         tableCell: {
-            padding: '1rem'
+            padding: '1rem',
+            color: '#000'
         },
         loadingContainer: {
             display: 'flex',
