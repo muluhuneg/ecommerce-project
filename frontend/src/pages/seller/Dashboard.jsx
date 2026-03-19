@@ -64,15 +64,6 @@ const Dashboard = () => {
     const [selectedPeriod, setSelectedPeriod] = useState('week');
     const [salesData, setSalesData] = useState(null);
     const [products, setProducts] = useState([]);
-    const [discounts, setDiscounts] = useState([
-        { id: 1, code: 'SAVE10', description: '10% off on orders over 100 Br', expires: 'In 5 days' },
-        { id: 2, code: 'FREESHIP', description: 'Free shipping on next 3 orders', expires: 'In 7 days' }
-    ]);
-    const [reviews, setReviews] = useState([
-        { id: 1, name: 'Amina', rating: 4.8, text: 'Great service, fast shipping.', date: '2026-03-15' },
-        { id: 2, name: 'Bekele', rating: 4.4, text: 'Good quality product.', date: '2026-03-14' },
-        { id: 3, name: 'Sara', rating: 4.9, text: 'Excellent communication and delivery', date: '2026-03-13' }
-    ]);
     const [loadingMore, setLoadingMore] = useState(false);
     const [withdrawError, setWithdrawError] = useState('');
     const [withdrawSuccess, setWithdrawSuccess] = useState('');
@@ -661,38 +652,6 @@ const Dashboard = () => {
                     </div>
                 </div>
 
-                {/* Discounts & Promotions */}
-                <div style={styles.section}>
-                    <h3 style={styles.sectionTitle}>Discounts & Promotions</h3>
-                    <div style={styles.discountList}>
-                        {discounts.map(d => (
-                            <div key={d.id} style={styles.discountCard}>
-                                <div>
-                                    <strong>{d.code}</strong>
-                                    <p>{d.description}</p>
-                                </div>
-                                <span style={styles.discountExpiry}>{d.expires}</span>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-
-                {/* Reviews */}
-                <div style={styles.section}>
-                    <h3 style={styles.sectionTitle}>Latest Reviews</h3>
-                    <div style={styles.reviewList}>
-                        {reviews.map(r => (
-                            <div key={r.id} style={styles.reviewCard}>
-                                <div style={styles.reviewHeader}>
-                                    <strong>{r.name}</strong>
-                                    <span>{r.rating} ★</span>
-                                </div>
-                                <p>{r.text}</p>
-                                <small>{new Date(r.date).toLocaleDateString()}</small>
-                            </div>
-                        ))}
-                    </div>
-                </div>
 
                 {/* Recent Transactions */}
                 <div className="transactionsSection" style={styles.transactionsSection}>
@@ -1295,33 +1254,6 @@ const styles = {
         marginTop: '0.5rem',
         fontSize: '1.25rem',
         fontWeight: '700'
-    },
-    discountList: {
-        display: 'grid',
-        gap: '0.75rem'
-    },
-    discountCard: {
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        border: '1px solid #e4e7ec',
-        borderRadius: '8px',
-        padding: '0.75rem',
-        background: '#fbfcff'
-    },
-    discountExpiry: {
-        color: '#666',
-        fontSize: '0.8rem'
-    },
-    reviewList: {
-        display: 'grid',
-        gap: '0.75rem'
-    },
-    reviewCard: {
-        border: '1px solid #e4e7ec',
-        borderRadius: '8px',
-        padding: '0.75rem',
-        background: '#fff'
     },
     reviewHeader: {
         display: 'flex',
