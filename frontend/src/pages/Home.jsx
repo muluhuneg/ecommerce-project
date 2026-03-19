@@ -548,28 +548,8 @@ const Home = () => {
                 </div>
             </div>
 
-            {/* Newsletter */}
-            <div style={styles.newsletterSection}>
-                <div style={styles.contentWrapper}>
-                    <div style={styles.newsletterContent}>
-                        <h2 style={styles.newsletterTitle}>Stay Updated</h2>
-                        <p style={styles.newsletterText}>
-                            Subscribe to get exclusive offers and updates
-                        </p>
-                        <div style={styles.newsletterForm}>
-                            <input 
-                                type="email" 
-                                placeholder="Your email address" 
-                                style={styles.newsletterInput}
-                            />
-                            <button style={styles.newsletterButton}>
-                                Subscribe
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
+            
+    
             {/* CSS Animations and Responsive Styles */}
             <style>
                 {`
