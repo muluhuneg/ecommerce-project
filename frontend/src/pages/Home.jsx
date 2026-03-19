@@ -1039,7 +1039,7 @@ const styles = {
     // Hero Section - Full width with constrained content
     heroSection: {
         position: 'relative',
-        height: '600px',
+        height: '200px',
         overflow: 'hidden',
         width: '100%',
         '@media (max-width: 768px)': {

@@ -13,6 +13,10 @@ const Footer = () => {
         footer: {
             background: 'linear-gradient(135deg, #1e3c72 0%, #2a5298 100%)',
             color: 'white',
+            width: '100vw',
+            left: 0,
+            right: 0,
+            position: 'relative',
             marginTop: 'auto',
             padding: '50px 0 20px',
             fontFamily: 'Arial, sans-serif',
