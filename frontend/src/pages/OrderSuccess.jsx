@@ -1,7 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useSearchParams, useNavigate, Link } from 'react-router-dom';
 import orderApi from '../services/orderApi';
-import paymentApi from '../services/paymentApi';
 import { FaCheck, FaSpinner, FaHome, FaShoppingBag } from 'react-icons/fa';
 
 const OrderSuccess = () => {
@@ -11,74 +10,103 @@ const OrderSuccess = () => {
     const [error, setError] = useState('');
     const [order, setOrder] = useState(null);
     const [status, setStatus] = useState('verifying'); // 'verifying', 'confirmed', 'pending', 'failed'
+    const [retryCount, setRetryCount] = useState(0);
+    const [manualPaymentAttempted, setManualPaymentAttempted] = useState(false);
     
     const tx_ref = searchParams.get('tx_ref');
     const order_id = searchParams.get('order_id');
 
-    useEffect(() => {
-        const verifyOrder = async () => {
-            console.log('🔍 Verifying order with:', { tx_ref, order_id });
-            
-            try {
-                setLoading(true);
-                setError('');
+    const verifyOrder = useCallback(async () => {
+        console.log('🔍 Verifying order with:', { tx_ref, order_id, retryCount, manualPaymentAttempted });
 
-                if (order_id) {
-                    console.log('📦 Fetching order by ID:', order_id);
-                    const orderData = await orderApi.getOrderById(order_id);
+        try {
+            setLoading(true);
+            setError('');
+
+            if (order_id) {
+                console.log('📦 Fetching order by ID:', order_id);
+                const orderData = await orderApi.getOrderById(order_id);
+                setOrder(orderData);
+                setStatus('confirmed');
+                return;
+            }
+
+            if (tx_ref) {
+                console.log('🔍 Checking order status for tx_ref:', tx_ref);
+                const statusCheck = await orderApi.checkOrderStatus(tx_ref);
+                console.log('✅ Order status check:', statusCheck);
+
+                if (statusCheck.exists && statusCheck.order_id) {
+                    const orderData = await orderApi.getOrderById(statusCheck.order_id);
                     setOrder(orderData);
                     setStatus('confirmed');
                     return;
                 }
 
-                if (tx_ref) {
-                    console.log('🔍 Checking order status for tx_ref:', tx_ref);
-                    const statusCheck = await orderApi.checkOrderStatus(tx_ref);
-                    console.log('✅ Order status check:', statusCheck);
-
-                    if (statusCheck.exists && statusCheck.order_id) {
-                        const orderData = await orderApi.getOrderById(statusCheck.order_id);
-                        setOrder(orderData);
-                        setStatus('confirmed');
-                    } else if (statusCheck.pending) {
-                        setStatus('pending');
-                        console.log('⏳ Order still pending, checking again in 3 seconds...');
-                        setTimeout(verifyOrder, 3000);
-                        return;
-                    } else {
-                        // If order is missing but tx_ref exists from localStorage, keep as success-like pending state
-                        const pendingTx = localStorage.getItem('pending_tx_ref');
-                        if (pendingTx === tx_ref) {
-                            setStatus('pending');
-                            setError('Payment successful, order confirmation is processing. Please wait a moment.');
-                        } else {
-                            setStatus('failed');
-                            setError('Order not found. Please contact support.');
-                        }
-                    }
-                } else {
-                    setStatus('failed');
-                    setError('No order information found');
-                }
-            } catch (err) {
-                console.error('❌ Error verifying order:', err);
-
-                const message = err?.message || 'Failed to verify order';
-                if (tx_ref && localStorage.getItem('pending_tx_ref') === tx_ref) {
+                if (statusCheck.pending) {
                     setStatus('pending');
-                    setError('Payment was successful, but the server response is delayed. Please refresh in a few seconds.');
-                    setTimeout(verifyOrder, 5000);
+                    setRetryCount(prev => prev + 1);
+                    setError('Payment successful, finalizing your order...');
                 } else {
-                    setStatus('failed');
-                    setError(message);
+                    const pendingTx = localStorage.getItem('pending_tx_ref');
+                    if (pendingTx === tx_ref) {
+                        setStatus('pending');
+                        setRetryCount(prev => prev + 1);
+                        setError('Payment successful, order confirmation is processing. Please wait.');
+                    } else {
+                        setStatus('failed');
+                        setError('Order not found. Please contact support.');
+                    }
                 }
-            } finally {
-                setLoading(false);
+            } else {
+                setStatus('failed');
+                setError('No order information found');
             }
-        };
+        } catch (err) {
+            console.error('❌ Error verifying order:', err);
+            const message = err?.message || 'Failed to verify order';
 
+            if (tx_ref && localStorage.getItem('pending_tx_ref') === tx_ref) {
+                setStatus('pending');
+                setRetryCount(prev => prev + 1);
+                setError('Payment responsive but server is delayed. Retrying...');
+            } else {
+                setStatus('failed');
+                setError(message);
+            }
+        } finally {
+            setLoading(false);
+        }
+    }, [tx_ref, order_id, retryCount, manualPaymentAttempted]);
+
+    useEffect(() => {
         verifyOrder();
-    }, [tx_ref, order_id]);
+    }, [verifyOrder]);
+
+    useEffect(() => {
+        if (status === 'pending' && retryCount < 6) {
+            const timer = setTimeout(() => verifyOrder(), 3000);
+            return () => clearTimeout(timer);
+        }
+
+        if (status === 'pending' && retryCount >= 6 && tx_ref && !manualPaymentAttempted) {
+            const manualComplete = async () => {
+                try {
+                    setLoading(true);
+                    await orderApi.manualPaymentSuccess(tx_ref);
+                    setManualPaymentAttempted(true);
+                    await verifyOrder();
+                } catch (error) {
+                    console.error('❌ Manual payment finalization failed:', error);
+                    setError('Please click "Force complete" or contact support.');
+                } finally {
+                    setLoading(false);
+                }
+            };
+
+            manualComplete();
+        }
+    }, [status, retryCount, manualPaymentAttempted, tx_ref, verifyOrder]);
 
     if (loading && status !== 'confirmed') {
         return (
@@ -118,6 +146,22 @@ const OrderSuccess = () => {
     }
 
     if (!order && status === 'pending') {
+        const handleForceComplete = async () => {
+            if (!tx_ref) return;
+            try {
+                setLoading(true);
+                setError('');
+                setManualPaymentAttempted(true);
+                await orderApi.manualPaymentSuccess(tx_ref);
+                await verifyOrder();
+            } catch (forceError) {
+                console.error('❌ Force complete failed:', forceError);
+                setError('Force completion failed. Please contact support.');
+            } finally {
+                setLoading(false);
+            }
+        };
+
         return (
             <div style={styles.container}>
                 <div style={styles.successCard}>
@@ -128,6 +172,9 @@ const OrderSuccess = () => {
                     <p style={styles.subtitle}>Your payment was received. Final order confirmation is in progress.</p>
                     <p style={styles.subtitle}>{error || 'Please keep this page open until the order is confirmed.'}</p>
                     <div style={styles.buttonGroup}>
+                        <button style={styles.primaryButton} onClick={handleForceComplete}>
+                            Force complete order
+                        </button>
                         <Link to="/orders" style={styles.viewOrdersButton}>View Orders</Link>
                         <Link to="/products" style={styles.continueButton}>Continue Shopping</Link>
                     </div>
