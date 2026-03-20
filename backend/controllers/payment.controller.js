@@ -7,6 +7,10 @@ const CHAPA_SECRET_KEY = process.env.CHAPA_SECRET_KEY;
 const CHAPA_PUBLIC_KEY = process.env.CHAPA_PUBLIC_KEY;
 const CHAPA_API_URL = 'https://api.chapa.co/v1';
 
+// For callbacks, set in environment. Defaults are local dev.
+const CHAPA_CALLBACK_URL = process.env.CHAPA_CALLBACK_URL || 'http://localhost:5000/api/payment/verify';
+const CHAPA_RETURN_URL = process.env.CHAPA_RETURN_URL || 'http://localhost:3000/order-success';
+
 // Helper function to sanitize description
 const sanitizeDescription = (text) => {
     if (!text) return 'Payment for order';
@@ -120,8 +124,8 @@ exports.initializePayment = async (req, res) => {
             last_name: last_name,
             phone_number: cleanPhone,
             tx_ref: tx_ref,
-            callback_url: `http://localhost:5000/api/payment/verify/${tx_ref}`,
-            return_url: `http://localhost:3000/order-success?tx_ref=${tx_ref}`,
+            callback_url: `${CHAPA_CALLBACK_URL}/${tx_ref}`,
+            return_url: `${CHAPA_RETURN_URL}?tx_ref=${tx_ref}`,
             customization: {
                 title: 'E-Store Payment',
                 description: cleanDescription
@@ -399,7 +403,7 @@ exports.verifyPayment = async (req, res) => {
             console.log('Seller earnings:', sellerEarnings);
 
             // Redirect to success page with order_id
-            res.redirect(`http://localhost:3000/order-success?order_id=${orderId}&tx_ref=${tx_ref}`);
+            res.redirect(`${CHAPA_RETURN_URL}?order_id=${orderId}&tx_ref=${tx_ref}`);
 
         } else {
             console.log('❌ Payment verification failed:', response.data);
