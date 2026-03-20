@@ -10,6 +10,7 @@ const OrderSuccess = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
     const [order, setOrder] = useState(null);
+    const [status, setStatus] = useState('verifying'); // 'verifying', 'confirmed', 'pending', 'failed'
     
     const tx_ref = searchParams.get('tx_ref');
     const order_id = searchParams.get('order_id');
@@ -20,43 +21,57 @@ const OrderSuccess = () => {
             
             try {
                 setLoading(true);
-                
-                // If we have order_id directly, fetch the order
+                setError('');
+
                 if (order_id) {
                     console.log('📦 Fetching order by ID:', order_id);
                     const orderData = await orderApi.getOrderById(order_id);
                     setOrder(orderData);
-                    setLoading(false);
+                    setStatus('confirmed');
                     return;
                 }
-                
-                // If we have tx_ref, check order status
+
                 if (tx_ref) {
                     console.log('🔍 Checking order status for tx_ref:', tx_ref);
-                    
-                    // First check if order exists using orderApi (NOT paymentApi)
-                    // orderApi.checkOrderStatus doesn't require authentication
                     const statusCheck = await orderApi.checkOrderStatus(tx_ref);
                     console.log('✅ Order status check:', statusCheck);
-                    
+
                     if (statusCheck.exists && statusCheck.order_id) {
-                        // Order exists, fetch it
                         const orderData = await orderApi.getOrderById(statusCheck.order_id);
                         setOrder(orderData);
+                        setStatus('confirmed');
                     } else if (statusCheck.pending) {
-                        // Order still pending, wait and check again
+                        setStatus('pending');
                         console.log('⏳ Order still pending, checking again in 3 seconds...');
                         setTimeout(verifyOrder, 3000);
                         return;
                     } else {
-                        setError('Order not found. Please contact support.');
+                        // If order is missing but tx_ref exists from localStorage, keep as success-like pending state
+                        const pendingTx = localStorage.getItem('pending_tx_ref');
+                        if (pendingTx === tx_ref) {
+                            setStatus('pending');
+                            setError('Payment successful, order confirmation is processing. Please wait a moment.');
+                        } else {
+                            setStatus('failed');
+                            setError('Order not found. Please contact support.');
+                        }
                     }
                 } else {
+                    setStatus('failed');
                     setError('No order information found');
                 }
             } catch (err) {
                 console.error('❌ Error verifying order:', err);
-                setError(err.message || 'Failed to verify order');
+
+                const message = err?.message || 'Failed to verify order';
+                if (tx_ref && localStorage.getItem('pending_tx_ref') === tx_ref) {
+                    setStatus('pending');
+                    setError('Payment was successful, but the server response is delayed. Please refresh in a few seconds.');
+                    setTimeout(verifyOrder, 5000);
+                } else {
+                    setStatus('failed');
+                    setError(message);
+                }
             } finally {
                 setLoading(false);
             }
@@ -65,18 +80,18 @@ const OrderSuccess = () => {
         verifyOrder();
     }, [tx_ref, order_id]);
 
-    if (loading) {
+    if (loading && status !== 'confirmed') {
         return (
             <div style={styles.container}>
                 <div style={styles.loadingContainer}>
                     <FaSpinner className="spinner" size={50} color="#667eea" />
-                    <h2 style={styles.loadingText}>Verifying your order...</h2>
+                    <h2 style={styles.loadingText}>{status === 'pending' ? 'Finalizing your order...' : 'Verifying your order...'}</h2>
                 </div>
             </div>
         );
     }
 
-    if (error) {
+    if (status === 'failed' && error) {
         return (
             <div style={styles.container}>
                 <div style={styles.errorContainer}>
@@ -96,6 +111,25 @@ const OrderSuccess = () => {
                         >
                             Contact Support
                         </button>
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
+    if (!order && status === 'pending') {
+        return (
+            <div style={styles.container}>
+                <div style={styles.successCard}>
+                    <div style={styles.successIcon}>
+                        <FaCheck size={50} color="#28a745" />
+                    </div>
+                    <h1 style={styles.title}>Payment Successful</h1>
+                    <p style={styles.subtitle}>Your payment was received. Final order confirmation is in progress.</p>
+                    <p style={styles.subtitle}>{error || 'Please keep this page open until the order is confirmed.'}</p>
+                    <div style={styles.buttonGroup}>
+                        <Link to="/orders" style={styles.viewOrdersButton}>View Orders</Link>
+                        <Link to="/products" style={styles.continueButton}>Continue Shopping</Link>
                     </div>
                 </div>
             </div>
