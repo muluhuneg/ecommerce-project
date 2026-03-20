@@ -98,8 +98,10 @@ exports.initializePayment = async (req, res) => {
         // Sanitize description
         const cleanDescription = sanitizeDescription(description || `Payment for order ${order_id || 'N/A'}`);
 
-        // Generate unique transaction reference
-        const tx_ref = `TX-${Date.now()}-${crypto.randomBytes(4).toString('hex')}`;
+        // Use provided tx_ref from pending order (if available), otherwise generate a new one
+        const tx_ref = req.body.tx_ref && req.body.tx_ref.toString().trim().length > 0
+            ? req.body.tx_ref.toString().trim()
+            : `TX-${Date.now()}-${crypto.randomBytes(4).toString('hex')}`;
 
         // Split name into first and last
         const nameParts = customer_name.trim().split(' ');
@@ -256,7 +258,21 @@ exports.verifyPayment = async (req, res) => {
             );
 
             if (pendingOrders.length === 0) {
-                console.log('❌ No pending order found for this transaction');
+                console.log('❌ No pending order found for this transaction. Trying fallback to existing order record');
+
+                // Fallback: maybe transaction already completed and pending entry deleted
+                const [existingOrders] = await connection.query(
+                    'SELECT id, order_number FROM orders WHERE transaction_id = ? LIMIT 1',
+                    [tx_ref]
+                );
+
+                if (existingOrders.length > 0) {
+                    const existingOrder = existingOrders[0];
+                    console.log('✅ Existing order found for tx_ref:', existingOrder);
+                    await connection.commit();
+                    return res.redirect(`http://localhost:3000/order-success?order_id=${existingOrder.id}&tx_ref=${tx_ref}`);
+                }
+
                 throw new Error('No pending order found for this transaction');
             }
 

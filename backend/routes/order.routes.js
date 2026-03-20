@@ -60,21 +60,43 @@ router.post('/save-pending', authenticate, async (req, res) => {
 // ============================================
 // Check order status by tx_ref (for returning from payment)
 // ============================================
-router.get('/status/:tx_ref', authenticate, async (req, res) => {
+router.get('/status/:tx_ref', async (req, res) => {
     try {
         const { tx_ref } = req.params;
 
         console.log('🔍 Checking order status for tx_ref:', tx_ref);
 
-        // For demo purposes, always return success
-        console.log('✅ DEMO MODE: Returning order found');
-        return res.json({
-            exists: true,
-            order_id: 999,
-            order_number: 'DEMO-ORD-001',
-            status: 'processing',
-            demo_mode: true
-        });
+        // Lookup order by transaction reference
+        const [orders] = await db.query(
+            'SELECT id as order_id, order_number, status FROM orders WHERE transaction_id = ? LIMIT 1',
+            [tx_ref]
+        );
+
+        if (orders.length > 0) {
+            const order = orders[0];
+            console.log('✅ Order found for tx_ref:', tx_ref, 'order_id:', order.order_id);
+            return res.json({
+                exists: true,
+                order_id: order.order_id,
+                order_number: order.order_number,
+                status: order.status,
+                demo_mode: false
+            });
+        }
+
+        // If not found in orders, verify if a pending order exists
+        const [pendingOrders] = await db.query(
+            'SELECT id, user_id FROM pending_orders WHERE tx_ref = ? LIMIT 1',
+            [tx_ref]
+        );
+
+        if (pendingOrders.length > 0) {
+            console.log('⏳ Pending order exists for tx_ref:', tx_ref);
+            return res.json({ exists: true, pending: true });
+        }
+
+        console.log('❌ No order found for tx_ref:', tx_ref);
+        return res.json({ exists: false });
 
     } catch (error) {
         console.error('Error checking order status:', error);

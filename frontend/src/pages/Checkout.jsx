@@ -204,6 +204,7 @@ const Checkout = () => {
             // STEP 2: Initialize payment with Chapa
             const paymentData = {
                 order_id: saveResponse.order_id || 'N/A',
+                tx_ref: tx_ref, // Use same tx_ref from pending order
                 amount: total,
                 currency: 'ETB',
                 description: `Payment for order`,
