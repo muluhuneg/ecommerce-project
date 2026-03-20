@@ -1,14 +1,10 @@
-import axios from 'axios';
-
-const API_BASE = 'http://localhost:5000/api';
+import API from './api';
 
 const reviewApi = {
     // Get reviews for a product
     getProductReviews: async (productId, page = 1, limit = 10) => {
         try {
-            const response = await axios.get(
-                `${API_BASE}/reviews/product/${productId}?page=${page}&limit=${limit}`
-            );
+            const response = await API.get(`/reviews/product/${productId}?page=${page}&limit=${limit}`);
             return response.data;
         } catch (error) {
             console.error('Error fetching reviews:', error);
@@ -19,7 +15,7 @@ const reviewApi = {
     // Get review summary for a product
     getReviewSummary: async (productId) => {
         try {
-            const response = await axios.get(`${API_BASE}/reviews/product/${productId}/summary`);
+            const response = await API.get(`/reviews/product/${productId}/summary`);
             return response.data;
         } catch (error) {
             console.error('Error fetching review summary:', error);
@@ -30,7 +26,7 @@ const reviewApi = {
     // Create a new review
     createReview: async (reviewData) => {
         try {
-            const response = await axios.post(`${API_BASE}/reviews`, reviewData);
+            const response = await API.post('/reviews', reviewData);
             return response.data;
         } catch (error) {
             console.error('Error creating review:', error);
@@ -41,7 +37,7 @@ const reviewApi = {
     // Update a review
     updateReview: async (reviewId, reviewData) => {
         try {
-            const response = await axios.put(`${API_BASE}/reviews/${reviewId}`, reviewData);
+            const response = await API.put(`/reviews/${reviewId}`, reviewData);
             return response.data;
         } catch (error) {
             console.error('Error updating review:', error);
@@ -52,7 +48,7 @@ const reviewApi = {
     // Delete a review
     deleteReview: async (reviewId) => {
         try {
-            const response = await axios.delete(`${API_BASE}/reviews/${reviewId}`);
+            const response = await API.delete(`/reviews/${reviewId}`);
             return response.data;
         } catch (error) {
             console.error('Error deleting review:', error);
@@ -63,7 +59,7 @@ const reviewApi = {
     // Mark review as helpful
     markHelpful: async (reviewId) => {
         try {
-            const response = await axios.post(`${API_BASE}/reviews/${reviewId}/helpful`);
+            const response = await API.post(`/reviews/${reviewId}/helpful`);
             return response.data;
         } catch (error) {
             console.error('Error marking review as helpful:', error);
@@ -74,7 +70,7 @@ const reviewApi = {
     // Unmark review as helpful
     unmarkHelpful: async (reviewId) => {
         try {
-            const response = await axios.delete(`${API_BASE}/reviews/${reviewId}/helpful`);
+            const response = await API.delete(`/reviews/${reviewId}/helpful`);
             return response.data;
         } catch (error) {
             console.error('Error removing helpful mark:', error); // FIXED: changed "unmarking" to "removing"
@@ -91,8 +87,8 @@ const reviewApi = {
                 formData.append('images', image);
             });
             
-            const response = await axios.post(
-                `${API_BASE}/reviews/${reviewId}/images`,
+            const response = await API.post(
+                `/reviews/${reviewId}/images`,
                 formData,
                 {
                     headers: {
@@ -110,7 +106,7 @@ const reviewApi = {
     // Get user's reviews
     getUserReviews: async (userId) => {
         try {
-            const response = await axios.get(`${API_BASE}/reviews/user/${userId}`);
+            const response = await API.get(`/reviews/user/${userId}`);
             return response.data;
         } catch (error) {
             console.error('Error fetching user reviews:', error);
@@ -121,7 +117,7 @@ const reviewApi = {
     // Check if user can review product
     canReview: async (productId) => {
         try {
-            const response = await axios.get(`${API_BASE}/reviews/can-review/${productId}`);
+            const response = await API.get(`/reviews/can-review/${productId}`);
             return response.data;
         } catch (error) {
             console.error('Error checking review eligibility:', error);
@@ -133,7 +129,7 @@ const reviewApi = {
     getAllReviews: async (filters = {}) => {
         try {
             const queryParams = new URLSearchParams(filters).toString();
-            const response = await axios.get(`${API_BASE}/admin/reviews?${queryParams}`);
+            const response = await API.get(`/admin/reviews?${queryParams}`);
             return response.data;
         } catch (error) {
             console.error('Error fetching all reviews:', error);
@@ -144,7 +140,7 @@ const reviewApi = {
     // Admin: Approve/reject review
     moderateReview: async (reviewId, action) => {
         try {
-            const response = await axios.put(`${API_BASE}/admin/reviews/${reviewId}/moderate`, { action });
+            const response = await API.put(`/admin/reviews/${reviewId}/moderate`, { action });
             return response.data;
         } catch (error) {
             console.error('Error moderating review:', error);
